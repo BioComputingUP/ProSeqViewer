@@ -1,0 +1,77 @@
+.root{
+  font-family: monospace, monospace;
+}
+
+.chunk {
+  position: relative;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: top;
+}
+.index {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.labelContainer {
+  margin-right: 10px;
+}
+
+.label-hidden {
+  padding-left: 2px;
+  padding-right: 5px;
+  -webkit-user-select: none;
+  display:block;
+  height:1em;
+  min-height: 1em;
+  line-height: 1em;
+  font-size: 1em;
+  font-style: italic;
+  justify-content: flex-end;
+  flex-direction: column;
+  margin-left: 10px;
+}
+
+.label {
+  min-height: 1em;
+  line-height: 1em;
+  font-size: 0.6em;
+  font-style: italic;
+  position: relative;
+}
+
+.highlight {
+  background-color: #EBD270!important;;
+}
+
+/* 'card' name is not available because used by bootstrap */
+.crd {
+  position: relative;
+  display: inline-block;
+  font-size: 1em;
+}
+
+.crds {
+  display: inline-block;
+  -webkit-user-select: none;
+}
+
+
+.tooltipText {
+  visibility: hidden;
+  position: absolute;
+  z-index: 1;
+}
+
+.label:hover .tooltipText {
+  visibility: visible;
+}

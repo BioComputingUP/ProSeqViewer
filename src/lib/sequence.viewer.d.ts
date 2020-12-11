@@ -1,0 +1,30 @@
+import { OptionsModel } from './models/options.model';
+import { RowsModel } from './models/rows.model';
+import { ColorsModel } from './models/colors.model';
+import { SelectionModel } from './models/selection.model';
+import { IconsModel } from './models/icons.model';
+import { SequenceInfoModel } from './models/sequenceInfoModel';
+import { EventsModel } from './models/events.model';
+import { PatternsModel } from './models/patterns.model';
+import { InputModel } from './models/input.model';
+import { ConsensusModel } from './models/consensus.model';
+export declare class SequenceViewer {
+    static sqvList: any[];
+    divId: string;
+    init: boolean;
+    input: InputModel;
+    params: OptionsModel;
+    rows: RowsModel;
+    consensus: ConsensusModel;
+    regions: ColorsModel;
+    patterns: PatternsModel;
+    icons: IconsModel;
+    labels: SequenceInfoModel;
+    selection: SelectionModel;
+    events: EventsModel;
+    constructor(divId?: string);
+    drawSequenceViewer(input1?: any, input2?: any, input3?: any, input4?: any, input5?: any, input6?: any, input7?: any): void;
+    private generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, fontSize, tooltips, data);
+    private addTopIndexes(topIndexes, chunkSize, x, maxTop);
+    private createGUI(data, labels, startIndexes, tooltips, options);
+}
