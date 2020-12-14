@@ -12,6 +12,11 @@ Represent biological data with the sequence viewer library! Used in [MobiDB](htt
 
 * [Typescript](https://www.typescriptlang.org/)
 
+
+8 Output Demo
+
+![Sequence Viewer](src/assets/sqvDemo.png)
+
 ## Getting started
 
 1 Install the library using npm
@@ -21,7 +26,7 @@ npm install sequence-viewer-typescript
 
 2 Import the sequence viewer in javascript or your angular component
 ```typescript
-import {FeatureViewer} from 'feature-viewer-typescript/dist';
+import {SequenceViewer} from 'sequence-viewer-typescript/dist';
 ```
 
 3 Optional: if you are installing the feature viewer in an Angular 2+ based App, you may
@@ -43,7 +48,7 @@ styles: [
 this.sequenceviewer = new SequenceViewer('sqv');
 ```
 
-6 Add inputs (here an example with minimum required input, for all input settings options check github documentation).
+6 Add inputs -- here an example with minimum required input, for the full list of input settings options check github documentation --.
 ```typescript
  this.sequences = [{sequence: 'DFRLE--F---'}]
 ```
@@ -51,10 +56,6 @@ this.sequenceviewer = new SequenceViewer('sqv');
 ```typescript
  this.sequenceviewer.draw(this.sequences);
 ```
-
-8 Output
-
-![Sequence Viewer](src/assets/sqvDemo.png)
 
 ## Support
 
