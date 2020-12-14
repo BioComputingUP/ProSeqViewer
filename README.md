@@ -1,4 +1,4 @@
-# TypeScript Feature Viewer
+# TypeScript Sequence Viewer
 
 This is a code repository for the BioComputingUP Sequence Viewer project.
 Full documentation is work in progress and will be available at: -- github pages --.
