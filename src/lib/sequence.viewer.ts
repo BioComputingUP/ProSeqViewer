@@ -65,7 +65,7 @@ export class SequenceViewer {
     };
   }
 
-  public drawSequenceViewer(input1?, input2?, input3?, input4?, input5?, input6?, input7?) {
+  public draw(input1?, input2?, input3?, input4?, input5?, input6?, input7?) {
 
     SequenceViewer.sqvList.push(this.divId);
 
