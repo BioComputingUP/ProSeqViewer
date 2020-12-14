@@ -13,7 +13,7 @@ Represent biological data with the sequence viewer library! Used in [MobiDB](htt
 * [Typescript](https://www.typescriptlang.org/)
 
 
-8 Output Demo
+## Output demo
 
 ![Sequence Viewer](src/assets/sqvDemo.png)
 
