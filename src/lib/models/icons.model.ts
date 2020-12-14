@@ -1,3 +1,5 @@
+import {Icons} from '../icons/icons';
+
 export class IconsModel {
 
   process(regions, sequences, iconsHtml, iconsPaths) {
@@ -22,11 +24,44 @@ export class IconsModel {
                     reg.color = 'rgb' + reg.color;
                   }
 
-                  if (iconsHtml && iconsHtml[reg.icon]) {
-                    icon = iconsHtml[reg.icon];
-                  } else if (iconsPaths && iconsPaths[reg.icon]) {
-                    const path = iconsPaths[reg.icon];
-                    icon = `<img src="${path}">`;
+                  // default icons
+
+                  switch (reg.icon) {
+                    case 'lollipop': {
+                      icon = Icons.lollipop;
+                      break;
+                    }
+                    case 'arrowRight': {
+                      icon = Icons.arrowRight;
+                      break;
+                    }
+                    case 'arrowLeft': {
+                      icon = Icons.arrowLeft;
+                      break;
+                    }
+                    case 'strand': {
+                      icon = Icons.strand;
+                      break;
+                    }
+                    case 'noSecondary': {
+                      icon = Icons.noSecondary;
+                      break;
+                    }
+                    case 'helix': {
+                      icon = Icons.helix;
+                      break;
+                    }
+                    case 'turn': {
+                      icon = Icons.turn;
+                      break;
+                    }
+                    default: {
+                      // customizable icons
+                      if (iconsHtml && iconsHtml[reg.icon]) {
+                        icon = iconsHtml[reg.icon];
+                      }
+                      break;
+                    }
                   }
 
                   if (reg.display === 'center' && +key === reg.start + center) {
