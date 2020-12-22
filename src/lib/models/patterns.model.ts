@@ -4,7 +4,6 @@ export class PatternsModel {
 
   // find index of matched regex positions and create array of regions with color
   process(patterns, sequences) {
-
     const regions = []; // OutPatterns
     // @ts-ignore
     for (const element of patterns) {
@@ -13,16 +12,16 @@ export class PatternsModel {
       let str;
       if (sequences.find(x => x.id === element.sequenceId)) {
         str = sequences.find(x => x.id === element.sequenceId).sequence;
+        if (element.start && element.end) {
+          str = str.substr(element.start - 1, element.end - (element.start - 1));
+        }
         this.regexMatch(str, pattern, regions, element);
       } else {
         for (const seq of sequences) {
           // regex
           if (element.start && element.end) {
             str = seq.sequence.substr(element.start - 1, element.end - (element.start - 1));
-          } else {
-            Log.w(2, 'missing region bounds.');
           }
-
           this.regexMatch(str, pattern, regions, element);
         }
       }

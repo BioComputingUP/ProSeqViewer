@@ -193,7 +193,6 @@ export class SequenceViewer {
   }
 
   private createGUI(data, labels, startIndexes, tooltips, options) {
-    console.log(data)
 
     const sqvBody = document.getElementById(this.divId);
     if (!sqvBody) {
@@ -274,7 +273,7 @@ export class SequenceViewer {
           idx = idxNum - (chunkSize - 1);
         }
         // adding labels
-        if (lateralIndexes) {
+        if (lateralIndexes && !topIndexes) {
           const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, false, indexWidth, false, data);
           if (oneLineSetting) {
             index = gapsContainer;  // lateral number indexes + labels
@@ -282,7 +281,7 @@ export class SequenceViewer {
             index = labelsContainer  + gapsContainer;  // lateral number indexes + labels
           }
 
-          } else if (lateralIndexesGap) {
+          } else if (lateralIndexesGap  && !topIndexes) {
           const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, indexWidth, false, data);
           if (oneLineSetting) {
             index = gapsContainer;  // lateral number indexes + labels

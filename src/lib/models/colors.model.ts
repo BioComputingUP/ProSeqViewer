@@ -2,11 +2,9 @@ import {Log} from './log.model';
 
 interface InpColor {
   backgroundColor: string;
-  backgroundImage: string;
-  borderColor: string;
-  borderStyle: string;
+  backgroundImage?: string;
   sequenceId: string;
-  color: string;
+  color?: string;
   start: number;
   end: number;
   colorScheme?: string;
@@ -71,12 +69,11 @@ export class ColorsModel {
       if (sequence.colorScheme === 'clustal') {
         // @ts-ignore
         colorSchemeRegions.push({sequenceId: sequence.id, start: 1, end: sequence.sequence.length, colorScheme: 'clustal'});
-        for (const reg of allInputs.regions) {
-          if (reg.sequenceId === sequence.id) {
-            reg.start = 1;
-            reg.end = sequence.sequence.length;
-          }
-        }
+      }
+    }
+    for (const reg of allInputs.regions) {
+      if (!reg.backgroundColor) {
+        colorSchemeRegions.push(reg);
       }
     }
     if (colorSchemeRegions.length > 0) {
@@ -84,25 +81,39 @@ export class ColorsModel {
     }
 
     const allRegions = Array.prototype.concat(allInputs.icons, allInputs[ordering[0]], allInputs[ordering[1]]);
+
     const newRegions = this.transformInput(allRegions, allInputs.sequences);
     this.transformColors();
     return newRegions;
   }
 
+  // transform input structure
   private transformInput(regions, sequences) {
 
     // if don't receive new colors, keep old colors
     if (!regions) { return; }
-
+    console.log('???')
     const newRegions = this.fixMissingIds(regions, sequences);
+
 
     // if receive new colors, change them
     ColorsModel.palette = {};
     let info;
-    // transform input structure
+
+    for (const seq of sequences) {
+
+      let reg = {sequenceId: seq.id, backgroundColor: '', start: 1, end: seq.sequence.length, colorScheme: ''};
+      if (seq.colorScheme) {
+
+        reg.backgroundColor = seq.colorScheme;
+        reg.colorScheme = seq.colorScheme;
+        info = this.setColorscheme(reg, seq);
+      }
+    }
+
+    // overwrite region color if colorscheme is set
     // @ts-ignore
     for (const reg of newRegions) {
-
       // if first element in region is a number: e.g. '1-2'
       if (isNaN(+reg.start) || isNaN(+reg.end)) {
         Log.w(2, 'missing region bounds.');
@@ -115,6 +126,7 @@ export class ColorsModel {
       let colorScheme;
       if (reg.icon) { continue; }
       if (sequences.find(x => x.id === reg.sequenceId)) {
+
         colorScheme = sequences.find(x => x.id === reg.sequenceId).colorScheme;
         if (colorScheme && colorScheme !== 'blosum62') {
           if (reg.backgroundColor) {
@@ -133,12 +145,29 @@ export class ColorsModel {
       ColorsModel.palette[info.type][info.sequenceId].positions
             .push({start: reg.start, end: reg.end, target: info.letterStyle});
       if (colorScheme && colorScheme.includes('binary')) {
+        console.log('.......')
+
         // @ts-ignore
         ColorsModel.palette[info.type].binaryColors = this.getBinaryColors(colorScheme);
-
       }
       }
     return newRegions;
+  }
+
+  private setColorscheme(reg, seq) {
+    let info;
+
+    info = this.processColor(reg);
+
+    ColorsModel.palette[info.type][info.sequenceId].positions
+      .push({start: reg.start, end: reg.end, target: info.letterStyle});
+
+    if (seq.colorScheme.includes('binary')) {
+      // @ts-ignore
+      ColorsModel.palette[info.type].binaryColors = this.getBinaryColors(seq.colorScheme);
+      console.log(ColorsModel.palette[info.type].binaryColors)
+    }
+    return info;
   }
 
   private fixMissingIds(regions, sequences) {
@@ -190,12 +219,15 @@ export class ColorsModel {
         case 'binary': {
           // tslint:disable-next-line:forin
           for (const row in ColorsModel.palette[type]) {
+            console.log(row)
             if (row === 'binaryColors') {
               continue;
             }
             c = ColorsModel.palette[type][row];
+            console.log(c)
             n = c.positions.length + c.chars.length;
             arrColors = this.binary(n, ColorsModel.palette[type].binaryColors);
+            console.log(arrColors)
             c.positions.sort((a, b) => (a.start > b.start) ? 1 : -1);
             for (const e of c.positions) {
               e.backgroundColor = arrColors.pop();
@@ -225,6 +257,7 @@ export class ColorsModel {
           // tslint:disable-next-line:forin
           for (const row in ColorsModel.palette[type]) {
             c = ColorsModel.palette[type][row];
+            console.log(c)
             if (c.positions.length > 0) {
 
               for (const pos of c.positions) {
@@ -248,6 +281,7 @@ export class ColorsModel {
 
   private processColor(e: InpColor) {
 
+
     const result = {type: 'custom', sequenceId: -1, letterStyle: ''};
 
     // check if row key is a number
@@ -265,13 +299,6 @@ export class ColorsModel {
       result.letterStyle += `background-color:${e.backgroundColor};`; }
     if (e.backgroundImage) {
         result.letterStyle += `background-image: ${e.backgroundImage};`;
-    }
-    if (e.borderColor) {
-      e.borderColor = this.checkColor(e.borderColor);
-      result.letterStyle += `border-color: ${e.borderColor};`;
-    }
-    if (e.borderStyle) {
-      result.letterStyle += `border-style: ${e.borderStyle};`;
     }
 
     // define color or palette
@@ -297,6 +324,8 @@ export class ColorsModel {
       return this.checkRgb(color);
     } else if (color[0] === '#') {
       return this.checkHex(color);
+    } else if (color[0] === 'binary' || color[0] === 'clustal') {
+      return color[0];
     } else {
       Log.w(1, 'invalid color format');
       return -1;

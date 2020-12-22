@@ -36,11 +36,11 @@ export class InputModel {
       } else if (!ordering.includes('patterns') && element.pattern) {
         allInputs.patterns = input;
         ordering.push('patterns');
-      } else if (!ordering.includes('regions') && (element.backgroundColor || element.color && !element.pattern && !element.icon)) {
+      }  else if (element.icon) {
+        allInputs.icons = input;
+      } else if (!ordering.includes('regions') && (element.backgroundColor || element.color || element.start || element.end)) {
         allInputs.regions = input;
         ordering.push('regions');
-      } else if (element.icon) {
-        allInputs.icons = input;
       }
     }
   }
