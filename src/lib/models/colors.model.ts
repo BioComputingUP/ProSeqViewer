@@ -64,56 +64,60 @@ export class ColorsModel {
   }
 
   process(allInputs, ordering) {
-    const colorSchemeRegions = [];
-    for (const sequence of allInputs.sequences) {
-      if (sequence.colorScheme === 'clustal') {
-        // @ts-ignore
-        colorSchemeRegions.push({sequenceId: sequence.id, start: 1, end: sequence.sequence.length, colorScheme: 'clustal'});
+
+    if (!allInputs.options.colorScheme) {
+      const colorSchemeRegions = [];
+      for (const sequence of allInputs.sequences) {
+        if (sequence.colorScheme === 'clustal') {
+          // @ts-ignore
+          colorSchemeRegions.push({sequenceId: sequence.id, start: 1, end: sequence.sequence.length, colorScheme: 'clustal'});
+        }
+      }
+      for (const reg of allInputs.regions) {
+        if (!reg.backgroundColor) {
+          colorSchemeRegions.push(reg);
+        }
+      }
+      if (colorSchemeRegions.length > 0) {
+        allInputs.regions = colorSchemeRegions;
       }
     }
-    for (const reg of allInputs.regions) {
-      if (!reg.backgroundColor) {
-        colorSchemeRegions.push(reg);
-      }
-    }
-    if (colorSchemeRegions.length > 0) {
-      allInputs.regions = colorSchemeRegions;
-    }
+
 
     const allRegions = Array.prototype.concat(allInputs.icons, allInputs[ordering[0]], allInputs[ordering[1]]);
-
-    const newRegions = this.transformInput(allRegions, allInputs.sequences);
+    let newRegions = this.fixMissingIds(allRegions, allInputs.sequences);
+    newRegions = this.transformInput(allRegions, newRegions, allInputs.sequences, allInputs.options.colorScheme);
     this.transformColors();
     return newRegions;
   }
 
   // transform input structure
-  private transformInput(regions, sequences) {
+  private transformInput(regions, newRegions, sequences, globalColor) {
 
     // if don't receive new colors, keep old colors
     if (!regions) { return; }
-    console.log('???')
-    const newRegions = this.fixMissingIds(regions, sequences);
 
 
     // if receive new colors, change them
     ColorsModel.palette = {};
     let info;
+    if (!globalColor) {
+      for (const seq of sequences) {
 
-    for (const seq of sequences) {
+        let reg = {sequenceId: seq.id, backgroundColor: '', start: 1, end: seq.sequence.length, colorScheme: ''};
+        if (seq.colorScheme === 'clustal') {
 
-      let reg = {sequenceId: seq.id, backgroundColor: '', start: 1, end: seq.sequence.length, colorScheme: ''};
-      if (seq.colorScheme) {
-
-        reg.backgroundColor = seq.colorScheme;
-        reg.colorScheme = seq.colorScheme;
-        info = this.setColorscheme(reg, seq);
+          reg.backgroundColor = seq.colorScheme;
+          reg.colorScheme = seq.colorScheme;
+          info = this.setColorscheme(reg, seq);
+        }
       }
     }
 
     // overwrite region color if colorscheme is set
     // @ts-ignore
     for (const reg of newRegions) {
+
       // if first element in region is a number: e.g. '1-2'
       if (isNaN(+reg.start) || isNaN(+reg.end)) {
         Log.w(2, 'missing region bounds.');
@@ -128,7 +132,7 @@ export class ColorsModel {
       if (sequences.find(x => x.id === reg.sequenceId)) {
 
         colorScheme = sequences.find(x => x.id === reg.sequenceId).colorScheme;
-        if (colorScheme && colorScheme !== 'blosum62') {
+        if (colorScheme && !globalColor) {
           if (reg.backgroundColor) {
             let log = '';
             log += 'Colorscheme is set. Cannot set color: ' + reg.backgroundColor + '. ';
@@ -136,7 +140,9 @@ export class ColorsModel {
             Log.w(2, log);
           }
           reg.colorScheme = colorScheme; }
-      }
+        }
+
+
 
       info = this.processColor(reg);
       if (info === -1) { continue; }
@@ -145,7 +151,6 @@ export class ColorsModel {
       ColorsModel.palette[info.type][info.sequenceId].positions
             .push({start: reg.start, end: reg.end, target: info.letterStyle});
       if (colorScheme && colorScheme.includes('binary')) {
-        console.log('.......')
 
         // @ts-ignore
         ColorsModel.palette[info.type].binaryColors = this.getBinaryColors(colorScheme);
@@ -219,15 +224,14 @@ export class ColorsModel {
         case 'binary': {
           // tslint:disable-next-line:forin
           for (const row in ColorsModel.palette[type]) {
-            console.log(row)
             if (row === 'binaryColors') {
               continue;
             }
             c = ColorsModel.palette[type][row];
+            console.log('llll')
             console.log(c)
             n = c.positions.length + c.chars.length;
             arrColors = this.binary(n, ColorsModel.palette[type].binaryColors);
-            console.log(arrColors)
             c.positions.sort((a, b) => (a.start > b.start) ? 1 : -1);
             for (const e of c.positions) {
               e.backgroundColor = arrColors.pop();

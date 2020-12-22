@@ -166,6 +166,7 @@ process(sequences, regions, options, ordering) {
   }
 
   if (options.colorScheme === 'blosum62') {
+      regions = [];
       sequences.sort( (a, b) => a.id - b.id);
 
       const min = sequences[0];
@@ -177,9 +178,10 @@ process(sequences, regions, options, ordering) {
           if (sequence.id === min.id) {
             score = Palettes.blosum62[sequence.sequence[i] + sequence.sequence[i]];
             // score with itself
+
+            if (!score) { score = '-'; }
             regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
               backgroundColor: Palettes.blosum[score].backgroundColor});
-
 
           } else {
             // score with first sequence
@@ -198,7 +200,14 @@ process(sequences, regions, options, ordering) {
       }
 
       ordering = ConsensusModel.resetOrdering(ordering);
+    } else if (options.colorScheme === 'clustal') {
+    regions = [];
+    for (const sequence of sequences) {
+      sequence.colorScheme = 'clustal';
+      regions.push({sequenceId: sequence.id, start:  1, end: sequence.sequence.length, colorScheme: 'clustal'});
     }
+    ordering = ConsensusModel.resetOrdering(ordering);
+  }
 
   let consensusInfoIdentity;
   let consensusInfoPhysical;
