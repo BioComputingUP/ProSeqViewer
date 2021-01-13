@@ -85,8 +85,10 @@ export class SequenceViewer {
     /** check and consensus input  and global colorScheme */
     [inputs.sequences, inputs.regions, order ] = this.consensus.process(inputs.sequences, inputs.regions, inputs.options, order);
 
+
     /** check and process patterns input */
     inputs.patterns = this.patterns.process(inputs.patterns, inputs.sequences);
+
     /** check and process colors input */
     inputs.regions = this.regions.process(inputs, order);
 
@@ -203,7 +205,6 @@ export class SequenceViewer {
     const fontSize = options.fontSize;
     const spaceSize = options.spaceSize;
     const topIndexes = options.topIndexes;
-    const lateralIndexes = options.lateralIndexes;
     const lateralIndexesGap = options.lateralIndexesGap;
     const oneLineSetting = options.oneLineSetting;
     const oneLineWidth = options.oneLineWidth;
@@ -272,7 +273,7 @@ export class SequenceViewer {
           idx = idxNum - (chunkSize - 1);
         }
         // adding labels
-        if (lateralIndexes && !topIndexes) {
+        if (lateralIndexesGap && !topIndexes) {
           const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, false, indexWidth, false, data);
           if (oneLineSetting) {
             index = gapsContainer;  // lateral number indexes + labels
@@ -280,7 +281,7 @@ export class SequenceViewer {
             index = labelsContainer  + gapsContainer;  // lateral number indexes + labels
           }
 
-          } else if (lateralIndexesGap  && !topIndexes) {
+          } else if (!lateralIndexesGap  && !topIndexes) {
           const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, indexWidth, false, data);
           if (oneLineSetting) {
             index = gapsContainer;  // lateral number indexes + labels

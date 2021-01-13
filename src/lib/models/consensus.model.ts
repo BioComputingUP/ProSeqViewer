@@ -99,6 +99,7 @@ export class ConsensusModel {
     }
 
     sequences.push({id, sequence: consensusSequence, label});
+
     return [sequences, regions];
   }
 

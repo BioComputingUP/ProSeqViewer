@@ -7,7 +7,6 @@ interface Option {
   logLevel?: string;
   emptyFiller?: string;
   topIndexes?: boolean;
-  lateralIndexes?: boolean;
   lateralIndexesGap?: boolean;
   lateralIndexStart: number;
   sidebarWidth?: string;
@@ -27,7 +26,6 @@ export class OptionsModel {
     logLevel: 'none',
     emptyFiller: '-', // fills gap at the end of the MSA sequences
     topIndexes: false,
-    lateralIndexes: false,
     lateralIndexesGap: false,
     lateralIndexStart: 0,
     sidebarWidth: '2em',
@@ -149,15 +147,6 @@ export class OptionsModel {
         Log.w(1, 'wrong index type.');
       } else {
         this.options.lateralIndexesGap = opt.lateralIndexesGap;
-      }
-    }
-
-    /** check lateralIndexes value */
-    if (opt.lateralIndexes) {
-      if (typeof opt.lateralIndexes !== 'boolean') {
-        Log.w(1, 'wrong index type.');
-      } else {
-        this.options.lateralIndexes = opt.lateralIndexes;
       }
     }
 

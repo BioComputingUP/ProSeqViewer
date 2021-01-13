@@ -74,15 +74,15 @@ export class ColorsModel {
         }
       }
       for (const reg of allInputs.regions) {
-        if (!reg.backgroundColor) {
+        if (!reg.backgroundColor && reg.sequenceId !== -99999999999998 ) {
           colorSchemeRegions.push(reg);
         }
       }
+
       if (colorSchemeRegions.length > 0) {
         allInputs.regions = colorSchemeRegions;
       }
     }
-
 
     const allRegions = Array.prototype.concat(allInputs.icons, allInputs[ordering[0]], allInputs[ordering[1]]);
     let newRegions = this.fixMissingIds(allRegions, allInputs.sequences);

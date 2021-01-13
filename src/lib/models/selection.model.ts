@@ -30,6 +30,9 @@ export class SelectionModel {
     for (const sqv of sequenceViewers) {
 
       sqv.onmousedown = (e: any) => {
+        if (this.selection) {
+          for ( const el of this.selection) { el.classList.remove('highlight');  }
+        }
         this.selection = [];
         this.alreadySelected = {};
 
