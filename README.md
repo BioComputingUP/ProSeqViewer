@@ -4,6 +4,7 @@ This is a code repository for the BioComputingUP Sequence Viewer project.
 Full documentation is work in progress and will be available at: https://biocomputingup.github.io/sequence-viewer-documentation/.
 
 This version is based on [Typescript](https://www.typescriptlang.org/) and compatible with [Angular 2+](https://angular.io/) framework.
+A Javascript version of the package is also available (see https://github.com/BioComputingUP/sequence-viewer-typescript).
 
 Represent biological data with the sequence viewer library! Used in [MobiDB](http://mobidb.bio.unipd.it/),
 [DisProt](http://www.disprot.org/) and [RepeatsDB](http://repeatsdb.bio.unipd.it/).
@@ -11,13 +12,16 @@ Represent biological data with the sequence viewer library! Used in [MobiDB](htt
 ## Dependencies
 
 * [Typescript](https://www.typescriptlang.org/)
+* [Webpack](https://www.https://webpack.js.org/)
 
 
 ## Output demo
 
-![Sequence Viewer](dist/assets/sqvDemo.png)
+![Sequence Viewer](https://github.com/mb925/sequence-viewer-typescript/blob/master/src/assets/sqvDemo.png?raw=true)
 
 ## Getting started
+
+### Angular installation
 
 1 Install the library using npm
 ```
@@ -29,9 +33,7 @@ npm install sequence-viewer-typescript
 import {SequenceViewer} from 'sequence-viewer-typescript/dist';
 ```
 
-3 Optional: if you are installing the feature viewer in an Angular 2+ based App, you may
-need to load the feature viewer stylesheet in your angular.json "styles" to
-ensure the correct prioritization of stylesheets.
+3 Load the feature viewer stylesheet in your angular.json "styles".
 ```json
 styles: [
     "./node_modules/sequence-viewer-typescript/dist/assets/sqv.scss"

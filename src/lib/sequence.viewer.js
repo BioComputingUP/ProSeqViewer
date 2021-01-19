@@ -51,7 +51,7 @@ class SequenceViewer {
             }
         };
     }
-    drawSequenceViewer(input1, input2, input3, input4, input5, input6, input7) {
+    draw(input1, input2, input3, input4, input5, input6, input7) {
         SequenceViewer.sqvList.push(this.divId);
         let inputs;
         let order;
@@ -61,6 +61,7 @@ class SequenceViewer {
         let data;
         /** check and process input */
         [inputs, order] = this.input.process(input1, input2, input3, input4, input5, input6, input7);
+
         /** check and process parameters input */
         inputs.options = this.params.process(inputs.options);
         /** check and consensus input */
@@ -73,8 +74,10 @@ class SequenceViewer {
         inputs.icons = this.icons.process(inputs.regions, inputs.sequences, inputs.iconsHtml, inputs.iconsPaths);
         /** check and process sequences input */
         data = this.rows.process(inputs.sequences, inputs.icons, inputs.regions, inputs.options.colorScheme);
+
         /** check and process labels input */
         [labels, startIndexes, tooltips] = this.labels.process(inputs.regions, inputs.sequences);
+
         /** create/update lib-body html */
         this.createGUI(data, labels, startIndexes, tooltips, inputs.options);
         /** listen copy paste events */
@@ -161,7 +164,7 @@ class SequenceViewer {
         return cells;
     }
     createGUI(data, labels, startIndexes, tooltips, options) {
-        console.log(data);
+
         const sqvBody = document.getElementById(this.divId);
         if (!sqvBody) {
             log_model_1.Log.w(1, 'Cannot find lib-body element.');
@@ -289,4 +292,4 @@ class SequenceViewer {
     }
 }
 SequenceViewer.sqvList = [];
-exports.SequenceViewer = SequenceViewer;
+window.SequenceViewer = SequenceViewer
