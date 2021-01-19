@@ -36,7 +36,7 @@ import {SequenceViewer} from 'sequence-viewer-typescript/dist';
 3 Load the feature viewer stylesheet in your angular.json "styles".
 ```json
 styles: [
-    "./node_modules/sequence-viewer-typescript/dist/assets/sqv.scss"
+    "./node_modules/sequence-viewer-typescript/dist/assets/sqv.css"
 ]
 ```
 
