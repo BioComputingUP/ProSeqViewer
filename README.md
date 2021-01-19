@@ -1,7 +1,7 @@
 # TypeScript Sequence Viewer
 
 This is a code repository for the BioComputingUP Sequence Viewer project.
-Full documentation is work in progress and will be available at: https://biocomputingup.github.io/sequence-viewer-documentation/.
+Full documentation is available at: https://biocomputingup.github.io/sequence-viewer-documentation/.
 
 This version is based on [Typescript](https://www.typescriptlang.org/) and compatible with [Angular 2+](https://angular.io/) framework.
 A Javascript version of the package is also available (see https://github.com/BioComputingUP/sequence-viewer-typescript).
