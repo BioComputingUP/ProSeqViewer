@@ -25,6 +25,7 @@
 
 .labelContainer {
   margin-right: 10px;
+  direction: rtl;
 }
 
 .label-hidden {

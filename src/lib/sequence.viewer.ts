@@ -195,7 +195,7 @@ export class SequenceViewer {
   private createGUI(data, labels, startIndexes, tooltips, options) {
 
     const sqvBody = document.getElementById(this.divId);
-    console.log(sqvBody)
+
     if (!sqvBody) {
       Log.w(1, 'Cannot find sqv-body element.');
       return;
@@ -310,7 +310,7 @@ export class SequenceViewer {
     } else {
       sqvBody.innerHTML = `<div class="root">${html}</div>`;
     }
-    console.log(html)
+
     window.dispatchEvent(new Event('resize'));
   }
 }

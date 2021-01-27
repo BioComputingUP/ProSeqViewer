@@ -1,12 +1,10 @@
 export class SequenceInfoModel {
 
   process(regions, sequences) {
-    console.log(regions)
-    console.log(sequences)
+
     const labels = [];
     const startIndexes = [];
     const tooltips = [];
-    let flag;
     sequences.sort((a, b) => a.id - b.id);
     for (const seq of sequences) {
       if (!seq) { continue; }
@@ -22,12 +20,12 @@ export class SequenceInfoModel {
       }
       if (seq.label && !this.isHTML(seq.label) ) {
         labels.push(seq.label);
-        flag = true;
       } else {
         labels.push('');
       }
     }
-    if (flag) { return [labels, startIndexes, tooltips]; } else { return []; }
+
+    return [labels, startIndexes, tooltips];
   }
 
   isHTML = (str) => {
