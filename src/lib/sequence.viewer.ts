@@ -215,6 +215,8 @@ export class SequenceViewer {
     const fNum = +fontSize.substr(0, fontSize.length - 2);
     const fUnit = fontSize.substr(fontSize.length - 2, 2);
 
+
+
     // maxIdx = length of the longest sequence
     let maxIdx = 0;
     let maxTop = 0;
@@ -299,6 +301,7 @@ export class SequenceViewer {
         index = `<div class="idx hidden">${index}</div>`;
         style = `font-size: ${fontSize};`;
 
+        console.log(spaceSize)
         if (x !== maxIdx) { style += 'padding-right: ' + spaceSize + 'em;'; } else { style += 'margin-right: ' + spaceSize + 'em;'; }
 
         const chunk = `<div class="cnk" style="${style}">${index}<div class="crds">${cards}</div></div>`;

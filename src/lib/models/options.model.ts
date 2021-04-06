@@ -100,6 +100,12 @@ export class OptionsModel {
       Log.w(2, 'spaceSize not set.');
     }
 
+    if (opt.chunkSize == 0) {
+      this.options.chunkSize = 1;
+      this.options.spaceSize = 0;
+    }
+    console.log(this.options.spaceSize)
+
     /** check log value */
 
     if (opt.logLevel !== undefined) {
