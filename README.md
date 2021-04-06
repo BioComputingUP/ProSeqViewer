@@ -9,15 +9,8 @@ Full documentation is available at: [sequence-viewer-typescript](https://biocomp
 This version is based on [Typescript](https://www.typescriptlang.org/) and compatible with [Angular 2+](https://angular.io/) framework.
 A Javascript version of the package is also available (see the documentation at [sequence-viewer-typescript](https://biocomputingup.github.io/sequence-viewer-documentation/) for more info).
 
-## Dependencies
-
-* [Typescript](https://www.typescriptlang.org/)
-* [Webpack](https://www.https://webpack.js.org/)
-
-
-## Output demo
-
-![Sequence Viewer](https://github.com/mb925/sequence-viewer-typescript/blob/master/src/assets/sqvDemo.png?raw=true)
+[comment]: <> (demo image)
+[comment]: <> (![Sequence Viewer]&#40;https://github.com/mb925/sequence-viewer-typescript/blob/master/src/assets/sqvDemo.png&#41;)
 
 ## Getting started
 
@@ -58,6 +51,15 @@ this.sequenceviewer = new SequenceViewer('sqv');
 ```typescript
  this.sequenceviewer.draw(this.sequences);
 ```
+
+
+## Compiler
+
+This package ECMAScript target version is: es2015.
+
+## Dependencies
+
+* [Typescript](https://www.typescriptlang.org/)
 
 ## Support
 

@@ -2,14 +2,18 @@
   font-family: monospace, monospace;
 }
 
-.chunk {
+.container {
+  margin-left: 0;
+}
+
+.cnk {
   position: relative;
   white-space: nowrap;
   display: inline-block;
   vertical-align: top;
   margin-bottom: 10px;
 }
-.index {
+.idx {
   position: relative;
   display: inline-block;
   vertical-align: top;
@@ -23,19 +27,19 @@
   display: none;
 }
 
-.labelContainer {
+.lblContainer {
   margin-right: 10px;
   direction: rtl;
 }
 
-.label-hidden {
+.lbl-hidden {
   padding-left: 2px;
   padding-right: 5px;
   -webkit-user-select: none;
   display:block;
-  height:1em;
-  min-height: 1em;
-  line-height: 1em;
+  height:1.1em;
+  min-height: 1.1em; /* cell height given by font size (1em) + 0.1em added on this css --> .cell */
+  line-height: 1.1em;
   font-size: 1em;
   font-style: italic;
   justify-content: flex-end;
@@ -43,12 +47,16 @@
   margin-left: 10px;
 }
 
-.label {
-  min-height: 1em;
-  line-height: 1em;
+.lbl {
+  min-height: 1.1em; /* cell height */
+  line-height: 1.1em;
   font-size: 0.6em;
   font-style: italic;
   position: relative;
+}
+
+.cell{
+  margin-bottom: 0.1em;
 }
 
 .highlight {
@@ -67,13 +75,12 @@
   -webkit-user-select: none;
 }
 
-
 .tooltipText {
   visibility: hidden;
   position: absolute;
   z-index: 1;
 }
 
-.label:hover .tooltipText {
+.lbl:hover .tooltipText {
   visibility: visible;
 }

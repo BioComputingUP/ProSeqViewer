@@ -45,7 +45,7 @@ export class SequenceViewer {
         const sqvBody = document.getElementById(id);
         if (!sqvBody) { Log.w(1, 'Cannot find sqv-body element.'); continue; }
 
-        const chunks = sqvBody.getElementsByClassName('chunk');
+        const chunks = sqvBody.getElementsByClassName('cnk');
         if (!chunks) { Log.w(1, 'Cannot find chunk elements.'); continue; }
 
         let oldTop = 0;
@@ -53,11 +53,15 @@ export class SequenceViewer {
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < chunks.length; i++) {
             newTop = chunks[i].getBoundingClientRect().top;
+            if (chunks[i].getBoundingClientRect().top == 0) {
+              newTop = chunks[i].getBoundingClientRect().height
+            }
+
             if (newTop > oldTop) {
-              chunks[i].firstElementChild.className = 'index';
+              chunks[i].firstElementChild.className = 'idx';
               oldTop = newTop;
             } else {
-              chunks[i].firstElementChild.className = 'index hidden';
+              chunks[i].firstElementChild.className = 'idx hidden';
             }
           }
       }
@@ -117,7 +121,7 @@ export class SequenceViewer {
 
     if (labels.length > 0) {
       if (topIndexes) {
-        labelshtml += `<span class="label-hidden"></span>`;
+        labelshtml += `<span class="lbl-hidden"></span>`;
       }
       let flag;
       let count = -1;
@@ -138,9 +142,9 @@ export class SequenceViewer {
           noGapsLabels[seqN] = '';
           if (idx) {
             // line with only icons, no need for index
-            labelshtml += `<span class="label-hidden"><span class="label"> ${noGapsLabels[seqN]}</span></span>`;
+            labelshtml += `<span class="lbl-hidden"><span class="lbl"> ${noGapsLabels[seqN]}</span></span>`;
           } else {
-            labelshtml += `<span class="label-hidden"><span class="label"></span></span>`;
+            labelshtml += `<span class="lbl-hidden"><span class="lbl"></span></span>`;
           }
 
         } else {
@@ -148,8 +152,8 @@ export class SequenceViewer {
           if (idx) {
             if (!chunkSize) {
               // lateral index regular
-              labelshtml += `<span class="label-hidden" style="width: ${fontSize}">
-                            <span class="label" >${(startIndexes[count] - 1) + idx}</span></span>`;
+              labelshtml += `<span class="lbl-hidden" style="width: ${fontSize}">
+                            <span class="lbl" >${(startIndexes[count] - 1) + idx}</span></span>`;
             } else {
               let noGaps = 0;
               for (const res in seqNum) {
@@ -159,18 +163,18 @@ export class SequenceViewer {
               }
               // lateral index gap
               noGapsLabels[seqN] = noGaps;
-              labelshtml += `<span class="label-hidden" style="width:  ${fontSize}">
-                            <span class="label" >${(startIndexes[count] - 1) + noGapsLabels[seqN]}</span></span>`;
+              labelshtml += `<span class="lbl-hidden" style="width:  ${fontSize}">
+                            <span class="lbl" >${(startIndexes[count] - 1) + noGapsLabels[seqN]}</span></span>`;
             }
 
           } else {
-            labelshtml += `<span class="label-hidden"><span class="label">${labels[count]}${tooltips[count]}</span></span>`;
+            labelshtml += `<span class="lbl-hidden"><span class="lbl">${labels[count]}${tooltips[count]}</span></span>`;
           }
         }
         flag = false;
       }
 
-      labelsContainer = `<span class="labelContainer" style="display: inline-block">${labelshtml}</span>`;
+      labelsContainer = `<span class="lblContainer" style="display: inline-block">${labelshtml}</span>`;
     }
     return labelsContainer;
   }
@@ -292,12 +296,12 @@ export class SequenceViewer {
             index = labelsContainer;
           }
 
-        index = `<div class="index hidden">${index}</div>`;
+        index = `<div class="idx hidden">${index}</div>`;
         style = `font-size: ${fontSize};`;
 
         if (x !== maxIdx) { style += 'padding-right: ' + spaceSize + 'em;'; } else { style += 'margin-right: ' + spaceSize + 'em;'; }
 
-        const chunk = `<div class="chunk" style="${style}">${index}<div class="crds">${cards}</div></div>`;
+        const chunk = `<div class="cnk" style="${style}">${index}<div class="crds">${cards}</div></div>`;
         cards = '';
         index = '';
         html += chunk;

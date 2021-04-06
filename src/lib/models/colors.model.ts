@@ -228,7 +228,6 @@ export class ColorsModel {
               continue;
             }
             c = ColorsModel.palette[type][row];
-            console.log('llll')
             console.log(c)
             n = c.positions.length + c.chars.length;
             arrColors = this.binary(n, ColorsModel.palette[type].binaryColors);

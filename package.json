@@ -1,6 +1,6 @@
 {
   "name": "sequence-viewer-typescript",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {

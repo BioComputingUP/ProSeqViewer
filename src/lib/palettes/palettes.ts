@@ -6,11 +6,11 @@ export class Palettes {
   };
 
   static consensus = {
-    100: {backgroundColor: '#213945', color: '#FFFFFF'},
-    70:  {backgroundColor: '#42728A', color: '#FFFFFF'},
-    40:  {backgroundColor: '#5a93af', color: '#FFFFFF'},
-    10:  {backgroundColor: '#9fc0d1', color: '#FFFFFF'},
-    0:  {backgroundColor: '#9fc0d1', color: '#FFFFFF'}
+    100: {backgroundColor: '#0A0A0A', color: '#FFFFFF'},
+    70:  {backgroundColor: '#333333', color: '#FFFFFF'},
+    40:  {backgroundColor: '#707070', color: '#FFFFFF'},
+    10:  {backgroundColor: '#A3A3A3', color: '#FFFFFF'},
+    0:  {backgroundColor: '#FFFFFF', color: '#FFFFFF'}
   };
 
   // colour scheme in Lesk, Introduction to Bioinformatics
@@ -27,9 +27,9 @@ export class Palettes {
     '-4': {backgroundColor: '#222D44', color: '#FFFFFF'},
     '-3': {backgroundColor: '#3E517A', color: '#FFFFFF'},
     '-2': {backgroundColor: '#5C76AD', color: '#FFFFFF'},
-    '-1': {backgroundColor: '#92A4C8', color: '#FFFFFF'},
-    0: {backgroundColor: '#C9D2E4', color: '#FFFFFF'},
-    1: {backgroundColor: '#EA9AA2', color: '#FFFFFF'},
+    '-1': {backgroundColor: '#C9D2E4', color: '#FFFFFF'},
+    0: {backgroundColor: '#FFFFFF', color: '#FFFFFF'},
+    1: {backgroundColor: '#F5CCD0', color: '#FFFFFF'},
     2: {backgroundColor: '#E37882', color: '#FFFFFF'},
     3: {backgroundColor: '#DC5663', color: '#FFFFFF'},
     4: {backgroundColor: '#D53444', color: '#FFFFFF'},

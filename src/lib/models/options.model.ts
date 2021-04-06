@@ -24,7 +24,7 @@ export class OptionsModel {
     chunkSize: 10,
     spaceSize: 1, // relative to fontSize
     logLevel: 'none',
-    emptyFiller: '-', // fills gap at the end of the MSA sequences
+    emptyFiller: ' ', // fills gap at the end of the MSA sequences
     topIndexes: false,
     lateralIndexesGap: false,
     lateralIndexStart: 0,
