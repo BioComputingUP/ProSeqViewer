@@ -61,6 +61,25 @@ This package ECMAScript target version is: es2015.
 
 * [Typescript](https://www.typescriptlang.org/)
 
+
+## Development
+
+`git clone https://github.com/BioComputingUP/sequence-viewer-typescript.git`
+
+`npm install`  (will install the development dependencies)
+
+...make your changes and modifications...
+
+`npm run build` (will create the bundle js files)
+
+`npm run postbuild` (will move assets files in dist/)
+
+`npm run wp` (will create the sqv-bundle.js file)
+
+`npm run post wp` (will edit the bundle file to make it work)
+
+This commands can be found in package.json
+
 ## Support
 
 If you have any problem or suggestion please open an issue.

@@ -5,10 +5,11 @@
   "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf dist && tsc",
+    "build": "rm -rfv dist && tsc",
     "postbuild": "cp -r src/assets dist/",
     "wp": "npx webpack",
-    "buildall" : "rm -rf dist && npm run build && npm run postbuild && npm run wp",
+    "postwp": "sed -i 's/^exports\\.\\(SequenceViewer = SequenceViewer;\\)$/window\\.\\1/' dist/sqv-bundle.js",
+    "buildall" : "rm -rfv dist && npm run build && npm run postbuild && npm run wp && npm run postwp",
     "start": "npm run build -- -w"
   },
   "files": [

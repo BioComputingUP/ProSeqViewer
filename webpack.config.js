@@ -1,9 +1,10 @@
 module.exports = {
   entry: './dist/index.js',
   output: {
-    filename: 'bundle.js'
+    filename: 'sqv-bundle.js'
   },
   optimization: {
     minimize: false
-  }
+  },
+  mode: "production"
 };
