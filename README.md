@@ -37,7 +37,8 @@ You can find the <i>sqv.css</i> file in the src/assets folder on this Github rep
   const seqs = [
     {sequence: 'MVLSPADKVGAH--RMFLSFPTTKTYF--LS', id: 1, label: 'sp|P69905|HBA_HUMAN'}
   ];
-  const sequenceviewer = new SequenceViewer('sqv');  // Create an instance of the sequence viewer in javascript
+  // Create an instance of the sequence viewer in javascript
+  const sequenceviewer = new SequenceViewer('sqv'); 
   sequenceviewer.draw(sequence);
   
 </script>
