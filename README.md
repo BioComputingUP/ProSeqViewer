@@ -14,6 +14,36 @@ A Javascript version of the package is also available (see the documentation at 
 
 ## Getting started
 
+### Javascript installation
+1. Download the sequence viewer stylesheet
+You can find the <i>sqv.css</i> file in the src/assets folder on this Github repo.
+
+2. Download the library code
+   You can find the <i>sqv-bundle.js</i> file in the dist folder on this Github repo.
+
+3. In your index.html:
+``` html 
+<head>
+  <link rel="stylesheet" type="text/css" href="sqv.css">
+</head>
+<body>
+
+
+<div id="sqv"></div>
+
+<script src="sqv-bundle.js"></script>
+<script>
+
+  const seqs = [
+    {sequence: 'MVLSPADKVGAH--RMFLSFPTTKTYF--LS', id: 1, label: 'sp|P69905|HBA_HUMAN'}
+  ];
+  const sequenceviewer = new SequenceViewer('sqv');  // Create an instance of the sequence viewer in javascript
+  sequenceviewer.draw(sequence);
+  
+</script>
+
+</body>
+```
 ### Angular installation
 
 1 Install the library using npm
@@ -38,18 +68,13 @@ styles: [
  <div id="sqv"></div>
 ```
 
-5 Create an instance of the sequence viewer in javascript and style it
+5 Create an instance of the sequence viewer in your component, add inputs and execute
 ```typescript
-this.sequenceviewer = new SequenceViewer('sqv');
-```
-
-6 Add inputs -- here an example with minimum required input, for the full list of input settings options check github documentation --.
-```typescript
- this.sequences = [{sequence: 'DFRLE--F---'}]
-```
-7 Execute the function to draw the sequence viewer on the page
-```typescript
- this.sequenceviewer.draw(this.sequences);
+ const seqs = [
+  {sequence: 'MVLSPADKTNVGAH--RMFLSFPTTKTYF--LSHGG', id: 1, label: 'sp|P69905|HBA_HUMAN'}
+  ];
+  const sequenceviewer = new SequenceViewer('sqv');
+  sequenceviewer.draw(sequence);
 ```
 
 
@@ -74,7 +99,7 @@ This package ECMAScript target version is: es2015.
 
 `npm run postbuild` (will move assets files in dist/)
 
-`npm run wp` (will create the sqv-bundle.js file)
+`npm run wp` (will create the sqv-bundle.js file in dist/)
 
 `npm run post wp` (will edit the bundle file to make it work)
 
