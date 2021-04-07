@@ -5,8 +5,10 @@
   "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "postbuild": "cp -r src/assets dist/",
+    "wp": "npx webpack",
+    "buildall" : "rm -rf dist && npm run build && npm run postbuild && npm run wp",
     "start": "npm run build -- -w"
   },
   "files": [
