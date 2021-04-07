@@ -1,14 +1,14 @@
-import { OptionsModel } from './models/options.model';
-import {RowsModel} from './models/rows.model';
-import {ColorsModel} from './models/colors.model';
-import {Log} from './models/log.model';
-import {SelectionModel} from './models/selection.model';
-import {IconsModel} from './models/icons.model';
-import {SequenceInfoModel} from './models/sequenceInfoModel';
-import {EventsModel} from './models/events.model';
-import {PatternsModel} from './models/patterns.model';
-import {InputModel} from './models/input.model';
-import {ConsensusModel} from './models/consensus.model';
+import { OptionsModel } from './options.model';
+import {RowsModel} from './rows.model';
+import {ColorsModel} from './colors.model';
+import {Log} from './log.model';
+import {SelectionModel} from './selection.model';
+import {IconsModel} from './icons.model';
+import {SequenceInfoModel} from './sequenceInfoModel';
+import {EventsModel} from './events.model';
+import {PatternsModel} from './patterns.model';
+import {InputModel} from './input.model';
+import {ConsensusModel} from './consensus.model';
 
 export class SequenceViewer {
   static sqvList = [];

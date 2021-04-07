@@ -1,6 +1,5 @@
 import {Log} from './log.model';
-import {CharsModel} from './chars.model';
-import {Palettes} from '../palettes/palettes';
+import {Palettes} from './palettes';
 import {ColorsModel} from './colors.model';
 
 export class RowsModel {
@@ -134,8 +133,7 @@ export class RowsModel {
       rows[id] = {};
       for (const idx of Object.keys(sequences[row].sequence)) {
         const idxKey = (+idx + 1).toString();
-        let char = new CharsModel();
-        char = sequences[row].sequence[idx];
+        const char = sequences[row].sequence[idx];
         rows[id][idxKey] = {char};
       }
     }

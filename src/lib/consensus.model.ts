@@ -1,4 +1,4 @@
-import {Palettes} from '../palettes/palettes';
+import {Palettes} from './palettes';
 
 export class ConsensusModel {
 
