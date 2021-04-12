@@ -104,13 +104,11 @@ export class OptionsModel {
       this.options.chunkSize = 1;
       this.options.spaceSize = 0;
     }
-    console.log(this.options.spaceSize)
 
     /** check log value */
 
     if (opt.logLevel !== undefined) {
       this.options.logLevel = opt.logLevel;
-      console.log(opt.logLevel);
       switch (opt.logLevel) {
         case 'none': {
           Log.s(0);
