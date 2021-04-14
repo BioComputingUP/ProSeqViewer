@@ -170,7 +170,6 @@ export class ColorsModel {
     if (seq.colorScheme.includes('binary')) {
       // @ts-ignore
       ColorsModel.palette[info.type].binaryColors = this.getBinaryColors(seq.colorScheme);
-      console.log(ColorsModel.palette[info.type].binaryColors)
     }
     return info;
   }

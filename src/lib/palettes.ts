@@ -24,23 +24,23 @@ export class Palettes {
   };
 
   static blosum = {
-    '-4': {backgroundColor: '#222D44', color: '#FFFFFF'},
-    '-3': {backgroundColor: '#3E517A', color: '#FFFFFF'},
-    '-2': {backgroundColor: '#5C76AD', color: '#FFFFFF'},
-    '-1': {backgroundColor: '#C9D2E4', color: '#FFFFFF'},
-    0: {backgroundColor: '#FFFFFF', color: '#FFFFFF'},
-    1: {backgroundColor: '#F5CCD0', color: '#FFFFFF'},
-    2: {backgroundColor: '#E37882', color: '#FFFFFF'},
-    3: {backgroundColor: '#DC5663', color: '#FFFFFF'},
-    4: {backgroundColor: '#D53444', color: '#FFFFFF'},
-    5 : {backgroundColor: '#BA2635', color: '#FFFFFF'},
-    6: {backgroundColor: '#981F2B', color: '#FFFFFF'},
-    7: {backgroundColor: '#871C27', color: '#FFFFFF'},
-    8: {backgroundColor: '#771822', color: '#FFFFFF'},
-    9: {backgroundColor: '#66151D', color: '#FFFFFF'},
-    10: {backgroundColor: '#551118', color: '#14000B'},
-    11: {backgroundColor: '#440D13', color: '#14000B'},
-    '-': {backgroundColor: '#FFFFFF', color: '#FFFFFF'}
+    '-4': {backgroundColor: '#3867BC'},
+    '-3': {backgroundColor: '#527DCB'},
+    '-2': {backgroundColor: '#7496d5'},
+    '-1': {backgroundColor: '#a2b8e0'},
+    0: {backgroundColor: '#cfd9ea'},
+    1: {backgroundColor: '#F0D1DB'},
+    2: {backgroundColor: '#EBC1CF'},
+    3: {backgroundColor: '#E6B2C3'},
+    4: {backgroundColor: '#E1A3B7'},
+    5 : {backgroundColor: '#DC93AA'},
+    6: {backgroundColor: '#D7849E'},
+    7: {backgroundColor: '#D27492'},
+    8: {backgroundColor: '#CD6586'},
+    9: {backgroundColor: '#C8567A'},
+    10: {backgroundColor: '#C3466E'},
+    11: {backgroundColor: '#B93C64'},
+    '-': {backgroundColor: '#FFFFFF'}
 
   };
 
