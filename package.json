@@ -1,6 +1,6 @@
 {
   "name": "sequence-viewer-typescript",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
@@ -9,7 +9,7 @@
     "postbuild": "cp -r src/assets dist/",
     "wp": "npx webpack",
     "postwp": "sed -i 's/^exports\\.\\(SequenceViewer = SequenceViewer;\\)$/window\\.\\1/' dist/sqv-bundle.js",
-    "buildall" : "rm -rfv dist && npm run build && npm run postbuild && npm run wp && npm run postwp",
+    "buildall": "rm -rfv dist && npm run build && npm run postbuild && npm run wp && npm run postwp",
     "start": "npm run build -- -w"
   },
   "files": [
@@ -17,14 +17,11 @@
   ],
   "author": "Martina Bevilacqua",
   "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "typescript": "4.1.3",
-    "webpack": "5.15.0"
-  },
+  "description": "library for the visualization of (not only) biological sequence features",
   "devDependencies": {
     "@types/node": "14.14.13",
-    "webpack": "^1.13.0",
+    "typescript": "4.2.4",
+    "webpack": "5.32.0",
     "webpack-cli": "4.6.0"
   }
 }

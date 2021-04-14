@@ -1,0 +1,86 @@
+.root{
+  font-family: monospace, monospace;
+}
+
+.container {
+  margin-left: 0;
+}
+
+.cnk {
+  position: relative;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: 10px;
+}
+.idx {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.lblContainer {
+  margin-right: 10px;
+  direction: rtl;
+}
+
+.lbl-hidden {
+  padding-left: 2px;
+  padding-right: 5px;
+  -webkit-user-select: none;
+  display:block;
+  height:1.1em;
+  min-height: 1.1em; /* cell height given by font size (1em) + 0.1em added on this css --> .cell */
+  line-height: 1.1em;
+  font-size: 1em;
+  font-style: italic;
+  justify-content: flex-end;
+  flex-direction: column;
+  margin-left: 10px;
+}
+
+.lbl {
+  min-height: 1.1em; /* cell height */
+  line-height: 1.1em;
+  font-size: 0.6em;
+  font-style: italic;
+  position: relative;
+}
+
+.cell{
+  margin-bottom: 0.1em;
+}
+
+.highlight {
+  background-color: #EBD270!important;;
+}
+
+/* 'card' name is not available because used by bootstrap */
+.crd {
+  position: relative;
+  display: inline-block;
+  font-size: 1em;
+}
+
+.crds {
+  display: inline-block;
+  -webkit-user-select: none;
+}
+
+.tooltipText {
+  visibility: hidden;
+  position: absolute;
+  z-index: 1;
+}
+
+.lbl:hover .tooltipText {
+  visibility: visible;
+}
