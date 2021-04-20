@@ -114,14 +114,14 @@ export class SequenceViewer {
     this.events.onRegionSelected();
   }
 
-  private generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, fontSize, tooltips, data) {
+  private generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, fontSize, tooltips, data, rowMarginBottom) {
     let labelshtml = '';
     let labelsContainer = '';
     const noGapsLabels = [];
 
     if (labels.length > 0) {
       if (topIndexes) {
-        labelshtml += `<span class="lbl-hidden"></span>`;
+        labelshtml += `<span class="lbl-hidden" style="margin-bottom:${rowMarginBottom};"></span>`;
       }
       let flag;
       let count = -1;
@@ -142,9 +142,9 @@ export class SequenceViewer {
           noGapsLabels[seqN] = '';
           if (idx) {
             // line with only icons, no need for index
-            labelshtml += `<span class="lbl-hidden"><span class="lbl"> ${noGapsLabels[seqN]}</span></span>`;
+            labelshtml += `<span class="lbl-hidden" style="margin-bottom:${rowMarginBottom}"><span class="lbl"> ${noGapsLabels[seqN]}</span></span>`;
           } else {
-            labelshtml += `<span class="lbl-hidden"><span class="lbl"></span></span>`;
+            labelshtml += `<span class="lbl-hidden" style="margin-bottom:${rowMarginBottom}"><span class="lbl"></span></span>`;
           }
 
         } else {
@@ -152,7 +152,7 @@ export class SequenceViewer {
           if (idx) {
             if (!chunkSize) {
               // lateral index regular
-              labelshtml += `<span class="lbl-hidden" style="width: ${fontSize}">
+              labelshtml += `<span class="lbl-hidden" style="width: ${fontSize};margin-bottom:${rowMarginBottom}">
                             <span class="lbl" >${(startIndexes[count] - 1) + idx}</span></span>`;
             } else {
               let noGaps = 0;
@@ -163,12 +163,12 @@ export class SequenceViewer {
               }
               // lateral index gap
               noGapsLabels[seqN] = noGaps;
-              labelshtml += `<span class="lbl-hidden" style="width:  ${fontSize}">
+              labelshtml += `<span class="lbl-hidden" style="width:  ${fontSize};margin-bottom:${rowMarginBottom}">
                             <span class="lbl" >${(startIndexes[count] - 1) + noGapsLabels[seqN]}</span></span>`;
             }
 
           } else {
-            labelshtml += `<span class="lbl-hidden"><span class="lbl">${labels[count]}${tooltips[count]}</span></span>`;
+            labelshtml += `<span class="lbl-hidden" style="margin-bottom:${rowMarginBottom}"><span class="lbl">${labels[count]}${tooltips[count]}</span></span>`;
           }
         }
         flag = false;
@@ -179,17 +179,17 @@ export class SequenceViewer {
     return labelsContainer;
   }
 
-  private addTopIndexes(topIndexes, chunkSize, x, maxTop) {
+  private addTopIndexes(topIndexes, chunkSize, x, maxTop, rowMarginBottom) {
 
     let cells = '';
     // adding top indexes
     if (topIndexes) {
       let chunkTopIndex;
       if (x % chunkSize === 0 && x <= maxTop) {
-        chunkTopIndex = `<span style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;">${x}</span>`;
+        chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}"">${x}</span>`;
 
       } else {
-        chunkTopIndex = `<span style="-webkit-user-select: none;display:block;visibility: hidden;">0</span>`;
+        chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}"">0</span>`;
       }
       cells += chunkTopIndex;
     }
@@ -212,8 +212,10 @@ export class SequenceViewer {
     const lateralIndexesGap = options.lateralIndexesGap;
     const oneLineSetting = options.oneLineSetting;
     const oneLineWidth = options.oneLineWidth;
+    const rowMarginBottom = options.rowMarginBottom;
     const fNum = +fontSize.substr(0, fontSize.length - 2);
     const fUnit = fontSize.substr(fontSize.length - 2, 2);
+    console.log(rowMarginBottom)
 
 
 
@@ -232,7 +234,7 @@ export class SequenceViewer {
     if (chunkSize > 0) { maxIdx += (chunkSize - (maxIdx % chunkSize)) % chunkSize; }
 
     // generate labels
-    const labelsContainer = this.generateLabels(false, labels, startIndexes, topIndexes, false, indexWidth, tooltips, data);
+    const labelsContainer = this.generateLabels(false, labels, startIndexes, topIndexes, false, indexWidth, tooltips, data, rowMarginBottom);
 
     let index = '';
     let cards = '';
@@ -244,11 +246,11 @@ export class SequenceViewer {
     let idx;
 
     for (let x = 1; x <= maxIdx; x++) {
-      let cells = this.addTopIndexes(topIndexes, chunkSize, x, maxTop);
+      let cells = this.addTopIndexes(topIndexes, chunkSize, x, maxTop, rowMarginBottom);
 
       for (let y = 0; y < data.length; y++) {
         entity = data[y][x];
-        style = 'font-size: 1em;display:block;height:1em;line-height:1em;';
+        style = 'font-size: 1em;display:block;height:1em;line-height:1em;margin-bottom:' + rowMarginBottom;
         if (y === data.length - 1) { style = 'font-size: 1em;'; }
         if (!entity) {
           // emptyfiller
@@ -280,7 +282,7 @@ export class SequenceViewer {
         }
         // adding labels
         if (lateralIndexesGap && !topIndexes) {
-          const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, false, indexWidth, false, data);
+          const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, false, indexWidth, false, data, rowMarginBottom);
           if (oneLineSetting) {
             index = gapsContainer;  // lateral number indexes + labels
           } else {
@@ -288,7 +290,7 @@ export class SequenceViewer {
           }
 
           } else if (!lateralIndexesGap  && !topIndexes) {
-          const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, indexWidth, false, data);
+          const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, indexWidth, false, data, rowMarginBottom);
           if (oneLineSetting) {
             index = gapsContainer;  // lateral number indexes + labels
           } else {

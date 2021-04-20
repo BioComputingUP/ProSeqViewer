@@ -180,7 +180,6 @@ class ColorsModel {
                             continue;
                         }
                         c = ColorsModel.palette[type][row];
-                        console.log(c);
                         n = c.positions.length + c.chars.length;
                         arrColors = this.binary(n, ColorsModel.palette[type].binaryColors);
                         c.positions.sort((a, b) => (a.start > b.start) ? 1 : -1);
@@ -211,7 +210,6 @@ class ColorsModel {
                     // tslint:disable-next-line:forin
                     for (const row in ColorsModel.palette[type]) {
                         c = ColorsModel.palette[type][row];
-                        console.log(c);
                         if (c.positions.length > 0) {
                             for (const pos of c.positions) {
                                 pos.backgroundColor = '@clustal';
@@ -918,7 +916,8 @@ class OptionsModel {
             oneLineSetting: false,
             oneLineWidth: '300px',
             consensusType: null,
-            consensusThreshold: 90
+            consensusThreshold: 90,
+            rowMarginBottom: '10px'
         };
     }
     process(opt) {
@@ -1053,6 +1052,22 @@ class OptionsModel {
                 this.options.consensusThreshold = opt.consensusThreshold;
             }
         }
+        /** check rowMarginBottom value */
+        if (opt.rowMarginBottom !== undefined) {
+            const rSize = opt.rowMarginBottom;
+            const rNum = +rSize.substr(0, rSize.length - 2);
+            const rUnit = rSize.substr(rSize.length - 2, 2);
+            if (isNaN(rNum) || (rUnit !== 'px' && rUnit !== 'vw' && rUnit !== 'em')) {
+                log_model_1.Log.w(1, 'wrong rowMarginBottom format.');
+            }
+            else {
+                this.options.rowMarginBottom = rSize;
+            }
+        }
+        else {
+            log_model_1.Log.w(2, 'rowMarginBottom not set.');
+            this.options.rowMarginBottom = '14px'; // default reset
+        }
         /** check oneLineSetting value */
         if (opt.oneLineSetting) {
             if (typeof opt.oneLineSetting !== 'boolean' && opt.oneLineSetting) {
@@ -1065,7 +1080,7 @@ class OptionsModel {
         else {
             this.options.oneLineSetting = false;
         }
-        /** check oneLineWidth fontSize */
+        /** check oneLineWidth */
         if (opt.oneLineWidth) {
             const oneLineWidth = opt.oneLineWidth;
             const olNum = +oneLineWidth.substr(0, oneLineWidth.length - 2);
@@ -1581,13 +1596,13 @@ class SequenceViewer {
         /** listen selection events */
         this.events.onRegionSelected();
     }
-    generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, fontSize, tooltips, data) {
+    generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, fontSize, tooltips, data, rowMarginBottom) {
         let labelshtml = '';
         let labelsContainer = '';
         const noGapsLabels = [];
         if (labels.length > 0) {
             if (topIndexes) {
-                labelshtml += `<span class="lbl-hidden"></span>`;
+                labelshtml += `<span class="lbl-hidden" style="margin-bottom:${rowMarginBottom};"></span>`;
             }
             let flag;
             let count = -1;
@@ -1607,10 +1622,10 @@ class SequenceViewer {
                     noGapsLabels[seqN] = '';
                     if (idx) {
                         // line with only icons, no need for index
-                        labelshtml += `<span class="lbl-hidden"><span class="lbl"> ${noGapsLabels[seqN]}</span></span>`;
+                        labelshtml += `<span class="lbl-hidden" style="margin-bottom:${rowMarginBottom}"><span class="lbl"> ${noGapsLabels[seqN]}</span></span>`;
                     }
                     else {
-                        labelshtml += `<span class="lbl-hidden"><span class="lbl"></span></span>`;
+                        labelshtml += `<span class="lbl-hidden" style="margin-bottom:${rowMarginBottom}"><span class="lbl"></span></span>`;
                     }
                 }
                 else {
@@ -1618,7 +1633,7 @@ class SequenceViewer {
                     if (idx) {
                         if (!chunkSize) {
                             // lateral index regular
-                            labelshtml += `<span class="lbl-hidden" style="width: ${fontSize}">
+                            labelshtml += `<span class="lbl-hidden" style="width: ${fontSize};margin-bottom:${rowMarginBottom}">
                             <span class="lbl" >${(startIndexes[count] - 1) + idx}</span></span>`;
                         }
                         else {
@@ -1630,12 +1645,12 @@ class SequenceViewer {
                             }
                             // lateral index gap
                             noGapsLabels[seqN] = noGaps;
-                            labelshtml += `<span class="lbl-hidden" style="width:  ${fontSize}">
+                            labelshtml += `<span class="lbl-hidden" style="width:  ${fontSize};margin-bottom:${rowMarginBottom}">
                             <span class="lbl" >${(startIndexes[count] - 1) + noGapsLabels[seqN]}</span></span>`;
                         }
                     }
                     else {
-                        labelshtml += `<span class="lbl-hidden"><span class="lbl">${labels[count]}${tooltips[count]}</span></span>`;
+                        labelshtml += `<span class="lbl-hidden" style="margin-bottom:${rowMarginBottom}"><span class="lbl">${labels[count]}${tooltips[count]}</span></span>`;
                     }
                 }
                 flag = false;
@@ -1644,16 +1659,16 @@ class SequenceViewer {
         }
         return labelsContainer;
     }
-    addTopIndexes(topIndexes, chunkSize, x, maxTop) {
+    addTopIndexes(topIndexes, chunkSize, x, maxTop, rowMarginBottom) {
         let cells = '';
         // adding top indexes
         if (topIndexes) {
             let chunkTopIndex;
             if (x % chunkSize === 0 && x <= maxTop) {
-                chunkTopIndex = `<span style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;">${x}</span>`;
+                chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}"">${x}</span>`;
             }
             else {
-                chunkTopIndex = `<span style="-webkit-user-select: none;display:block;visibility: hidden;">0</span>`;
+                chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}"">0</span>`;
             }
             cells += chunkTopIndex;
         }
@@ -1672,8 +1687,10 @@ class SequenceViewer {
         const lateralIndexesGap = options.lateralIndexesGap;
         const oneLineSetting = options.oneLineSetting;
         const oneLineWidth = options.oneLineWidth;
+        const rowMarginBottom = options.rowMarginBottom;
         const fNum = +fontSize.substr(0, fontSize.length - 2);
         const fUnit = fontSize.substr(fontSize.length - 2, 2);
+        console.log(rowMarginBottom);
         // maxIdx = length of the longest sequence
         let maxIdx = 0;
         let maxTop = 0;
@@ -1692,7 +1709,7 @@ class SequenceViewer {
             maxIdx += (chunkSize - (maxIdx % chunkSize)) % chunkSize;
         }
         // generate labels
-        const labelsContainer = this.generateLabels(false, labels, startIndexes, topIndexes, false, indexWidth, tooltips, data);
+        const labelsContainer = this.generateLabels(false, labels, startIndexes, topIndexes, false, indexWidth, tooltips, data, rowMarginBottom);
         let index = '';
         let cards = '';
         let cell;
@@ -1702,10 +1719,10 @@ class SequenceViewer {
         let idxNum = 0;
         let idx;
         for (let x = 1; x <= maxIdx; x++) {
-            let cells = this.addTopIndexes(topIndexes, chunkSize, x, maxTop);
+            let cells = this.addTopIndexes(topIndexes, chunkSize, x, maxTop, rowMarginBottom);
             for (let y = 0; y < data.length; y++) {
                 entity = data[y][x];
-                style = 'font-size: 1em;display:block;height:1em;line-height:1em;';
+                style = 'font-size: 1em;display:block;height:1em;line-height:1em;margin-bottom:' + rowMarginBottom;
                 if (y === data.length - 1) {
                     style = 'font-size: 1em;';
                 }
@@ -1741,7 +1758,7 @@ class SequenceViewer {
                 }
                 // adding labels
                 if (lateralIndexesGap && !topIndexes) {
-                    const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, false, indexWidth, false, data);
+                    const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, false, indexWidth, false, data, rowMarginBottom);
                     if (oneLineSetting) {
                         index = gapsContainer; // lateral number indexes + labels
                     }
@@ -1750,7 +1767,7 @@ class SequenceViewer {
                     }
                 }
                 else if (!lateralIndexesGap && !topIndexes) {
-                    const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, indexWidth, false, data);
+                    const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, indexWidth, false, data, rowMarginBottom);
                     if (oneLineSetting) {
                         index = gapsContainer; // lateral number indexes + labels
                     }

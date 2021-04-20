@@ -227,7 +227,6 @@ export class ColorsModel {
               continue;
             }
             c = ColorsModel.palette[type][row];
-            console.log(c)
             n = c.positions.length + c.chars.length;
             arrColors = this.binary(n, ColorsModel.palette[type].binaryColors);
             c.positions.sort((a, b) => (a.start > b.start) ? 1 : -1);
@@ -259,7 +258,6 @@ export class ColorsModel {
           // tslint:disable-next-line:forin
           for (const row in ColorsModel.palette[type]) {
             c = ColorsModel.palette[type][row];
-            console.log(c)
             if (c.positions.length > 0) {
 
               for (const pos of c.positions) {

@@ -37,10 +37,8 @@
   padding-right: 5px;
   -webkit-user-select: none;
   display:block;
-  height:1.1em;
-  min-height: 1.1em; /* cell height given by font size (1em) + 0.1em added on this css --> .cell */
-  line-height: 1.1em;
-  font-size: 1em;
+  height:1em;
+  margin-bottom: 1.5em;
   font-style: italic;
   justify-content: flex-end;
   flex-direction: column;
@@ -48,15 +46,13 @@
 }
 
 .lbl {
-  min-height: 1.1em; /* cell height */
-  line-height: 1.1em;
   font-size: 0.6em;
-  font-style: italic;
-  position: relative;
 }
 
 .cell{
-  margin-bottom: 0.1em;
+  margin-bottom: 1.5em;
+  height: 1em;
+  display: inline-block;
 }
 
 .highlight {
@@ -67,7 +63,6 @@
 .crd {
   position: relative;
   display: inline-block;
-  font-size: 1em;
 }
 
 .crds {

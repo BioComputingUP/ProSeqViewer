@@ -15,6 +15,7 @@ interface Option {
   colorScheme?: string;
   consensusType?: string;
   consensusThreshold?: number;
+  rowMarginBottom?: string;
 }
 
 export class OptionsModel {
@@ -32,7 +33,8 @@ export class OptionsModel {
     oneLineSetting: false,
     oneLineWidth: '300px',
     consensusType: null,
-    consensusThreshold: 90
+    consensusThreshold: 90,
+    rowMarginBottom: '10px'
   };
 
   process(opt) {
@@ -173,6 +175,22 @@ export class OptionsModel {
       }
     }
 
+    /** check rowMarginBottom value */
+    if (opt.rowMarginBottom !== undefined) {
+      const rSize = opt.rowMarginBottom;
+      const rNum = +rSize.substr(0, rSize.length - 2);
+      const rUnit = rSize.substr(rSize.length - 2, 2);
+
+      if (isNaN(rNum) || (rUnit !== 'px' && rUnit !== 'vw' && rUnit !== 'em')) {
+        Log.w(1, 'wrong rowMarginBottom format.');
+      } else {
+        this.options.rowMarginBottom = rSize;
+      }
+    } else {
+      Log.w(2, 'rowMarginBottom not set.');
+      this.options.rowMarginBottom = '14px'; // default reset
+    }
+
     /** check oneLineSetting value */
     if (opt.oneLineSetting) {
       if (typeof opt.oneLineSetting !== 'boolean' && opt.oneLineSetting) {
@@ -184,7 +202,7 @@ export class OptionsModel {
       this.options.oneLineSetting = false;
     }
 
-    /** check oneLineWidth fontSize */
+    /** check oneLineWidth */
     if (opt.oneLineWidth) {
       const oneLineWidth = opt.oneLineWidth;
       const olNum = +oneLineWidth.substr(0, oneLineWidth.length - 2);
