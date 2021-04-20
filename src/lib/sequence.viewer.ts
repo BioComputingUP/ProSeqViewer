@@ -206,16 +206,15 @@ export class SequenceViewer {
     }
 
     const chunkSize = options.chunkSize;
-    const fontSize = options.fontSize+ ';';
+    const fontSize = options.fontSize;
     const spaceSize = options.spaceSize;
     const topIndexes = options.topIndexes;
     const lateralIndexesGap = options.lateralIndexesGap;
     const oneLineSetting = options.oneLineSetting;
-    const oneLineWidth = options.oneLineWidth+ ';';
+    const oneLineWidth = options.oneLineWidth;
     const rowMarginBottom = options.rowMarginBottom + ';';
     const fNum = +fontSize.substr(0, fontSize.length - 2);
     const fUnit = fontSize.substr(fontSize.length - 2, 2);
-    console.log(rowMarginBottom)
 
 
 
