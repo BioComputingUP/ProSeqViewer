@@ -188,7 +188,7 @@ export class OptionsModel {
       }
     } else {
       Log.w(2, 'rowMarginBottom not set.');
-      this.options.rowMarginBottom = '14px'; // default reset
+      this.options.rowMarginBottom = '5px'; // default reset
     }
 
     /** check oneLineSetting value */

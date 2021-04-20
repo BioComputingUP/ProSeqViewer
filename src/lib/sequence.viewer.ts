@@ -186,10 +186,10 @@ export class SequenceViewer {
     if (topIndexes) {
       let chunkTopIndex;
       if (x % chunkSize === 0 && x <= maxTop) {
-        chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}"">${x}</span>`;
+        chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${x}</span>`;
 
       } else {
-        chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}"">0</span>`;
+        chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}">0</span>`;
       }
       cells += chunkTopIndex;
     }
