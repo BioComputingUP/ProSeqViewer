@@ -34,7 +34,7 @@ export class OptionsModel {
     oneLineWidth: '300px',
     consensusType: null,
     consensusThreshold: 90,
-    rowMarginBottom: '10px'
+    rowMarginBottom: '5px'
   };
 
   process(opt) {
