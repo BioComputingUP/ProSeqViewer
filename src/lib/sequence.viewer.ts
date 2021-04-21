@@ -250,7 +250,7 @@ export class SequenceViewer {
       for (let y = 0; y < data.length; y++) {
         entity = data[y][x];
         style = 'font-size: 1em;display:block;height:1em;line-height:1em;margin-bottom:' + rowMarginBottom;
-        if (y === data.length - 1) { style = 'font-size: 1em;'; }
+        if (y === data.length - 1) { style = 'font-size: 1em;display:block;line-height:1em;margin-bottom:' + rowMarginBottom; }
         if (!entity) {
           // emptyfiller
             cell = `<span style="${style}"> </span>`;

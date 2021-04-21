@@ -38,6 +38,7 @@
   -webkit-user-select: none;
   display:block;
   height:1em;
+  line-height:1em;
   margin-bottom: 1.5em;
   font-style: italic;
   justify-content: flex-end;
