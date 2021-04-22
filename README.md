@@ -5,7 +5,7 @@ Full documentation is work in progress and will be available at: https://biocomp
 
 This version is based on [Typescript](https://www.typescriptlang.org/) and compatible with [Angular 2+](https://angular.io/) framework.
 
-Represent biological data with the ProSeqVieweriewer library! Used in [MobiDB](http://mobidb.bio.unipd.it/),
+Represent biological data with the ProSeqViewer library! Used in [MobiDB](http://mobidb.bio.unipd.it/),
 [DisProt](http://www.disprot.org/) and [RepeatsDB](http://repeatsdb.bio.unipd.it/).
 
 ## Dependencies
@@ -15,18 +15,18 @@ Represent biological data with the ProSeqVieweriewer library! Used in [MobiDB](h
 
 [comment]: <> (## Output demo)
 
-[comment]: <> (![ProSeqVieweriewer]&#40;src/assets/sqvDemo.png&#41;)
+[comment]: <> (![ProSeqViewer]&#40;src/assets/sqvDemo.png&#41;)
 
 ## Getting started
 
 1 Install the library using npm
 ```
-npm install sequence-viewer-typescript
+npm install proseqviewer
 ```
 
 2 Import the ProSeqViewer in javascript or your angular component
 ```typescript
-import {ProSeqViewer} from 'sequence-viewer-typescript/dist';
+import {ProSeqViewer} from 'proseqviewer/dist';
 ```
 
 3 Optional: if you are installing the feature viewer in an Angular 2+ based App, you may
@@ -34,7 +34,7 @@ need to load the feature viewer stylesheet in your angular.json "styles" to
 ensure the correct prioritization of stylesheets.
 ```json
 styles: [
-    "./node_modules/proseqviewer/dist/assets/sqv.scss"
+    "./node_modules/proseqviewer/dist/assets/proseqviewer.css"
 ]
 ```
 
