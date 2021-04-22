@@ -10,7 +10,7 @@ import {PatternsModel} from './patterns.model';
 import {InputModel} from './input.model';
 import {ConsensusModel} from './consensus.model';
 
-export class ProSeqViewer {
+export class Proseqviewer {
   static sqvList = [];
   divId: string;
   init: boolean;
@@ -40,7 +40,7 @@ export class ProSeqViewer {
     this.events = new EventsModel();
 
     window.onresize = () => {
-      for (const id of ProSeqViewer.sqvList) {
+      for (const id of Proseqviewer.sqvList) {
 
         const sqvBody = document.getElementById(id);
         if (!sqvBody) { Log.w(1, 'Cannot find sqv-body element.'); continue; }
@@ -70,7 +70,7 @@ export class ProSeqViewer {
 
   public draw(input1?, input2?, input3?, input4?, input5?, input6?, input7?) {
 
-    ProSeqViewer.sqvList.push(this.divId);
+    Proseqviewer.sqvList.push(this.divId);
 
     let inputs;
     let order;
@@ -187,6 +187,7 @@ export class ProSeqViewer {
       let chunkTopIndex;
       if (x % chunkSize === 0 && x <= maxTop) {
         chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${x}</span>`;
+
       } else {
         chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}">0</span>`;
       }
