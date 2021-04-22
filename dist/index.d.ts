@@ -1,1 +1,1 @@
-export { SequenceViewer } from './lib/sequence.viewer';
+export { ProSeqViewer } from './lib/proseqviewer';
