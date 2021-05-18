@@ -88,7 +88,6 @@ export class ProSeqViewer {
     /** check and consensus input  and global colorScheme */
     [inputs.sequences, inputs.regions, order ] = this.consensus.process(inputs.sequences, inputs.regions, inputs.options, order);
 
-
     /** check and process patterns input */
     inputs.patterns = this.patterns.process(inputs.patterns, inputs.sequences);
 

@@ -1,7 +1,6 @@
 export class SequenceInfoModel {
 
   process(regions, sequences) {
-
     const labels = [];
     const startIndexes = [];
     const tooltips = [];

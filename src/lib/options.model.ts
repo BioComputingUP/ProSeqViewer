@@ -15,6 +15,7 @@ interface Option {
   colorScheme?: string;
   consensusType?: string;
   consensusThreshold?: number;
+  consensusStartIndex?: number,
   rowMarginBottom?: string;
 }
 
@@ -34,6 +35,7 @@ export class OptionsModel {
     oneLineWidth: '300px',
     consensusType: null,
     consensusThreshold: 90,
+    consensusStartIndex: 1,
     rowMarginBottom: '5px'
   };
 
@@ -172,6 +174,15 @@ export class OptionsModel {
         Log.w(1, 'wrong threshold type.');
       } else {
         this.options.consensusThreshold = opt.consensusThreshold;
+      }
+    }
+
+    /** check consensusStartIndex value */
+    if (opt.consensusStartIndex) {
+      if (typeof opt.consensusStartIndex !== 'number') {
+        Log.w(1, 'wrong consensusStartIndex type.');
+      } else {
+        this.options.consensusStartIndex = opt.consensusStartIndex;
       }
     }
 

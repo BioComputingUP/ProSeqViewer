@@ -1,4 +1,5 @@
 import {Palettes} from './palettes';
+import {start} from "repl";
 
 export class ConsensusModel {
 
@@ -31,7 +32,8 @@ export class ConsensusModel {
     return consensusInfo;
   }
 
-  static createConsensus(type, consensus, consensus2, sequences, regions, threshold) {
+  static createConsensus(type, consensus, consensus2, sequences, regions, threshold, startIndex) {
+
 
     if (threshold < 50) {
       threshold = 100 - threshold;
@@ -98,7 +100,7 @@ export class ConsensusModel {
       consensusSequence += maxLetter;
     }
 
-    sequences.push({id, sequence: consensusSequence, label});
+    sequences.push({id, sequence: consensusSequence, label, startIndex});
 
     return [sequences, regions];
   }
@@ -215,14 +217,14 @@ process(sequences, regions, options, ordering) {
   switch (options.consensusType) {
     case 'identity': {
       consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences);
-      [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusThreshold);
+      [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusThreshold, options.consensusStartIndex);
       ordering = ConsensusModel.resetOrdering(ordering);
       break;
     }
     case 'physical': {
       consensusInfoPhysical = ConsensusModel.setConsensusInfo('physical', sequences);
       if (!consensusInfoIdentity) { consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences); }
-      [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusThreshold);
+      [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusThreshold, options.consensusStartIndex);
       ordering = ConsensusModel.resetOrdering(ordering);
       break;
     }
