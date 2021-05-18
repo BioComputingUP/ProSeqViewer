@@ -304,7 +304,12 @@ export class ProSeqViewer {
 
         if (x !== maxIdx) { style += 'padding-right: ' + spaceSize + 'em;'; } else { style += 'margin-right: ' + spaceSize + 'em;'; }
 
-        const chunk = `<div class="cnk" style="${style}">${index}<div class="crds">${cards}</div></div>`;
+        let chunk = '';
+        if (index != '') {
+          chunk = `<div class="cnk" style="${style}">${index}<div class="crds">${cards}</div></div>`;
+        } else {
+          chunk = `<div class="cnk" style="${style}"><div class="crds">${cards}</div></div>`; // remove lateral index
+        }
         cards = '';
         index = '';
         html += chunk;
