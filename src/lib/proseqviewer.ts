@@ -208,6 +208,7 @@ export class ProSeqViewer {
     const fontSize = options.fontSize;
     const spaceSize = options.spaceSize;
     const topIndexes = options.topIndexes;
+    const lateralIndexes = options.lateralIndexes;
     const lateralIndexesGap = options.lateralIndexesGap;
     const oneLineSetting = options.oneLineSetting;
     const oneLineWidth = options.oneLineWidth;
@@ -279,7 +280,7 @@ export class ProSeqViewer {
           idx = idxNum - (chunkSize - 1);
         }
         // adding labels
-        if (lateralIndexesGap && !topIndexes) {
+        if (lateralIndexesGap && !topIndexes && lateralIndexes) {
           const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, false, indexWidth, false, data, rowMarginBottom);
           if (oneLineSetting) {
             index = gapsContainer;  // lateral number indexes + labels
@@ -287,7 +288,7 @@ export class ProSeqViewer {
             index = labelsContainer  + gapsContainer;  // lateral number indexes + labels
           }
 
-          } else if (!lateralIndexesGap  && !topIndexes) {
+          } else if (!lateralIndexesGap  && !topIndexes && lateralIndexes) {
           const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, indexWidth, false, data, rowMarginBottom);
           if (oneLineSetting) {
             index = gapsContainer;  // lateral number indexes + labels
