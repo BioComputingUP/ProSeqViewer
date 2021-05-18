@@ -75,6 +75,7 @@ export class ProSeqViewer {
     let inputs;
     let order;
     let labels;
+    let labelsFlag;
     let startIndexes;
     let tooltips;
     let data;
@@ -101,10 +102,10 @@ export class ProSeqViewer {
     data = this.rows.process(inputs.sequences, inputs.icons, inputs.regions, inputs.options.colorScheme);
 
     /** check and process labels input */
-    [ labels, startIndexes, tooltips ] = this.labels.process(inputs.regions, inputs.sequences);
+    [ labels, startIndexes, tooltips, labelsFlag ] = this.labels.process(inputs.regions, inputs.sequences);
 
     /** create/update sqv-body html */
-    this.createGUI(data, labels, startIndexes, tooltips, inputs.options);
+    this.createGUI(data, labels, startIndexes, tooltips, inputs.options, labelsFlag);
 
     /** listen copy paste events */
     this.selection.process();
@@ -195,7 +196,7 @@ export class ProSeqViewer {
     return cells;
   }
 
-  private createGUI(data, labels, startIndexes, tooltips, options) {
+  private createGUI(data, labels, startIndexes, tooltips, options, labelsFlag) {
 
     const sqvBody = document.getElementById(this.divId);
 
@@ -280,17 +281,17 @@ export class ProSeqViewer {
           idx = idxNum - (chunkSize - 1);
         }
         // adding labels
-        if (lateralIndexesGap && !topIndexes && lateralIndexes) {
+        if (lateralIndexesGap && !topIndexes) {
           const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, false, indexWidth, false, data, rowMarginBottom);
-          if (oneLineSetting) {
+          if (oneLineSetting || labels[0] === '') {
             index = gapsContainer;  // lateral number indexes + labels
           } else {
             index = labelsContainer  + gapsContainer;  // lateral number indexes + labels
           }
 
-          } else if (!lateralIndexesGap  && !topIndexes && lateralIndexes) {
+          } else if (!lateralIndexesGap  && !topIndexes) {
           const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, indexWidth, false, data, rowMarginBottom);
-          if (oneLineSetting) {
+          if (oneLineSetting || !labelsFlag) {
             index = gapsContainer;  // lateral number indexes + labels
           } else {
             index = labelsContainer  + gapsContainer;  // lateral number indexes + labels
@@ -305,10 +306,10 @@ export class ProSeqViewer {
         if (x !== maxIdx) { style += 'padding-right: ' + spaceSize + 'em;'; } else { style += 'margin-right: ' + spaceSize + 'em;'; }
 
         let chunk = '';
-        if (index != '') {
+        if (labelsFlag || options.consensusType || lateralIndexes) {
           chunk = `<div class="cnk" style="${style}">${index}<div class="crds">${cards}</div></div>`;
         } else {
-          chunk = `<div class="cnk" style="${style}"><div class="crds">${cards}</div></div>`; // remove lateral index
+          chunk = `<div class="cnk" style="${style}"><div class="idx hidden"></div><div class="crds">${cards}</div></div>`;
         }
         cards = '';
         index = '';
