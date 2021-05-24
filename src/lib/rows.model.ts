@@ -5,7 +5,7 @@ import {ColorsModel} from './colors.model';
 export class RowsModel {
   substitutiveId = 99999999999999;
 
-  private processRows(rows, icons, regions) {
+  private processRows(rows, icons, regions, chunksize) {
 
     const allData = [];
 
@@ -78,7 +78,7 @@ export class RowsModel {
     return allData;
   }
 
-  process(sequences, icons, regions, colorScheme) {
+  process(sequences, icons, regions, colorScheme, chunkSize) {
 
     // check and set global colorScheme
     if (colorScheme) {
@@ -137,6 +137,6 @@ export class RowsModel {
         rows[id][idxKey] = {char};
       }
     }
-    return this.processRows(rows, icons, regions);
+    return this.processRows(rows, icons, regions, chunkSize);
   }
 }

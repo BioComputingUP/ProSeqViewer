@@ -99,7 +99,7 @@ export class ProSeqViewer {
     inputs.icons = this.icons.process(inputs.regions, inputs.sequences, inputs.iconsHtml, inputs.iconsPaths);
 
     /** check and process sequences input */
-    data = this.rows.process(inputs.sequences, inputs.icons, inputs.regions, inputs.options.colorScheme);
+    data = this.rows.process(inputs.sequences, inputs.icons, inputs.regions, inputs.options.colorScheme, inputs.options.chunkSize);
 
     /** check and process labels input */
     [ labels, startIndexes, tooltips, labelsFlag ] = this.labels.process(inputs.regions, inputs.sequences);
@@ -244,17 +244,17 @@ export class ProSeqViewer {
     let html = '';
     let idxNum = 0;
     let idx;
-
     for (let x = 1; x <= maxIdx; x++) {
       let cells = this.addTopIndexes(topIndexes, chunkSize, x, maxTop, rowMarginBottom);
 
       for (let y = 0; y < data.length; y++) {
         entity = data[y][x];
-        style = 'font-size: 1em;display:block;height:1em;line-height:1em;margin-bottom:' + rowMarginBottom;
+        style = 'font-size: 1em;display:none;height:1em;line-height:1em;margin-bottom:' + rowMarginBottom;
         if (y === data.length - 1) { style = 'font-size: 1em;display:block;line-height:1em;margin-bottom:' + rowMarginBottom; }
         if (!entity) {
           // emptyfiller
-            cell = `<span style="${style}"> </span>`;
+            style = 'font-size: 1em;display:block;color: rgba(0, 0, 0, 0);height:1em;line-height:1em;margin-bottom:' + rowMarginBottom;
+            cell = `<span style="${style}">A</span>`; // mock char, this has to be done to have chunks all of the same length (last chunk can't be shorter)
         } else {
           if (entity.target) { style += `${entity.target}`; }
           if (entity.char && !entity.char.includes('svg')) {
