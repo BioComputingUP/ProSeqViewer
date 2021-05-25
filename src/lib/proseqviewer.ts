@@ -249,7 +249,7 @@ export class ProSeqViewer {
 
       for (let y = 0; y < data.length; y++) {
         entity = data[y][x];
-        style = 'font-size: 1em;display:none;height:1em;line-height:1em;margin-bottom:' + rowMarginBottom;
+        style = 'font-size: 1em;display:block;height:1em;line-height:1em;margin-bottom:' + rowMarginBottom;
         if (y === data.length - 1) { style = 'font-size: 1em;display:block;line-height:1em;margin-bottom:' + rowMarginBottom; }
         if (!entity) {
           // emptyfiller
@@ -327,3 +327,4 @@ export class ProSeqViewer {
     window.dispatchEvent(new Event('resize'));
   }
 }
+// (window as any).ProSeqViewer = ProSeqViewer;
