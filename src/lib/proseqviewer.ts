@@ -327,4 +327,4 @@ export class ProSeqViewer {
     window.dispatchEvent(new Event('resize'));
   }
 }
-// (window as any).ProSeqViewer = ProSeqViewer;
+(window as any).ProSeqViewer = ProSeqViewer; // VERY IMPORTANT AND USEFUL TO BE ABLE TO HAVE A WORKING BUNDLE.JS!! NEVER DELETE THIS LINE

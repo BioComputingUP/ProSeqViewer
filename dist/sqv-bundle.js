@@ -1554,9 +1554,9 @@ class ProSeqViewer {
         window.dispatchEvent(new Event('resize'));
     }
 }
-window.ProSeqViewer = ProSeqViewer;
+exports.ProSeqViewer = ProSeqViewer;
 ProSeqViewer.sqvList = [];
-// (window as any).ProSeqViewer = ProSeqViewer;
+window.ProSeqViewer = ProSeqViewer;
 
 
 /***/ }),
