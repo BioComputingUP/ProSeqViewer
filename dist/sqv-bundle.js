@@ -1295,8 +1295,6 @@ class ProSeqViewer {
                 // tslint:disable-next-line:prefer-for-of
                 for (let i = 0; i < chunks.length; i++) {
                     newTop = chunks[i].getBoundingClientRect().top;
-                    console.log(chunks[i].clientTop);
-                    console.log(chunks[i].scrollTop);
                     if (chunks[i].getBoundingClientRect().top == 0) {
                         newTop = chunks[i].getBoundingClientRect().height;
                     }
@@ -1342,6 +1340,9 @@ class ProSeqViewer {
         this.selection.process();
         /** listen selection events */
         this.events.onRegionSelected();
+        // const resizeEvent = new Event('resize');
+        //
+        // window.dispatchEvent(resizeEvent);
     }
     generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, fontSize, tooltips, data, rowMarginBottom) {
         let labelshtml = '';

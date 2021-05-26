@@ -113,8 +113,7 @@ export class ProSeqViewer {
     /** listen selection events */
     this.events.onRegionSelected();
 
-    const resizeEvent = new Event('resize');
-
+    const resizeEvent = new Event('resize'); // to be sure index/labels are calculated
     window.dispatchEvent(resizeEvent);
   }
 
