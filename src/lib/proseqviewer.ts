@@ -39,33 +39,13 @@ export class ProSeqViewer {
     this.selection = new SelectionModel();
     this.events = new EventsModel();
 
+
     window.onresize = () => {
-      for (const id of ProSeqViewer.sqvList) {
-
-        const sqvBody = document.getElementById(id);
-        if (!sqvBody) { Log.w(1, 'Cannot find sqv-body element.'); continue; }
-
-        const chunks = sqvBody.getElementsByClassName('cnk');
-        if (!chunks) { Log.w(1, 'Cannot find chunk elements.'); continue; }
-
-        let oldTop = 0;
-        let newTop;
-        // tslint:disable-next-line:prefer-for-of
-        for (let i = 0; i < chunks.length; i++) {
-            newTop = chunks[i].getBoundingClientRect().top;
-            if (chunks[i].getBoundingClientRect().top == 0) {
-              newTop = chunks[i].getBoundingClientRect().height
-            }
-
-            if (newTop > oldTop) {
-              chunks[i].firstElementChild.className = 'idx';
-              oldTop = newTop;
-            } else {
-              chunks[i].firstElementChild.className = 'idx hidden';
-            }
-          }
-      }
+      this.calculateIdxs(false);
     };
+    window.onclick = () => {
+      this.calculateIdxs(true);
+    }; // had to add this to cover mobidb toggle event
   }
 
   public draw(input1?, input2?, input3?, input4?, input5?, input6?, input7?) {
@@ -112,9 +92,6 @@ export class ProSeqViewer {
 
     /** listen selection events */
     this.events.onRegionSelected();
-
-    const resizeEvent = new Event('resize'); // to be sure index/labels are calculated
-    window.dispatchEvent(resizeEvent);
   }
 
   private generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, fontSize, tooltips, data, rowMarginBottom) {
@@ -326,8 +303,45 @@ export class ProSeqViewer {
     } else {
       sqvBody.innerHTML = `<div class="root">${html}</div>`;
     }
+    console.log('finished drawing!')
 
     window.dispatchEvent(new Event('resize'));
   }
+
+  private calculateIdxs(flag) {
+    for (const id of ProSeqViewer.sqvList) {
+
+      const sqvBody = document.getElementById(id);
+      const chunks = sqvBody.getElementsByClassName('cnk');
+
+
+      let oldTop = 0;
+      let newTop;
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < chunks.length; i++) {
+        newTop = chunks[i].getBoundingClientRect().top;
+
+        if (flag) {
+          // avoid calculating if idx already set
+          if (chunks[i].firstElementChild.className === 'idx') {
+            return;
+          }
+        }
+
+        // if (chunks[i].getBoundingClientRect().top == 0) {
+        //   newTop = chunks[i].getBoundingClientRect().height
+        // }
+
+        if (newTop > oldTop) {
+          chunks[i].firstElementChild.className = 'idx';
+          oldTop = newTop;
+        } else {
+          chunks[i].firstElementChild.className = 'idx hidden';
+        }
+      }
+    }
+
+  }
+
 }
 (window as any).ProSeqViewer = ProSeqViewer; // VERY IMPORTANT AND USEFUL TO BE ABLE TO HAVE A WORKING BUNDLE.JS!! NEVER DELETE THIS LINE

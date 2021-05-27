@@ -1279,35 +1279,11 @@ class ProSeqViewer {
         this.selection = new selection_model_1.SelectionModel();
         this.events = new events_model_1.EventsModel();
         window.onresize = () => {
-            for (const id of ProSeqViewer.sqvList) {
-                const sqvBody = document.getElementById(id);
-                if (!sqvBody) {
-                    log_model_1.Log.w(1, 'Cannot find sqv-body element.');
-                    continue;
-                }
-                const chunks = sqvBody.getElementsByClassName('cnk');
-                if (!chunks) {
-                    log_model_1.Log.w(1, 'Cannot find chunk elements.');
-                    continue;
-                }
-                let oldTop = 0;
-                let newTop;
-                // tslint:disable-next-line:prefer-for-of
-                for (let i = 0; i < chunks.length; i++) {
-                    newTop = chunks[i].getBoundingClientRect().top;
-                    if (chunks[i].getBoundingClientRect().top == 0) {
-                        newTop = chunks[i].getBoundingClientRect().height;
-                    }
-                    if (newTop > oldTop) {
-                        chunks[i].firstElementChild.className = 'idx';
-                        oldTop = newTop;
-                    }
-                    else {
-                        chunks[i].firstElementChild.className = 'idx hidden';
-                    }
-                }
-            }
+            this.calculateIdxs(false);
         };
+        window.onclick = () => {
+            this.calculateIdxs(true);
+        }; // had to add this to cover mobidb toggle event
     }
     draw(input1, input2, input3, input4, input5, input6, input7) {
         ProSeqViewer.sqvList.push(this.divId);
@@ -1340,9 +1316,6 @@ class ProSeqViewer {
         this.selection.process();
         /** listen selection events */
         this.events.onRegionSelected();
-        // const resizeEvent = new Event('resize');
-        //
-        // window.dispatchEvent(resizeEvent);
     }
     generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, fontSize, tooltips, data, rowMarginBottom) {
         let labelshtml = '';
@@ -1554,7 +1527,36 @@ class ProSeqViewer {
         else {
             sqvBody.innerHTML = `<div class="root">${html}</div>`;
         }
+        console.log('finished drawing!');
         window.dispatchEvent(new Event('resize'));
+    }
+    calculateIdxs(flag) {
+        for (const id of ProSeqViewer.sqvList) {
+            const sqvBody = document.getElementById(id);
+            const chunks = sqvBody.getElementsByClassName('cnk');
+            let oldTop = 0;
+            let newTop;
+            // tslint:disable-next-line:prefer-for-of
+            for (let i = 0; i < chunks.length; i++) {
+                newTop = chunks[i].getBoundingClientRect().top;
+                if (flag) {
+                    // avoid calculating if idx already set
+                    if (chunks[i].firstElementChild.className === 'idx') {
+                        return;
+                    }
+                }
+                // if (chunks[i].getBoundingClientRect().top == 0) {
+                //   newTop = chunks[i].getBoundingClientRect().height
+                // }
+                if (newTop > oldTop) {
+                    chunks[i].firstElementChild.className = 'idx';
+                    oldTop = newTop;
+                }
+                else {
+                    chunks[i].firstElementChild.className = 'idx hidden';
+                }
+            }
+        }
     }
 }
 exports.ProSeqViewer = ProSeqViewer;
