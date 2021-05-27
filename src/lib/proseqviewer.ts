@@ -303,7 +303,6 @@ export class ProSeqViewer {
     } else {
       sqvBody.innerHTML = `<div class="root">${html}</div>`;
     }
-    console.log('finished drawing!')
 
     window.dispatchEvent(new Event('resize'));
   }
