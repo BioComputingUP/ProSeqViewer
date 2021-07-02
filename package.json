@@ -1,6 +1,6 @@
 {
   "name": "proseqviewer",
-  "version": "1.0.59",
+  "version": "1.0.60",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
@@ -8,7 +8,8 @@
     "build": "rm -rfv dist && tsc",
     "postbuild": "cp -r src/assets dist/",
     "wp": "npx webpack",
-    "buildall": "rm -rfv dist && npm run build && npm run postbuild && npm run wp",
+    "postwp": "sed -i 's/^exports\\.\\(ProSeqViewer = ProSeqViewer;\\)$/window\\.\\1/' dist/sqv-bundle.js",
+    "buildall": "rm -rfv dist && npm run build && npm run postbuild && npm run wp && npm run postwp",
     "start": "npm run build -- -w"
   },
   "files": [
