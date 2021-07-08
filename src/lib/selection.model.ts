@@ -120,8 +120,14 @@ export class SelectionModel {
           row = this.selection[el].getAttribute('data-res-y');
         }
 
+        let flag;
         for (const textRow in textDict) {
-          textToPaste +=  '\n' + textDict[textRow];
+          if (flag){
+            textToPaste +=  '\n' + textDict[textRow];
+          } else {
+            textToPaste +=  textDict[textRow];
+            flag = true;
+          }
         }
 
         // copy to clipboard for the paste event

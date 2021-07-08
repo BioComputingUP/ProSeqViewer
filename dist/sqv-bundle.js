@@ -1822,8 +1822,15 @@ class SelectionModel {
                     this.selection[el].classList.remove('highlight');
                     row = this.selection[el].getAttribute('data-res-y');
                 }
+                let flag;
                 for (const textRow in textDict) {
-                    textToPaste += '\n' + textDict[textRow];
+                    if (flag) {
+                        textToPaste += '\n' + textDict[textRow];
+                    }
+                    else {
+                        textToPaste += textDict[textRow];
+                        flag = true;
+                    }
                 }
                 // copy to clipboard for the paste event
                 const dummy = document.createElement('textarea');
