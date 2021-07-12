@@ -1531,28 +1531,31 @@ class ProSeqViewer {
     }
     calculateIdxs(flag) {
         for (const id of ProSeqViewer.sqvList) {
-            const sqvBody = document.getElementById(id);
-            const chunks = sqvBody.getElementsByClassName('cnk');
-            let oldTop = 0;
-            let newTop;
-            // tslint:disable-next-line:prefer-for-of
-            for (let i = 0; i < chunks.length; i++) {
-                newTop = chunks[i].getBoundingClientRect().top;
-                if (flag) {
-                    // avoid calculating if idx already set
-                    if (chunks[i].firstElementChild.className === 'idx') {
-                        return;
+            console.log(document.getElementById(id));
+            if (document.getElementById(id) != null) {
+                const sqvBody = document.getElementById(id);
+                const chunks = sqvBody.getElementsByClassName('cnk');
+                let oldTop = 0;
+                let newTop;
+                // tslint:disable-next-line:prefer-for-of
+                for (let i = 0; i < chunks.length; i++) {
+                    newTop = chunks[i].getBoundingClientRect().top;
+                    if (flag) {
+                        // avoid calculating if idx already set
+                        if (chunks[i].firstElementChild.className === 'idx') {
+                            return;
+                        }
                     }
-                }
-                // if (chunks[i].getBoundingClientRect().top == 0) {
-                //   newTop = chunks[i].getBoundingClientRect().height
-                // }
-                if (newTop > oldTop) {
-                    chunks[i].firstElementChild.className = 'idx';
-                    oldTop = newTop;
-                }
-                else {
-                    chunks[i].firstElementChild.className = 'idx hidden';
+                    // if (chunks[i].getBoundingClientRect().top == 0) {
+                    //   newTop = chunks[i].getBoundingClientRect().height
+                    // }
+                    if (newTop > oldTop) {
+                        chunks[i].firstElementChild.className = 'idx';
+                        oldTop = newTop;
+                    }
+                    else {
+                        chunks[i].firstElementChild.className = 'idx hidden';
+                    }
                 }
             }
         }
