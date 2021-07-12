@@ -1531,7 +1531,7 @@ class ProSeqViewer {
     }
     calculateIdxs(flag) {
         for (const id of ProSeqViewer.sqvList) {
-            console.log(document.getElementById(id));
+            // console.log(document.getElementById(id))
             if (document.getElementById(id) != null) {
                 const sqvBody = document.getElementById(id);
                 const chunks = sqvBody.getElementsByClassName('cnk');
