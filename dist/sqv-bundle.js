@@ -37,6 +37,7 @@ class ColorsModel {
         if (!allInputs.options.colorScheme) {
             const colorSchemeRegions = [];
             for (const sequence of allInputs.sequences) {
+                // TODO
                 if (sequence.colorScheme === 'clustal') {
                     // @ts-ignore
                     colorSchemeRegions.push({ sequenceId: sequence.id, start: 1, end: sequence.sequence.length, colorScheme: 'clustal' });
@@ -1129,6 +1130,7 @@ exports.Palettes = void 0;
 class Palettes {
 }
 exports.Palettes = Palettes;
+// TODO
 Palettes.clustal = {
     A: '#80a0f0', I: '#80a0f0', L: '#80a0f0', M: '#80a0f0', F: '#80a0f0', W: '#80a0f0', V: '#80a0f0',
     K: '#f01505', R: '#f01505', E: '#c048c0', D: '#c048c0', C: '#f08080', G: '#f09048',
@@ -1151,22 +1153,22 @@ Palettes.physicalProp = {
     '.': { backgroundColor: '#FFFFFF', color: '#14000B' },
 };
 Palettes.blosum = {
-    '-4': { backgroundColor: '#3867BC' },
-    '-3': { backgroundColor: '#527DCB' },
-    '-2': { backgroundColor: '#7496d5' },
-    '-1': { backgroundColor: '#a2b8e0' },
-    0: { backgroundColor: '#cfd9ea' },
-    1: { backgroundColor: '#F0D1DB' },
-    2: { backgroundColor: '#EBC1CF' },
-    3: { backgroundColor: '#E6B2C3' },
-    4: { backgroundColor: '#E1A3B7' },
-    5: { backgroundColor: '#DC93AA' },
-    6: { backgroundColor: '#D7849E' },
-    7: { backgroundColor: '#D27492' },
-    8: { backgroundColor: '#CD6586' },
-    9: { backgroundColor: '#C8567A' },
-    10: { backgroundColor: '#C3466E' },
-    11: { backgroundColor: '#B93C64' },
+    '-4': { backgroundColor: '#FFFFFF' },
+    '-3': { backgroundColor: '#FFFFFF' },
+    '-2': { backgroundColor: '#FFFFFF' },
+    '-1': { backgroundColor: '#FFFFFF' },
+    0: { backgroundColor: '#FFFFFF' },
+    1: { backgroundColor: '#CFDBF2' },
+    2: { backgroundColor: '#C0CFED' },
+    3: { backgroundColor: '#B0C4E8' },
+    4: { backgroundColor: '#A1B8E3' },
+    5: { backgroundColor: '#A1B8E3' },
+    6: { backgroundColor: '#91ACDE' },
+    7: { backgroundColor: '#81A0D9' },
+    8: { backgroundColor: '#7294D5' },
+    9: { backgroundColor: '#6288D0' },
+    10: { backgroundColor: '#4371C7' },
+    11: { backgroundColor: '#3867BC' },
     '-': { backgroundColor: '#FFFFFF' }
 };
 Palettes.blosum62 = { WF: 1, LR: -2, SP: -1, VT: '0', QQ: 5, NA: -2, ZY: -2, WR: -3, QA: -1, SD: '0', HH: 8, SH: -1, HD: -1, LN: -3, WA: -3,
@@ -1317,7 +1319,7 @@ class ProSeqViewer {
         /** listen selection events */
         this.events.onRegionSelected();
     }
-    generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, fontSize, tooltips, data, rowMarginBottom) {
+    generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, fontSize, tooltips, data, rowMarginBottom, lateralIndexes) {
         let labelshtml = '';
         let labelsContainer = '';
         const noGapsLabels = [];
@@ -1376,7 +1378,13 @@ class ProSeqViewer {
                 }
                 flag = false;
             }
-            labelsContainer = `<span class="lblContainer" style="display: inline-block">${labelshtml}</span>`;
+            if (lateralIndexes) {
+                labelsContainer = `<span class="lblContainer" style="display: inline-block">${labelshtml}</span>`;
+            }
+            else {
+                // add margin in case we only have labels and no indexes
+                labelsContainer = `<span class="lblContainer" style="margin-right:10px;display: inline-block">${labelshtml}</span>`;
+            }
         }
         return labelsContainer;
     }
@@ -1430,7 +1438,7 @@ class ProSeqViewer {
             maxIdx += (chunkSize - (maxIdx % chunkSize)) % chunkSize;
         }
         // generate labels
-        const labelsContainer = this.generateLabels(false, labels, startIndexes, topIndexes, false, indexWidth, tooltips, data, rowMarginBottom);
+        const labelsContainer = this.generateLabels(false, labels, startIndexes, topIndexes, false, indexWidth, tooltips, data, rowMarginBottom, lateralIndexes);
         let index = '';
         let cards = '';
         let cell;
@@ -1480,7 +1488,7 @@ class ProSeqViewer {
                 }
                 // adding labels
                 if (lateralIndexesGap && !topIndexes) {
-                    const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, false, indexWidth, false, data, rowMarginBottom);
+                    const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, false, indexWidth, false, data, rowMarginBottom, lateralIndexes);
                     if (oneLineSetting || labels[0] === '') {
                         index = gapsContainer; // lateral number indexes + labels
                     }
@@ -1489,12 +1497,17 @@ class ProSeqViewer {
                     }
                 }
                 else if (!lateralIndexesGap && !topIndexes) {
-                    const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, indexWidth, false, data, rowMarginBottom);
+                    const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, indexWidth, false, data, rowMarginBottom, lateralIndexes);
                     if (oneLineSetting || !labelsFlag) {
                         index = gapsContainer; // lateral number indexes + labels
                     }
                     else {
-                        index = labelsContainer + gapsContainer; // lateral number indexes + labels
+                        if (lateralIndexes) {
+                            index = labelsContainer + gapsContainer; // lateral number indexes + labels
+                        }
+                        else {
+                            index = labelsContainer; // lateral number indexes + labels
+                        }
                     }
                 }
                 else {
@@ -1625,6 +1638,7 @@ class RowsModel {
                                     log += 'New color: ' + e.backgroundColor + '.';
                                     log_model_1.Log.w(2, log);
                                 }
+                                // TODO: add colorschemes
                                 if (e.backgroundColor === '@clustal') {
                                     data[i].backgroundColor = palettes_1.Palettes.clustal[data[i].char];
                                 }

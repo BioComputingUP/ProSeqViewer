@@ -58,6 +58,7 @@ export class RowsModel {
                   Log.w(2, log);
                 }
 
+                // TODO: add colorschemes
                 if (e.backgroundColor === '@clustal') {
                   data[i].backgroundColor = Palettes.clustal[data[i].char];
                 } else {

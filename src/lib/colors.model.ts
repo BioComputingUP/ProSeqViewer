@@ -68,6 +68,7 @@ export class ColorsModel {
     if (!allInputs.options.colorScheme) {
       const colorSchemeRegions = [];
       for (const sequence of allInputs.sequences) {
+        // TODO
         if (sequence.colorScheme === 'clustal') {
           // @ts-ignore
           colorSchemeRegions.push({sequenceId: sequence.id, start: 1, end: sequence.sequence.length, colorScheme: 'clustal'});

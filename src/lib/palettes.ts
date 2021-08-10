@@ -1,4 +1,5 @@
 export class Palettes {
+  // TODO
   static clustal = {
     A: '#80a0f0', I: '#80a0f0', L: '#80a0f0', M: '#80a0f0', F: '#80a0f0', W: '#80a0f0', V: '#80a0f0',
     K: '#f01505', R: '#f01505', E: '#c048c0', D: '#c048c0', C: '#f08080', G: '#f09048',
@@ -24,22 +25,22 @@ export class Palettes {
   };
 
   static blosum = {
-    '-4': {backgroundColor: '#3867BC'},
-    '-3': {backgroundColor: '#527DCB'},
-    '-2': {backgroundColor: '#7496d5'},
-    '-1': {backgroundColor: '#a2b8e0'},
-    0: {backgroundColor: '#cfd9ea'},
-    1: {backgroundColor: '#F0D1DB'},
-    2: {backgroundColor: '#EBC1CF'},
-    3: {backgroundColor: '#E6B2C3'},
-    4: {backgroundColor: '#E1A3B7'},
-    5 : {backgroundColor: '#DC93AA'},
-    6: {backgroundColor: '#D7849E'},
-    7: {backgroundColor: '#D27492'},
-    8: {backgroundColor: '#CD6586'},
-    9: {backgroundColor: '#C8567A'},
-    10: {backgroundColor: '#C3466E'},
-    11: {backgroundColor: '#B93C64'},
+    '-4': {backgroundColor: '#FFFFFF'},
+    '-3': {backgroundColor: '#FFFFFF'},
+    '-2': {backgroundColor: '#FFFFFF'},
+    '-1': {backgroundColor: '#FFFFFF'},
+    0: {backgroundColor: '#FFFFFF'},
+    1: {backgroundColor: '#CFDBF2'},
+    2: {backgroundColor: '#C0CFED'},
+    3: {backgroundColor: '#B0C4E8'},
+    4: {backgroundColor: '#A1B8E3'},
+    5 : {backgroundColor: '#A1B8E3'},
+    6: {backgroundColor: '#91ACDE'},
+    7: {backgroundColor: '#81A0D9'},
+    8: {backgroundColor: '#7294D5'},
+    9: {backgroundColor: '#6288D0'},
+    10: {backgroundColor: '#4371C7'},
+    11: {backgroundColor: '#3867BC'},
     '-': {backgroundColor: '#FFFFFF'}
 
   };
