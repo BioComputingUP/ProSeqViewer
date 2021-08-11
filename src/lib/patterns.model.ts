@@ -4,6 +4,7 @@ export class PatternsModel {
 
   // find index of matched regex positions and create array of regions with color
   process(patterns, sequences) {
+    if (!patterns) { return }
     const regions = []; // OutPatterns
     // @ts-ignore
     for (const element of patterns) {

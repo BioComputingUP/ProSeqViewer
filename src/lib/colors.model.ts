@@ -63,9 +63,9 @@ export class ColorsModel {
     return outCol;
   }
 
-  process(allInputs, ordering) {
+  process(allInputs) {
 
-    if (!allInputs.options.colorScheme) {
+    if (allInputs.options && !allInputs.options.colorScheme) {
       const colorSchemeRegions = [];
       for (const sequence of allInputs.sequences) {
         // TODO
@@ -85,9 +85,9 @@ export class ColorsModel {
       }
     }
 
-    const allRegions = Array.prototype.concat(allInputs.icons, allInputs[ordering[0]], allInputs[ordering[1]]);
+    const allRegions = Array.prototype.concat(allInputs.icons, allInputs.regions, allInputs.patterns); // ordering
     let newRegions = this.fixMissingIds(allRegions, allInputs.sequences);
-    newRegions = this.transformInput(allRegions, newRegions, allInputs.sequences, allInputs.options.colorScheme);
+    newRegions = this.transformInput(allRegions, newRegions, allInputs.sequences, allInputs.options);
     this.transformColors();
     return newRegions;
   }

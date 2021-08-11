@@ -5,7 +5,7 @@ import {ColorsModel} from './colors.model';
 export class RowsModel {
   substitutiveId = 99999999999999;
 
-  private processRows(rows, icons, regions, chunksize) {
+  private processRows(rows, icons, regions) {
 
     const allData = [];
 
@@ -79,14 +79,14 @@ export class RowsModel {
     return allData;
   }
 
-  process(sequences, icons, regions, colorScheme, chunkSize) {
+  process(sequences, icons, regions, opt) {
 
     // check and set global colorScheme
-    if (colorScheme) {
+    if (opt && opt.colorScheme) {
       // @ts-ignore
       for (const sequence of sequences) {
         if (!sequence.colorScheme) {
-          sequence.colorScheme = colorScheme;
+          sequence.colorScheme = opt.colorScheme;
         }
       }
     }
@@ -138,6 +138,6 @@ export class RowsModel {
         rows[id][idxKey] = {char};
       }
     }
-    return this.processRows(rows, icons, regions, chunkSize);
+    return this.processRows(rows, icons, regions);
   }
 }

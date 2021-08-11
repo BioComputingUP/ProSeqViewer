@@ -9,6 +9,7 @@ import {EventsModel} from './events.model';
 import {PatternsModel} from './patterns.model';
 import {InputModel} from './input.model';
 import {ConsensusModel} from './consensus.model';
+import {Arguments} from './interface';
 
 export class ProSeqViewer {
   static sqvList = [];
@@ -48,38 +49,33 @@ export class ProSeqViewer {
     }; // had to add this to cover mobidb toggle event
   }
 
-  public draw(input1?, input2?, input3?, input4?, input5?, input6?, input7?) {
+  public draw(inputs: Arguments) {
 
     ProSeqViewer.sqvList.push(this.divId);
 
-    let inputs;
-    let order;
     let labels;
     let labelsFlag;
     let startIndexes;
     let tooltips;
     let data;
 
-    /** check and process input */
-    [inputs, order] = this.input.process(input1, input2, input3, input4, input5, input6, input7);
+    /** check and consensus input  and global colorScheme */
+    if (inputs.options){ [inputs.sequences, inputs.regions ] = this.consensus.process(inputs.sequences, inputs.regions, inputs.options); }
 
     /** check and process parameters input */
     inputs.options = this.params.process(inputs.options);
-
-    /** check and consensus input  and global colorScheme */
-    [inputs.sequences, inputs.regions, order ] = this.consensus.process(inputs.sequences, inputs.regions, inputs.options, order);
 
     /** check and process patterns input */
     inputs.patterns = this.patterns.process(inputs.patterns, inputs.sequences);
 
     /** check and process colors input */
-    inputs.regions = this.regions.process(inputs, order);
+    inputs.regions = this.regions.process(inputs);
 
     /** check and process icons input */
-    inputs.icons = this.icons.process(inputs.regions, inputs.sequences, inputs.iconsHtml, inputs.iconsPaths);
+    let icons = this.icons.process(inputs.regions, inputs.sequences, inputs.iconsHtml, inputs.icons);
 
     /** check and process sequences input */
-    data = this.rows.process(inputs.sequences, inputs.icons, inputs.regions, inputs.options.colorScheme, inputs.options.chunkSize);
+    data = this.rows.process(inputs.sequences, icons, inputs.regions, inputs.options);
 
     /** check and process labels input */
     [ labels, startIndexes, tooltips, labelsFlag ] = this.labels.process(inputs.regions, inputs.sequences);

@@ -1,28 +1,9 @@
 import { Log } from './log.model';
 
-interface Option {
-  fontSize?: string;
-  chunkSize?: number;
-  spaceSize?: number;
-  logLevel?: string;
-  emptyFiller?: string;
-  topIndexes?: boolean;
-  lateralIndexes?: boolean,
-  lateralIndexesGap?: boolean;
-  lateralIndexStart: number;
-  sidebarWidth?: string;
-  oneLineSetting?: boolean;
-  oneLineWidth?: string;
-  colorScheme?: string;
-  consensusType?: string;
-  consensusThreshold?: number;
-  consensusStartIndex?: number,
-  rowMarginBottom?: string;
-}
 
 export class OptionsModel {
 
-  options: Option =  {
+  options =  {
     fontSize: '14px',
     chunkSize: 10,
     spaceSize: 1, // relative to fontSize
@@ -38,18 +19,14 @@ export class OptionsModel {
     consensusType: null,
     consensusThreshold: 90,
     consensusStartIndex: 1,
-    rowMarginBottom: '5px'
+    rowMarginBottom: '5px',
+    colorScheme: undefined
   };
 
   process(opt) {
 
-    if (opt === undefined) {
-      Log.w(1, 'undefined parameters.');
-      return;
-    }
-
     /** check input fontSize */
-    if (opt.fontSize !== undefined) {
+    if (opt && opt.fontSize) {
       const fSize = opt.fontSize;
       const fNum = +fSize.substr(0, fSize.length - 2);
       const fUnit = fSize.substr(fSize.length - 2, 2);
@@ -66,7 +43,7 @@ export class OptionsModel {
 
 
     /** check input sidebarWidth */
-    if (opt.sidebarWidth !== undefined) {
+    if (opt && opt.sidebarWidth) {
       const sidebarWidth = opt.sidebarWidth;
       const sNum = +sidebarWidth.substr(0, sidebarWidth.length - 2);
       const sUnit = sidebarWidth.substr(sidebarWidth.length - 2, 2);
@@ -81,7 +58,7 @@ export class OptionsModel {
     }
 
     /** check input chunkSize */
-    if (opt.chunkSize !== undefined) {
+    if (opt && opt.chunkSize) {
 
       const cSize = +opt.chunkSize;
       if (isNaN(cSize) || cSize < 0) {
@@ -94,7 +71,7 @@ export class OptionsModel {
     }
 
     /** check input spaceSize */
-    if (opt.spaceSize !== undefined) {
+    if (opt && opt.spaceSize) {
 
       const cSize = +opt.spaceSize;
       if (isNaN(cSize) || cSize < 0) {
@@ -106,14 +83,14 @@ export class OptionsModel {
       Log.w(2, 'spaceSize not set.');
     }
 
-    if (opt.chunkSize == 0) {
+    if (opt && opt.chunkSize == 0) {
       this.options.chunkSize = 1;
       this.options.spaceSize = 0;
     }
 
     /** check log value */
 
-    if (opt.logLevel !== undefined) {
+    if (opt && opt.logLevel) {
       this.options.logLevel = opt.logLevel;
       switch (opt.logLevel) {
         case 'none': {
@@ -134,7 +111,7 @@ export class OptionsModel {
     }
 
     /** check topIndexes value */
-    if (opt.topIndexes) {
+    if (opt && opt.topIndexes) {
       if (typeof opt.topIndexes !== 'boolean') {
         Log.w(1, 'wrong index type.');
       } else {
@@ -143,7 +120,7 @@ export class OptionsModel {
     }
 
     /** check lateralIndexes value */
-    if (!opt.lateralIndexes) {
+    if (opt && !opt.lateralIndexes) {
       if (typeof opt.lateralIndexes !== 'boolean') {
         Log.w(1, 'wrong index type.');
       } else {
@@ -152,7 +129,7 @@ export class OptionsModel {
     }
 
     /** check colorScheme value */
-    if (opt.colorScheme) {
+    if (opt && opt.colorScheme) {
       if (typeof opt.colorScheme !== 'string') {
         Log.w(1, 'wrong index type.');
       } else {
@@ -161,7 +138,7 @@ export class OptionsModel {
     }
 
     /** check lateralIndexesGap value */
-    if (opt.lateralIndexesGap) {
+    if (opt && opt.lateralIndexesGap) {
       if (typeof opt.lateralIndexesGap !== 'boolean') {
         Log.w(1, 'wrong index type.');
       } else {
@@ -171,7 +148,7 @@ export class OptionsModel {
 
     /** check consensusType value */
 
-    if (opt.consensusType) {
+    if (opt && opt.consensusType) {
       if (typeof opt.consensusType !== 'string') {
         Log.w(1, 'wrong consensus type.');
       } else {
@@ -180,7 +157,7 @@ export class OptionsModel {
     }
 
     /** check consensusThreshold value */
-    if (opt.consensusThreshold) {
+    if (opt && opt.consensusThreshold) {
       if (typeof opt.consensusThreshold !== 'number') {
         Log.w(1, 'wrong threshold type.');
       } else {
@@ -189,7 +166,7 @@ export class OptionsModel {
     }
 
     /** check consensusStartIndex value */
-    if (opt.consensusStartIndex) {
+    if (opt && opt.consensusStartIndex) {
       if (typeof opt.consensusStartIndex !== 'number') {
         Log.w(1, 'wrong consensusStartIndex type.');
       } else {
@@ -198,7 +175,7 @@ export class OptionsModel {
     }
 
     /** check rowMarginBottom value */
-    if (opt.rowMarginBottom !== undefined) {
+    if (opt && opt.rowMarginBottom !== undefined) {
       const rSize = opt.rowMarginBottom;
       const rNum = +rSize.substr(0, rSize.length - 2);
       const rUnit = rSize.substr(rSize.length - 2, 2);
@@ -214,7 +191,7 @@ export class OptionsModel {
     }
 
     /** check oneLineSetting value */
-    if (opt.oneLineSetting) {
+    if (opt && opt.oneLineSetting) {
       if (typeof opt.oneLineSetting !== 'boolean' && opt.oneLineSetting) {
         Log.w(1, 'wrong oneLineSetting format.');
       } else {
@@ -225,7 +202,7 @@ export class OptionsModel {
     }
 
     /** check oneLineWidth */
-    if (opt.oneLineWidth) {
+    if (opt && opt.oneLineWidth) {
       const oneLineWidth = opt.oneLineWidth;
       const olNum = +oneLineWidth.substr(0, oneLineWidth.length - 2);
       const olUnit = oneLineWidth.substr(oneLineWidth.length - 2, 2);

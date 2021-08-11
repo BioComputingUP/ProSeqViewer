@@ -33,8 +33,8 @@ class ColorsModel {
         }
         return outCol;
     }
-    process(allInputs, ordering) {
-        if (!allInputs.options.colorScheme) {
+    process(allInputs) {
+        if (allInputs.options && !allInputs.options.colorScheme) {
             const colorSchemeRegions = [];
             for (const sequence of allInputs.sequences) {
                 // TODO
@@ -52,9 +52,9 @@ class ColorsModel {
                 allInputs.regions = colorSchemeRegions;
             }
         }
-        const allRegions = Array.prototype.concat(allInputs.icons, allInputs[ordering[0]], allInputs[ordering[1]]);
+        const allRegions = Array.prototype.concat(allInputs.icons, allInputs.regions, allInputs.patterns); // ordering
         let newRegions = this.fixMissingIds(allRegions, allInputs.sequences);
-        newRegions = this.transformInput(allRegions, newRegions, allInputs.sequences, allInputs.options.colorScheme);
+        newRegions = this.transformInput(allRegions, newRegions, allInputs.sequences, allInputs.options);
         this.transformColors();
         return newRegions;
     }
@@ -559,19 +559,7 @@ class ConsensusModel {
         color = palettes_1.Palettes.physicalProp[letter].color;
         return [backgroundColor, color];
     }
-    static resetOrdering(ordering) {
-        // in case there where no regions in input, well now there are
-        if (!ordering.includes('regions')) {
-            if (ordering) {
-                ordering.unshift('regions');
-            }
-            else {
-                ordering.push('regions');
-            }
-        }
-        return ordering;
-    }
-    process(sequences, regions, options, ordering) {
+    process(sequences, regions, options) {
         let maxIdx = 0;
         for (const row of sequences) {
             if (maxIdx < row.sequence.length) {
@@ -619,7 +607,6 @@ class ConsensusModel {
                     }
                 }
             }
-            ordering = ConsensusModel.resetOrdering(ordering);
         }
         else if (options.colorScheme === 'clustal') {
             regions = [];
@@ -627,7 +614,6 @@ class ConsensusModel {
                 sequence.colorScheme = 'clustal';
                 regions.push({ sequenceId: sequence.id, start: 1, end: sequence.sequence.length, colorScheme: 'clustal' });
             }
-            ordering = ConsensusModel.resetOrdering(ordering);
         }
         let consensusInfoIdentity;
         let consensusInfoPhysical;
@@ -635,7 +621,6 @@ class ConsensusModel {
             case 'identity': {
                 consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences);
                 [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusThreshold, options.consensusStartIndex);
-                ordering = ConsensusModel.resetOrdering(ordering);
                 break;
             }
             case 'physical': {
@@ -644,11 +629,10 @@ class ConsensusModel {
                     consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences);
                 }
                 [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusThreshold, options.consensusStartIndex);
-                ordering = ConsensusModel.resetOrdering(ordering);
                 break;
             }
         }
-        return [sequences, regions, ordering];
+        return [sequences, regions];
     }
 }
 exports.ConsensusModel = ConsensusModel;
@@ -813,54 +797,8 @@ exports.IconsModel = IconsModel;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.InputModel = void 0;
 class InputModel {
-    process(input1, input2, input3, input4, input5, input6, input7) {
-        // check inputs type and inputs ordering
-        const allInputs = { sequences: [], regions: [], patterns: [], icons: [], options: {}, iconsHtml: {} };
-        const ordering = [];
-        this.checkInput(allInputs, ordering, input1);
-        this.checkInput(allInputs, ordering, input2);
-        this.checkInput(allInputs, ordering, input3);
-        this.checkInput(allInputs, ordering, input4);
-        this.checkInput(allInputs, ordering, input5);
-        this.checkInput(allInputs, ordering, input6);
-        this.checkInput(allInputs, ordering, input7);
-        if (!allInputs.sequences) {
-            throw Error('sequence missing');
-        }
-        return [allInputs, ordering];
-    }
-    checkInput(allInputs, ordering, input) {
-        if (!Array.isArray(input)) {
-            if (input) {
-                if (input.id === 'icons') {
-                    allInputs.iconsHtml = input;
-                }
-                else if (input.id === 'paths') {
-                    allInputs.iconsPaths = input;
-                }
-                else {
-                    allInputs.options = input;
-                }
-            }
-            return;
-        }
-        for (const element of input) {
-            if (element.sequence) {
-                allInputs.sequences = input;
-                break;
-            }
-            else if (!ordering.includes('patterns') && element.pattern) {
-                allInputs.patterns = input;
-                ordering.push('patterns');
-            }
-            else if (element.icon) {
-                allInputs.icons = input;
-            }
-            else if (!ordering.includes('regions') && (element.backgroundColor || element.color || element.start || element.end)) {
-                allInputs.regions = input;
-                ordering.push('regions');
-            }
-        }
+    process(input) {
+        return [input];
     }
 }
 exports.InputModel = InputModel;
@@ -920,16 +858,13 @@ class OptionsModel {
             consensusType: null,
             consensusThreshold: 90,
             consensusStartIndex: 1,
-            rowMarginBottom: '5px'
+            rowMarginBottom: '5px',
+            colorScheme: undefined
         };
     }
     process(opt) {
-        if (opt === undefined) {
-            log_model_1.Log.w(1, 'undefined parameters.');
-            return;
-        }
         /** check input fontSize */
-        if (opt.fontSize !== undefined) {
+        if (opt && opt.fontSize) {
             const fSize = opt.fontSize;
             const fNum = +fSize.substr(0, fSize.length - 2);
             const fUnit = fSize.substr(fSize.length - 2, 2);
@@ -945,7 +880,7 @@ class OptionsModel {
             this.options.fontSize = '14px'; // default reset
         }
         /** check input sidebarWidth */
-        if (opt.sidebarWidth !== undefined) {
+        if (opt && opt.sidebarWidth) {
             const sidebarWidth = opt.sidebarWidth;
             const sNum = +sidebarWidth.substr(0, sidebarWidth.length - 2);
             const sUnit = sidebarWidth.substr(sidebarWidth.length - 2, 2);
@@ -960,7 +895,7 @@ class OptionsModel {
             log_model_1.Log.w(2, 'sidebarWidth not set.');
         }
         /** check input chunkSize */
-        if (opt.chunkSize !== undefined) {
+        if (opt && opt.chunkSize) {
             const cSize = +opt.chunkSize;
             if (isNaN(cSize) || cSize < 0) {
                 log_model_1.Log.w(1, 'wrong chunkSize format.');
@@ -973,7 +908,7 @@ class OptionsModel {
             log_model_1.Log.w(2, 'chunkSize not set.');
         }
         /** check input spaceSize */
-        if (opt.spaceSize !== undefined) {
+        if (opt && opt.spaceSize) {
             const cSize = +opt.spaceSize;
             if (isNaN(cSize) || cSize < 0) {
                 log_model_1.Log.w(1, 'wrong spaceSize format.');
@@ -985,12 +920,12 @@ class OptionsModel {
         else {
             log_model_1.Log.w(2, 'spaceSize not set.');
         }
-        if (opt.chunkSize == 0) {
+        if (opt && opt.chunkSize == 0) {
             this.options.chunkSize = 1;
             this.options.spaceSize = 0;
         }
         /** check log value */
-        if (opt.logLevel !== undefined) {
+        if (opt && opt.logLevel) {
             this.options.logLevel = opt.logLevel;
             switch (opt.logLevel) {
                 case 'none': {
@@ -1011,7 +946,7 @@ class OptionsModel {
             log_model_1.Log.w(2, 'log not set.');
         }
         /** check topIndexes value */
-        if (opt.topIndexes) {
+        if (opt && opt.topIndexes) {
             if (typeof opt.topIndexes !== 'boolean') {
                 log_model_1.Log.w(1, 'wrong index type.');
             }
@@ -1020,7 +955,7 @@ class OptionsModel {
             }
         }
         /** check lateralIndexes value */
-        if (!opt.lateralIndexes) {
+        if (opt && !opt.lateralIndexes) {
             if (typeof opt.lateralIndexes !== 'boolean') {
                 log_model_1.Log.w(1, 'wrong index type.');
             }
@@ -1029,7 +964,7 @@ class OptionsModel {
             }
         }
         /** check colorScheme value */
-        if (opt.colorScheme) {
+        if (opt && opt.colorScheme) {
             if (typeof opt.colorScheme !== 'string') {
                 log_model_1.Log.w(1, 'wrong index type.');
             }
@@ -1038,7 +973,7 @@ class OptionsModel {
             }
         }
         /** check lateralIndexesGap value */
-        if (opt.lateralIndexesGap) {
+        if (opt && opt.lateralIndexesGap) {
             if (typeof opt.lateralIndexesGap !== 'boolean') {
                 log_model_1.Log.w(1, 'wrong index type.');
             }
@@ -1047,7 +982,7 @@ class OptionsModel {
             }
         }
         /** check consensusType value */
-        if (opt.consensusType) {
+        if (opt && opt.consensusType) {
             if (typeof opt.consensusType !== 'string') {
                 log_model_1.Log.w(1, 'wrong consensus type.');
             }
@@ -1056,7 +991,7 @@ class OptionsModel {
             }
         }
         /** check consensusThreshold value */
-        if (opt.consensusThreshold) {
+        if (opt && opt.consensusThreshold) {
             if (typeof opt.consensusThreshold !== 'number') {
                 log_model_1.Log.w(1, 'wrong threshold type.');
             }
@@ -1065,7 +1000,7 @@ class OptionsModel {
             }
         }
         /** check consensusStartIndex value */
-        if (opt.consensusStartIndex) {
+        if (opt && opt.consensusStartIndex) {
             if (typeof opt.consensusStartIndex !== 'number') {
                 log_model_1.Log.w(1, 'wrong consensusStartIndex type.');
             }
@@ -1074,7 +1009,7 @@ class OptionsModel {
             }
         }
         /** check rowMarginBottom value */
-        if (opt.rowMarginBottom !== undefined) {
+        if (opt && opt.rowMarginBottom !== undefined) {
             const rSize = opt.rowMarginBottom;
             const rNum = +rSize.substr(0, rSize.length - 2);
             const rUnit = rSize.substr(rSize.length - 2, 2);
@@ -1090,7 +1025,7 @@ class OptionsModel {
             this.options.rowMarginBottom = '5px'; // default reset
         }
         /** check oneLineSetting value */
-        if (opt.oneLineSetting) {
+        if (opt && opt.oneLineSetting) {
             if (typeof opt.oneLineSetting !== 'boolean' && opt.oneLineSetting) {
                 log_model_1.Log.w(1, 'wrong oneLineSetting format.');
             }
@@ -1102,7 +1037,7 @@ class OptionsModel {
             this.options.oneLineSetting = false;
         }
         /** check oneLineWidth */
-        if (opt.oneLineWidth) {
+        if (opt && opt.oneLineWidth) {
             const oneLineWidth = opt.oneLineWidth;
             const olNum = +oneLineWidth.substr(0, oneLineWidth.length - 2);
             const olUnit = oneLineWidth.substr(oneLineWidth.length - 2, 2);
@@ -1209,6 +1144,9 @@ exports.PatternsModel = void 0;
 class PatternsModel {
     // find index of matched regex positions and create array of regions with color
     process(patterns, sequences) {
+        if (!patterns) {
+            return;
+        }
         const regions = []; // OutPatterns
         // @ts-ignore
         for (const element of patterns) {
@@ -1287,29 +1225,27 @@ class ProSeqViewer {
             this.calculateIdxs(true);
         }; // had to add this to cover mobidb toggle event
     }
-    draw(input1, input2, input3, input4, input5, input6, input7) {
+    draw(inputs) {
         ProSeqViewer.sqvList.push(this.divId);
-        let inputs;
-        let order;
         let labels;
         let labelsFlag;
         let startIndexes;
         let tooltips;
         let data;
-        /** check and process input */
-        [inputs, order] = this.input.process(input1, input2, input3, input4, input5, input6, input7);
+        /** check and consensus input  and global colorScheme */
+        if (inputs.options) {
+            [inputs.sequences, inputs.regions] = this.consensus.process(inputs.sequences, inputs.regions, inputs.options);
+        }
         /** check and process parameters input */
         inputs.options = this.params.process(inputs.options);
-        /** check and consensus input  and global colorScheme */
-        [inputs.sequences, inputs.regions, order] = this.consensus.process(inputs.sequences, inputs.regions, inputs.options, order);
         /** check and process patterns input */
         inputs.patterns = this.patterns.process(inputs.patterns, inputs.sequences);
         /** check and process colors input */
-        inputs.regions = this.regions.process(inputs, order);
+        inputs.regions = this.regions.process(inputs);
         /** check and process icons input */
-        inputs.icons = this.icons.process(inputs.regions, inputs.sequences, inputs.iconsHtml, inputs.iconsPaths);
+        let icons = this.icons.process(inputs.regions, inputs.sequences, inputs.iconsHtml, inputs.icons);
         /** check and process sequences input */
-        data = this.rows.process(inputs.sequences, inputs.icons, inputs.regions, inputs.options.colorScheme, inputs.options.chunkSize);
+        data = this.rows.process(inputs.sequences, icons, inputs.regions, inputs.options);
         /** check and process labels input */
         [labels, startIndexes, tooltips, labelsFlag] = this.labels.process(inputs.regions, inputs.sequences);
         /** create/update sqv-body html */
@@ -1594,7 +1530,7 @@ class RowsModel {
     constructor() {
         this.substitutiveId = 99999999999999;
     }
-    processRows(rows, icons, regions, chunksize) {
+    processRows(rows, icons, regions) {
         const allData = [];
         // decide which color is more important in case of overwriting
         const coloringOrder = ['custom', 'clustal', 'gradient', 'binary'];
@@ -1661,13 +1597,13 @@ class RowsModel {
         }
         return allData;
     }
-    process(sequences, icons, regions, colorScheme, chunkSize) {
+    process(sequences, icons, regions, opt) {
         // check and set global colorScheme
-        if (colorScheme) {
+        if (opt && opt.colorScheme) {
             // @ts-ignore
             for (const sequence of sequences) {
                 if (!sequence.colorScheme) {
-                    sequence.colorScheme = colorScheme;
+                    sequence.colorScheme = opt.colorScheme;
                 }
             }
         }
@@ -1716,7 +1652,7 @@ class RowsModel {
                 rows[id][idxKey] = { char };
             }
         }
-        return this.processRows(rows, icons, regions, chunkSize);
+        return this.processRows(rows, icons, regions);
     }
 }
 exports.RowsModel = RowsModel;

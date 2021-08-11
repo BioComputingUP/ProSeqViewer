@@ -139,98 +139,82 @@ export class ConsensusModel {
     color = Palettes.physicalProp[letter].color;
     return [backgroundColor, color];
   }
-  static resetOrdering(ordering) {
-    // in case there where no regions in input, well now there are
-    if (!ordering.includes('regions')) {
-      if (ordering) {
-        ordering.unshift('regions');
-      } else {
-        ordering.push('regions');
+
+process(sequences, regions, options) {
+    let maxIdx = 0;
+
+    for (const row of sequences) {
+      if (maxIdx < row.sequence.length) { maxIdx = row.sequence.length; }
+    }
+
+    for (const row of sequences) {
+      const diff = maxIdx - row.sequence.length;
+      if (diff > 0 && row.id !== -99999999999999 && row.id !== -99999999999998) {
+        for (let i = 0; i < diff; i++) {
+          row.sequence += '-';
+        }
       }
     }
-    return ordering;
-  }
 
-process(sequences, regions, options, ordering) {
+    if (options.colorScheme === 'blosum62') {
+        regions = [];
+        sequences.sort( (a, b) => a.id - b.id);
 
-  let maxIdx = 0;
+        const min = sequences[0];
 
-  for (const row of sequences) {
-    if (maxIdx < row.sequence.length) { maxIdx = row.sequence.length; }
-  }
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < min.sequence.length; i++) {
+          for (const sequence of sequences) {
+            let score;
+            if (sequence.id === min.id) {
+              score = Palettes.blosum62[sequence.sequence[i] + sequence.sequence[i]];
+              // score with itself
 
-  for (const row of sequences) {
-    const diff = maxIdx - row.sequence.length;
-    if (diff > 0 && row.id !== -99999999999999 && row.id !== -99999999999998) {
-      for (let i = 0; i < diff; i++) {
-        row.sequence += '-';
-      }
-    }
-  }
+              if (!score) { score = '-'; }
+              regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
+                backgroundColor: Palettes.blosum[score].backgroundColor});
 
-  if (options.colorScheme === 'blosum62') {
-      regions = [];
-      sequences.sort( (a, b) => a.id - b.id);
-
-      const min = sequences[0];
-
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < min.sequence.length; i++) {
-        for (const sequence of sequences) {
-          let score;
-          if (sequence.id === min.id) {
-            score = Palettes.blosum62[sequence.sequence[i] + sequence.sequence[i]];
-            // score with itself
-
-            if (!score) { score = '-'; }
-            regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
-              backgroundColor: Palettes.blosum[score].backgroundColor});
-
-          } else {
-            // score with first sequence
-            if (Palettes.blosum62[sequence.sequence[i] + min.sequence[i]]) {
-              score = Palettes.blosum62[sequence.sequence[i] + min.sequence[i]];
             } else {
-              score = Palettes.blosum62[min.sequence[i] + sequence.sequence[i]];
-            }
+              // score with first sequence
+              if (Palettes.blosum62[sequence.sequence[i] + min.sequence[i]]) {
+                score = Palettes.blosum62[sequence.sequence[i] + min.sequence[i]];
+              } else {
+                score = Palettes.blosum62[min.sequence[i] + sequence.sequence[i]];
+              }
 
-            if (!score) { score = '-'; }
-            regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
-              backgroundColor: Palettes.blosum[score].backgroundColor});
+              if (!score) { score = '-'; }
+              regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
+                backgroundColor: Palettes.blosum[score].backgroundColor});
+            }
           }
+
         }
 
+      } else if (options.colorScheme === 'clustal') {
+      regions = [];
+      for (const sequence of sequences) {
+        sequence.colorScheme = 'clustal';
+        regions.push({sequenceId: sequence.id, start:  1, end: sequence.sequence.length, colorScheme: 'clustal'});
       }
-
-      ordering = ConsensusModel.resetOrdering(ordering);
-    } else if (options.colorScheme === 'clustal') {
-    regions = [];
-    for (const sequence of sequences) {
-      sequence.colorScheme = 'clustal';
-      regions.push({sequenceId: sequence.id, start:  1, end: sequence.sequence.length, colorScheme: 'clustal'});
     }
-    ordering = ConsensusModel.resetOrdering(ordering);
-  }
 
-  let consensusInfoIdentity;
-  let consensusInfoPhysical;
-  switch (options.consensusType) {
-    case 'identity': {
-      consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences);
-      [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusThreshold, options.consensusStartIndex);
-      ordering = ConsensusModel.resetOrdering(ordering);
-      break;
+    let consensusInfoIdentity;
+    let consensusInfoPhysical;
+    switch (options.consensusType) {
+      case 'identity': {
+        consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences);
+        [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusThreshold, options.consensusStartIndex);
+        break;
+      }
+      case 'physical': {
+        consensusInfoPhysical = ConsensusModel.setConsensusInfo('physical', sequences);
+        if (!consensusInfoIdentity) { consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences); }
+        [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusThreshold, options.consensusStartIndex);
+        break;
+      }
     }
-    case 'physical': {
-      consensusInfoPhysical = ConsensusModel.setConsensusInfo('physical', sequences);
-      if (!consensusInfoIdentity) { consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences); }
-      [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusThreshold, options.consensusStartIndex);
-      ordering = ConsensusModel.resetOrdering(ordering);
-      break;
-    }
-  }
 
-  return [sequences, regions, ordering];
-  }
+    return [sequences, regions];
+    }
 
 }
