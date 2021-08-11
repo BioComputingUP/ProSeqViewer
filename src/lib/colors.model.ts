@@ -64,6 +64,9 @@ export class ColorsModel {
   }
 
   process(allInputs) {
+    if (!allInputs.regions) {
+      allInputs.regions = [];
+    }
 
     if (allInputs.options && !allInputs.options.colorScheme) {
       const colorSchemeRegions = [];

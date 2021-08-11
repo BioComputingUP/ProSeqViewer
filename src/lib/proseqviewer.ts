@@ -7,7 +7,6 @@ import {IconsModel} from './icons.model';
 import {SequenceInfoModel} from './sequenceInfoModel';
 import {EventsModel} from './events.model';
 import {PatternsModel} from './patterns.model';
-import {InputModel} from './input.model';
 import {ConsensusModel} from './consensus.model';
 import {Arguments} from './interface';
 
@@ -15,7 +14,6 @@ export class ProSeqViewer {
   static sqvList = [];
   divId: string;
   init: boolean;
-  input: InputModel;
   params: OptionsModel;
   rows: RowsModel;
   consensus: ConsensusModel;
@@ -29,7 +27,6 @@ export class ProSeqViewer {
   constructor(divId?: string ) {
     this.divId = divId;
     this.init = false;
-    this.input = new InputModel();
     this.params = new OptionsModel();
     this.rows = new RowsModel();
     this.consensus = new ConsensusModel();

@@ -34,6 +34,9 @@ class ColorsModel {
         return outCol;
     }
     process(allInputs) {
+        if (!allInputs.regions) {
+            allInputs.regions = [];
+        }
         if (allInputs.options && !allInputs.options.colorScheme) {
             const colorSchemeRegions = [];
             for (const sequence of allInputs.sequences) {
@@ -790,22 +793,6 @@ exports.IconsModel = IconsModel;
 
 /***/ }),
 
-/***/ 353:
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.InputModel = void 0;
-class InputModel {
-    process(input) {
-        return [input];
-    }
-}
-exports.InputModel = InputModel;
-
-
-/***/ }),
-
 /***/ 730:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -1202,13 +1189,12 @@ const icons_model_1 = __webpack_require__(473);
 const sequenceInfoModel_1 = __webpack_require__(695);
 const events_model_1 = __webpack_require__(252);
 const patterns_model_1 = __webpack_require__(227);
-const input_model_1 = __webpack_require__(353);
 const consensus_model_1 = __webpack_require__(588);
 class ProSeqViewer {
     constructor(divId) {
         this.divId = divId;
         this.init = false;
-        this.input = new input_model_1.InputModel();
+        // this.input = new InputModel();
         this.params = new options_model_1.OptionsModel();
         this.rows = new rows_model_1.RowsModel();
         this.consensus = new consensus_model_1.ConsensusModel();
