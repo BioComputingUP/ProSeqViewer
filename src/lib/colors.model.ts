@@ -1,5 +1,3 @@
-import {Log} from './log.model';
-
 interface InpColor {
   backgroundColor: string;
   backgroundImage?: string;
@@ -71,10 +69,9 @@ export class ColorsModel {
     if (allInputs.options && !allInputs.options.colorScheme) {
       const colorSchemeRegions = [];
       for (const sequence of allInputs.sequences) {
-        // TODO
-        if (sequence.colorScheme === 'clustal') {
+        if (sequence.colorScheme) {
           // @ts-ignore
-          colorSchemeRegions.push({sequenceId: sequence.id, start: 1, end: sequence.sequence.length, colorScheme: 'clustal'});
+          colorSchemeRegions.push({sequenceId: sequence.id, start: 1, end: sequence.sequence.length, colorScheme: sequence.colorScheme});
         }
       }
       for (const reg of allInputs.regions) {
@@ -91,7 +88,7 @@ export class ColorsModel {
     const allRegions = Array.prototype.concat(allInputs.icons, allInputs.regions, allInputs.patterns); // ordering
     let newRegions = this.fixMissingIds(allRegions, allInputs.sequences);
     newRegions = this.transformInput(allRegions, newRegions, allInputs.sequences, allInputs.options);
-    this.transformColors();
+    this.transformColors(allInputs.options.colorScheme);
     return newRegions;
   }
 
@@ -109,7 +106,7 @@ export class ColorsModel {
       for (const seq of sequences) {
 
         let reg = {sequenceId: seq.id, backgroundColor: '', start: 1, end: seq.sequence.length, colorScheme: ''};
-        if (seq.colorScheme === 'clustal') {
+        if (seq.colorScheme) {
 
           reg.backgroundColor = seq.colorScheme;
           reg.colorScheme = seq.colorScheme;
@@ -122,27 +119,13 @@ export class ColorsModel {
     // @ts-ignore
     for (const reg of newRegions) {
 
-      // if first element in region is a number: e.g. '1-2'
-      if (isNaN(+reg.start) || isNaN(+reg.end)) {
-        Log.w(2, 'missing region bounds.');
-        continue;
-      } else if (+reg.start > +reg.end) {
-        Log.w(1, 'end bound less than start bound.');
-        continue;
-      }
-
       let colorScheme;
       if (reg.icon) { continue; }
       if (sequences.find(x => x.id === reg.sequenceId)) {
 
         colorScheme = sequences.find(x => x.id === reg.sequenceId).colorScheme;
         if (colorScheme && !globalColor) {
-          if (reg.backgroundColor) {
-            let log = '';
-            log += 'Colorscheme is set. Cannot set color: ' + reg.backgroundColor + '. ';
-            log += 'New color: ' + colorScheme + '.';
-            Log.w(2, log);
-          }
+          // Colorscheme is set. Cannot set backgroundColor
           reg.colorScheme = colorScheme; }
         }
 
@@ -201,7 +184,7 @@ export class ColorsModel {
     return newRegions;
   }
 
-  private transformColors() {
+  private transformColors(colorscheme) {
 
     let arrColors;
     let n;
@@ -258,25 +241,17 @@ export class ColorsModel {
           }
           break;
         }
-        case 'clustal': {
+        case colorscheme: {
           // tslint:disable-next-line:forin
           for (const row in ColorsModel.palette[type]) {
             c = ColorsModel.palette[type][row];
             if (c.positions.length > 0) {
 
               for (const pos of c.positions) {
-                pos.backgroundColor = '@clustal';
+                pos.backgroundColor = colorscheme;
               }
             }
           }
-          break;
-        }
-        case 'blosum62': {
-         // calculated separately in consensus model
-          break;
-        }
-        default: {
-          Log.w(1, 'Unknown coloring type.');
           break;
         }
       }
@@ -290,7 +265,7 @@ export class ColorsModel {
 
     // check if row key is a number
     if (e.sequenceId === undefined || isNaN(+e.sequenceId)) {
-      Log.w(1, 'wrong entity row key.');
+      // wrong entity row key
       return -1;
     }
     result.sequenceId = +e.sequenceId;
@@ -328,11 +303,8 @@ export class ColorsModel {
       return this.checkRgb(color);
     } else if (color[0] === '#') {
       return this.checkHex(color);
-    } else if (color[0] === 'binary' || color[0] === 'clustal') {
-      return color[0];
     } else {
-      Log.w(1, 'invalid color format');
-      return -1;
+      return color[0];
     }
   }
 
@@ -348,7 +320,7 @@ export class ColorsModel {
     const hex = color.replace('#', '');
 
     if (hex.length !== 6) {
-      Log.w(1, 'invalid hex format.');
+      // invalid hex format
       return -1;
     }
 
@@ -356,7 +328,7 @@ export class ColorsModel {
       l1 = c[hex[i * 2]];
       l2 = c[hex[i * 2 + 1]];
       if (l1 === undefined || l2 === undefined) {
-        Log.w(1, 'Invalid char in hex value.');
+        // Invalid char in hex value
         return -1;
       }
     }
@@ -377,7 +349,7 @@ export class ColorsModel {
       for (let i = 0; i < 3; i++) {
         tmp = +rgb[i];
         if (isNaN(tmp) || tmp < 0 || tmp > 255) {
-          Log.w(1, 'wrong value for rgb.');
+          // wrong value for rgb
           return -1;
         }
       }
@@ -387,7 +359,7 @@ export class ColorsModel {
     if (rgb.length > 3) {
       tmp = +rgb[3];
       if (isNaN(tmp) || tmp < 0 || tmp > 1) {
-        Log.w(1, 'wrong opacity value for rgb.');
+        // wrong opacity value for rgb
         return -1;
       }
       prefix = 'rgba';
@@ -397,7 +369,7 @@ export class ColorsModel {
     }
 
     if (rgb.length <= 2 || rgb.length > 4) {
-      Log.w(1, 'invalid format for rgb.');
+      // invalid format for rgb
       return -1;
     }
 

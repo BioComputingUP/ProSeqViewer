@@ -190,11 +190,11 @@ process(sequences, regions, options) {
 
         }
 
-      } else if (options.colorScheme === 'clustal') {
+      } else if (options.colorScheme) {
       regions = [];
       for (const sequence of sequences) {
-        sequence.colorScheme = 'clustal';
-        regions.push({sequenceId: sequence.id, start:  1, end: sequence.sequence.length, colorScheme: 'clustal'});
+        sequence.colorScheme = options.colorScheme;
+        regions.push({sequenceId: sequence.id, start:  1, end: sequence.sequence.length, colorScheme: options.colorScheme});
       }
     }
 

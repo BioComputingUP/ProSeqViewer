@@ -1,4 +1,3 @@
-import {Log} from './log.model';
 import {Palettes} from './palettes';
 import {ColorsModel} from './colors.model';
 
@@ -10,7 +9,7 @@ export class RowsModel {
     const allData = [];
 
     // decide which color is more important in case of overwriting
-    const coloringOrder = ['custom', 'clustal', 'gradient', 'binary'];
+    const coloringOrder = ['custom', 'clustal', 'zappo', 'gradient', 'binary'];
 
     // order row Numbers
     const rowNumsOrdered = Object.keys(rows).map(Number).sort((n1, n2) => n1 - n2);
@@ -50,17 +49,9 @@ export class RowsModel {
                 if (!data[i]) {
                   continue;
                 }
-                if (data[i].backgroundColor) {
-                  log = 'Row: ' + rowNum + ', ';
-                  log += 'Index: ' + i + ', ';
-                  log += 'Overlapping color. ';
-                  log += 'New color: ' + e.backgroundColor + '.';
-                  Log.w(2, log);
-                }
 
-                // TODO: add colorschemes
-                if (e.backgroundColor === '@clustal') {
-                  data[i].backgroundColor = Palettes.clustal[data[i].char];
+                if (e.backgroundColor && !e.backgroundColor.startsWith('#')) {
+                  data[i].backgroundColor = Palettes[e.backgroundColor][data[i].char];
                 } else {
                   data[i].backgroundColor = e.backgroundColor;
                 }
@@ -104,16 +95,15 @@ export class RowsModel {
     for (const r of Object.keys(sequences)) {
 
       if (isNaN(+sequences[r].id)) {
-        Log.w(2, 'missing id.');
+        // missing id
         undefinedValues += 1;
         sequences[r].id = this.substitutiveId;
         this.substitutiveId -= 1;
         // otherwise just reset missing ids and log the resetted id
       } else {
         if (values.includes(+sequences[r].id)) {
+          // Duplicate sequence id
           delete sequences[r];
-          console.log(sequences)
-          Log.w(1, 'Duplicate sequence id.');
         } else {
           values.push(+sequences[r].id);
         }

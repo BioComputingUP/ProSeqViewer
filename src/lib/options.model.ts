@@ -1,14 +1,10 @@
-import { Log } from './log.model';
-
-
 export class OptionsModel {
 
   options =  {
     fontSize: '14px',
     chunkSize: 10,
     spaceSize: 1, // relative to fontSize
-    logLevel: 'none',
-    emptyFiller: ' ', // fills gap at the end of the MSA sequences
+    emptyFiller: ' ', // fills gap at the end of the MSA sequences // TODO remove
     topIndexes: false,
     lateralIndexes: true,
     lateralIndexesGap: false,
@@ -32,12 +28,12 @@ export class OptionsModel {
       const fUnit = fSize.substr(fSize.length - 2, 2);
 
       if (isNaN(fNum) || (fUnit !== 'px' && fUnit !== 'vw' && fUnit !== 'em')) {
-        Log.w(1, 'wrong fontSize format.');
+        // wrong fontSize format
       } else {
         this.options.fontSize = fSize;
       }
     } else {
-      Log.w(2, 'fontSize not set.');
+      // fontSize not set
       this.options.fontSize = '14px'; // default reset
     }
 
@@ -49,12 +45,10 @@ export class OptionsModel {
       const sUnit = sidebarWidth.substr(sidebarWidth.length - 2, 2);
 
       if (isNaN(sNum) || (sUnit !== 'px' && sUnit !== 'vw' && sUnit !== 'em')) {
-        Log.w(1, 'wrong sidebarWidth format.');
+        // wrong sidebarWidth format
       } else {
         this.options.sidebarWidth = sidebarWidth;
       }
-    } else {
-      Log.w(2, 'sidebarWidth not set.');
     }
 
     /** check input chunkSize */
@@ -62,12 +56,10 @@ export class OptionsModel {
 
       const cSize = +opt.chunkSize;
       if (isNaN(cSize) || cSize < 0) {
-        Log.w(1, 'wrong chunkSize format.');
+        // wrong chunkSize format
       } else {
         this.options.chunkSize = cSize;
       }
-    } else {
-      Log.w(2, 'chunkSize not set.');
     }
 
     /** check input spaceSize */
@@ -75,12 +67,10 @@ export class OptionsModel {
 
       const cSize = +opt.spaceSize;
       if (isNaN(cSize) || cSize < 0) {
-        Log.w(1, 'wrong spaceSize format.');
+        // wrong spaceSize format
       } else {
         this.options.spaceSize = cSize;
       }
-    } else {
-      Log.w(2, 'spaceSize not set.');
     }
 
     if (opt && opt.chunkSize == 0) {
@@ -88,32 +78,10 @@ export class OptionsModel {
       this.options.spaceSize = 0;
     }
 
-    /** check log value */
-
-    if (opt && opt.logLevel) {
-      this.options.logLevel = opt.logLevel;
-      switch (opt.logLevel) {
-        case 'none': {
-          Log.s(0);
-          break;
-        }
-        case 'error': {
-          Log.s(1);
-          break;
-        }
-        case 'warn': {
-          Log.s(2);
-          break;
-        }
-      }
-    } else {
-      Log.w(2, 'log not set.');
-    }
-
     /** check topIndexes value */
     if (opt && opt.topIndexes) {
       if (typeof opt.topIndexes !== 'boolean') {
-        Log.w(1, 'wrong index type.');
+        // wrong index type
       } else {
         this.options.topIndexes = opt.topIndexes;
       }
@@ -122,7 +90,7 @@ export class OptionsModel {
     /** check lateralIndexes value */
     if (opt && !opt.lateralIndexes) {
       if (typeof opt.lateralIndexes !== 'boolean') {
-        Log.w(1, 'wrong index type.');
+        // wrong index type
       } else {
         this.options.lateralIndexes = opt.lateralIndexes;
       }
@@ -131,7 +99,7 @@ export class OptionsModel {
     /** check colorScheme value */
     if (opt && opt.colorScheme) {
       if (typeof opt.colorScheme !== 'string') {
-        Log.w(1, 'wrong index type.');
+        // wrong index type
       } else {
         this.options.colorScheme = opt.colorScheme;
       }
@@ -140,7 +108,7 @@ export class OptionsModel {
     /** check lateralIndexesGap value */
     if (opt && opt.lateralIndexesGap) {
       if (typeof opt.lateralIndexesGap !== 'boolean') {
-        Log.w(1, 'wrong index type.');
+        // wrong index type
       } else {
         this.options.lateralIndexesGap = opt.lateralIndexesGap;
       }
@@ -150,7 +118,7 @@ export class OptionsModel {
 
     if (opt && opt.consensusType) {
       if (typeof opt.consensusType !== 'string') {
-        Log.w(1, 'wrong consensus type.');
+        // wrong consensus type
       } else {
         this.options.consensusType = opt.consensusType;
       }
@@ -158,18 +126,14 @@ export class OptionsModel {
 
     /** check consensusThreshold value */
     if (opt && opt.consensusThreshold) {
-      if (typeof opt.consensusThreshold !== 'number') {
-        Log.w(1, 'wrong threshold type.');
-      } else {
+      if (typeof opt.consensusThreshold == 'number') {
         this.options.consensusThreshold = opt.consensusThreshold;
       }
     }
 
     /** check consensusStartIndex value */
     if (opt && opt.consensusStartIndex) {
-      if (typeof opt.consensusStartIndex !== 'number') {
-        Log.w(1, 'wrong consensusStartIndex type.');
-      } else {
+      if (typeof opt.consensusStartIndex == 'number') {
         this.options.consensusStartIndex = opt.consensusStartIndex;
       }
     }
@@ -181,19 +145,19 @@ export class OptionsModel {
       const rUnit = rSize.substr(rSize.length - 2, 2);
 
       if (isNaN(rNum) || (rUnit !== 'px' && rUnit !== 'vw' && rUnit !== 'em')) {
-        Log.w(1, 'wrong rowMarginBottom format.');
+        // wrong rowMarginBottom format
       } else {
         this.options.rowMarginBottom = rSize;
       }
     } else {
-      Log.w(2, 'rowMarginBottom not set.');
+      // rowMarginBottom not set
       this.options.rowMarginBottom = '5px'; // default reset
     }
 
     /** check oneLineSetting value */
     if (opt && opt.oneLineSetting) {
       if (typeof opt.oneLineSetting !== 'boolean' && opt.oneLineSetting) {
-        Log.w(1, 'wrong oneLineSetting format.');
+        // wrong oneLineSetting format
       } else {
         this.options.oneLineSetting = opt.oneLineSetting;
       }
@@ -208,7 +172,7 @@ export class OptionsModel {
       const olUnit = oneLineWidth.substr(oneLineWidth.length - 2, 2);
 
       if (isNaN(olNum) || (olUnit !== 'px' && olUnit !== 'vw' && olUnit !== 'em')) {
-        Log.w(1, 'wrong oneLineWidth format.');
+       // wrong oneLineWidth format
       } else {
         this.options.oneLineWidth = oneLineWidth;
       }

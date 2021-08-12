@@ -1,14 +1,13 @@
 import { OptionsModel } from './options.model';
 import {RowsModel} from './rows.model';
 import {ColorsModel} from './colors.model';
-import {Log} from './log.model';
 import {SelectionModel} from './selection.model';
 import {IconsModel} from './icons.model';
 import {SequenceInfoModel} from './sequenceInfoModel';
 import {EventsModel} from './events.model';
 import {PatternsModel} from './patterns.model';
 import {ConsensusModel} from './consensus.model';
-import {Arguments} from './interface';
+import {Input} from './interface';
 
 export class ProSeqViewer {
   static sqvList = [];
@@ -46,7 +45,7 @@ export class ProSeqViewer {
     }; // had to add this to cover mobidb toggle event
   }
 
-  public draw(inputs: Arguments) {
+  public draw(inputs: Input) {
 
     ProSeqViewer.sqvList.push(this.divId);
 
@@ -65,8 +64,10 @@ export class ProSeqViewer {
     /** check and process patterns input */
     inputs.patterns = this.patterns.process(inputs.patterns, inputs.sequences);
 
+
     /** check and process colors input */
     inputs.regions = this.regions.process(inputs);
+
 
     /** check and process icons input */
     let icons = this.icons.process(inputs.regions, inputs.sequences, inputs.iconsHtml, inputs.icons);
@@ -182,7 +183,7 @@ export class ProSeqViewer {
     const sqvBody = document.getElementById(this.divId);
 
     if (!sqvBody) {
-      Log.w(1, 'Cannot find sqv-body element.');
+      // Cannot find sqv-body element
       return;
     }
 
