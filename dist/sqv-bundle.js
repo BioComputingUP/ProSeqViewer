@@ -36,27 +36,27 @@ class ColorsModel {
         if (!allInputs.regions) {
             allInputs.regions = [];
         }
-        if (allInputs.options && !allInputs.options.colorScheme) {
-            const colorSchemeRegions = [];
+        if (allInputs.options && !allInputs.options.sequenceColor) {
+            const sequenceColorRegions = [];
             for (const sequence of allInputs.sequences) {
-                if (sequence.colorScheme) {
+                if (sequence.sequenceColor) {
                     // @ts-ignore
-                    colorSchemeRegions.push({ sequenceId: sequence.id, start: 1, end: sequence.sequence.length, colorScheme: sequence.colorScheme });
+                    csequenceColorRegions.push({ sequenceId: sequence.id, start: 1, end: sequence.sequence.length, sequenceColor: sequence.sequenceColor });
                 }
             }
             for (const reg of allInputs.regions) {
                 if (!reg.backgroundColor && reg.sequenceId !== -99999999999998) {
-                    colorSchemeRegions.push(reg);
+                    sequenceColorRegions.push(reg);
                 }
             }
-            if (colorSchemeRegions.length > 0) {
-                allInputs.regions = colorSchemeRegions;
+            if (sequenceColorRegions.length > 0) {
+                allInputs.regions = sequenceColorRegions;
             }
         }
         const allRegions = Array.prototype.concat(allInputs.icons, allInputs.regions, allInputs.patterns); // ordering
         let newRegions = this.fixMissingIds(allRegions, allInputs.sequences);
         newRegions = this.transformInput(allRegions, newRegions, allInputs.sequences, allInputs.options);
-        this.transformColors(allInputs.options.colorScheme);
+        this.transformColors(allInputs.options.sequenceColor);
         return newRegions;
     }
     // transform input structure
@@ -70,26 +70,26 @@ class ColorsModel {
         let info;
         if (!globalColor) {
             for (const seq of sequences) {
-                let reg = { sequenceId: seq.id, backgroundColor: '', start: 1, end: seq.sequence.length, colorScheme: '' };
-                if (seq.colorScheme) {
-                    reg.backgroundColor = seq.colorScheme;
-                    reg.colorScheme = seq.colorScheme;
-                    info = this.setColorscheme(reg, seq);
+                let reg = { sequenceId: seq.id, backgroundColor: '', start: 1, end: seq.sequence.length, sequenceColor: '' };
+                if (seq.sequenceColor) {
+                    reg.backgroundColor = seq.sequenceColor;
+                    reg.sequenceColor = seq.sequenceColor;
+                    info = this.setSequenceColor(reg, seq);
                 }
             }
         }
-        // overwrite region color if colorscheme is set
+        // overwrite region color if sequenceColor is set
         // @ts-ignore
         for (const reg of newRegions) {
-            let colorScheme;
+            let sequenceColor;
             if (reg.icon) {
                 continue;
             }
             if (sequences.find(x => x.id === reg.sequenceId)) {
-                colorScheme = sequences.find(x => x.id === reg.sequenceId).colorScheme;
-                if (colorScheme && !globalColor) {
-                    // Colorscheme is set. Cannot set backgroundColor
-                    reg.colorScheme = colorScheme;
+                sequenceColor = sequences.find(x => x.id === reg.sequenceId).sequenceColor;
+                if (sequenceColor && !globalColor) {
+                    // sequenceColor is set. Cannot set backgroundColor
+                    reg.sequenceColor = sequenceColor;
                 }
             }
             info = this.processColor(reg);
@@ -98,21 +98,21 @@ class ColorsModel {
             }
             ColorsModel.palette[info.type][info.sequenceId].positions
                 .push({ start: reg.start, end: reg.end, target: info.letterStyle });
-            if (colorScheme && colorScheme.includes('binary')) {
+            if (sequenceColor && sequenceColor.includes('binary')) {
                 // @ts-ignore
-                ColorsModel.palette[info.type].binaryColors = this.getBinaryColors(colorScheme);
+                ColorsModel.palette[info.type].binaryColors = this.getBinaryColors(sequenceColor);
             }
         }
         return newRegions;
     }
-    setColorscheme(reg, seq) {
+    setSequenceColor(reg, seq) {
         let info;
         info = this.processColor(reg);
         ColorsModel.palette[info.type][info.sequenceId].positions
             .push({ start: reg.start, end: reg.end, target: info.letterStyle });
-        if (seq.colorScheme.includes('binary')) {
+        if (seq.sequenceColor.includes('binary')) {
             // @ts-ignore
-            ColorsModel.palette[info.type].binaryColors = this.getBinaryColors(seq.colorScheme);
+            ColorsModel.palette[info.type].binaryColors = this.getBinaryColors(seq.sequenceColor);
         }
         return info;
     }
@@ -141,7 +141,7 @@ class ColorsModel {
         }
         return newRegions;
     }
-    transformColors(colorscheme) {
+    transformColors(sequenceColor) {
         let arrColors;
         let n;
         let c;
@@ -194,13 +194,13 @@ class ColorsModel {
                     }
                     break;
                 }
-                case colorscheme: {
+                case sequenceColor: {
                     // tslint:disable-next-line:forin
                     for (const row in ColorsModel.palette[type]) {
                         c = ColorsModel.palette[type][row];
                         if (c.positions.length > 0) {
                             for (const pos of c.positions) {
-                                pos.backgroundColor = colorscheme;
+                                pos.backgroundColor = sequenceColor;
                             }
                         }
                     }
@@ -230,8 +230,8 @@ class ColorsModel {
             result.letterStyle += `background-image: ${e.backgroundImage};`;
         }
         // define color or palette
-        if (e.colorScheme) {
-            result.type = e.colorScheme;
+        if (e.sequenceColor) {
+            result.type = e.sequenceColor;
         }
         if (result.type.includes('binary')) {
             result.type = 'binary';
@@ -433,7 +433,7 @@ class ConsensusModel {
         }
         return consensusInfo;
     }
-    static createConsensus(type, consensus, consensus2, sequences, regions, threshold, startIndex) {
+    static createConsensus(type, consensus, consensus2, sequences, regions, threshold) {
         if (threshold < 50) {
             threshold = 100 - threshold;
         }
@@ -494,7 +494,7 @@ class ConsensusModel {
             regions.push({ start: +column + 1, end: +column + 1, sequenceId: id, backgroundColor, color });
             consensusSequence += maxLetter;
         }
-        sequences.push({ id, sequence: consensusSequence, label, startIndex });
+        sequences.push({ id, sequence: consensusSequence, label });
         return [sequences, regions];
     }
     static setColorsIdentity(frequency) {
@@ -549,7 +549,7 @@ class ConsensusModel {
                 }
             }
         }
-        if (options.colorScheme === 'blosum62') {
+        if (options.sequenceColor === 'blosum62') {
             regions = [];
             sequences.sort((a, b) => a.id - b.id);
             const min = sequences[0];
@@ -583,11 +583,11 @@ class ConsensusModel {
                 }
             }
         }
-        else if (options.colorScheme) {
+        else if (options.sequenceColor) {
             regions = [];
             for (const sequence of sequences) {
-                sequence.colorScheme = options.colorScheme;
-                regions.push({ sequenceId: sequence.id, start: 1, end: sequence.sequence.length, colorScheme: options.colorScheme });
+                sequence.sequenceColor = options.sequenceColor;
+                regions.push({ sequenceId: sequence.id, start: 1, end: sequence.sequence.length, sequenceColor: options.sequenceColor });
             }
         }
         let consensusInfoIdentity;
@@ -595,7 +595,7 @@ class ConsensusModel {
         switch (options.consensusType) {
             case 'identity': {
                 consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences);
-                [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusThreshold, options.consensusStartIndex);
+                [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusDotThreshold);
                 break;
             }
             case 'physical': {
@@ -603,7 +603,7 @@ class ConsensusModel {
                 if (!consensusInfoIdentity) {
                     consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences);
                 }
-                [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusThreshold, options.consensusStartIndex);
+                [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusDotThreshold);
                 break;
             }
         }
@@ -667,7 +667,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.IconsModel = void 0;
 const icons_1 = __webpack_require__(312);
 class IconsModel {
-    process(regions, sequences, iconsHtml, iconsPaths) {
+    process(regions, sequences, iconsPaths) {
         const rows = {};
         if (regions && sequences) {
             for (const seq of sequences) {
@@ -719,10 +719,8 @@ class IconsModel {
                                             break;
                                         }
                                         default: {
-                                            // customizable icons
-                                            if (iconsHtml && iconsHtml[reg.icon]) {
-                                                icon = iconsHtml[reg.icon];
-                                            }
+                                            // customizable icons (svg)
+                                            icon = reg.icon;
                                             break;
                                         }
                                     }
@@ -776,20 +774,15 @@ class OptionsModel {
         this.options = {
             fontSize: '14px',
             chunkSize: 10,
-            spaceSize: 1,
+            chunkSeparation: 1,
             emptyFiller: ' ',
-            topIndexes: false,
-            lateralIndexes: true,
-            lateralIndexesGap: false,
-            lateralIndexStart: 0,
-            sidebarWidth: '2em',
-            oneLineSetting: false,
-            oneLineWidth: '300px',
+            indexesLocation: null,
+            wrapLine: false,
+            viewerWidth: '300px',
             consensusType: null,
-            consensusThreshold: 90,
-            consensusStartIndex: 1,
-            rowMarginBottom: '5px',
-            colorScheme: undefined
+            consensusDotThreshold: 90,
+            lineSeparation: '5px',
+            sequenceColor: undefined
         };
     }
     process(opt) {
@@ -809,18 +802,6 @@ class OptionsModel {
             // fontSize not set
             this.options.fontSize = '14px'; // default reset
         }
-        /** check input sidebarWidth */
-        if (opt && opt.sidebarWidth) {
-            const sidebarWidth = opt.sidebarWidth;
-            const sNum = +sidebarWidth.substr(0, sidebarWidth.length - 2);
-            const sUnit = sidebarWidth.substr(sidebarWidth.length - 2, 2);
-            if (isNaN(sNum) || (sUnit !== 'px' && sUnit !== 'vw' && sUnit !== 'em')) {
-                // wrong sidebarWidth format
-            }
-            else {
-                this.options.sidebarWidth = sidebarWidth;
-            }
-        }
         /** check input chunkSize */
         if (opt && opt.chunkSize) {
             const cSize = +opt.chunkSize;
@@ -832,53 +813,29 @@ class OptionsModel {
             }
         }
         /** check input spaceSize */
-        if (opt && opt.spaceSize) {
-            const cSize = +opt.spaceSize;
-            if (isNaN(cSize) || cSize < 0) {
-                // wrong spaceSize format
-            }
-            else {
-                this.options.spaceSize = cSize;
+        if (opt && opt.chunkSeparation) {
+            const chunkSeparation = +opt.chunkSeparation;
+            if (chunkSeparation >= 0) {
+                this.options.chunkSeparation = chunkSeparation;
             }
         }
         if (opt && opt.chunkSize == 0) {
             this.options.chunkSize = 1;
-            this.options.spaceSize = 0;
+            this.options.chunkSeparation = 0;
         }
-        /** check topIndexes value */
-        if (opt && opt.topIndexes) {
-            if (typeof opt.topIndexes !== 'boolean') {
+        /** check indexesLocation value */
+        if (opt && opt.indexesLocation) {
+            if (opt.indexesLocation == "top" || opt.indexesLocation == "lateral") {
+                this.options.indexesLocation = opt.indexesLocation;
+            }
+        }
+        /** check sequenceColor value */
+        if (opt && opt.sequenceColor) {
+            if (typeof opt.sequenceColor !== 'string') {
                 // wrong index type
             }
             else {
-                this.options.topIndexes = opt.topIndexes;
-            }
-        }
-        /** check lateralIndexes value */
-        if (opt && !opt.lateralIndexes) {
-            if (typeof opt.lateralIndexes !== 'boolean') {
-                // wrong index type
-            }
-            else {
-                this.options.lateralIndexes = opt.lateralIndexes;
-            }
-        }
-        /** check colorScheme value */
-        if (opt && opt.colorScheme) {
-            if (typeof opt.colorScheme !== 'string') {
-                // wrong index type
-            }
-            else {
-                this.options.colorScheme = opt.colorScheme;
-            }
-        }
-        /** check lateralIndexesGap value */
-        if (opt && opt.lateralIndexesGap) {
-            if (typeof opt.lateralIndexesGap !== 'boolean') {
-                // wrong index type
-            }
-            else {
-                this.options.lateralIndexesGap = opt.lateralIndexesGap;
+                this.options.sequenceColor = opt.sequenceColor;
             }
         }
         /** check consensusType value */
@@ -891,55 +848,43 @@ class OptionsModel {
             }
         }
         /** check consensusThreshold value */
-        if (opt && opt.consensusThreshold) {
-            if (typeof opt.consensusThreshold == 'number') {
-                this.options.consensusThreshold = opt.consensusThreshold;
-            }
-        }
-        /** check consensusStartIndex value */
-        if (opt && opt.consensusStartIndex) {
-            if (typeof opt.consensusStartIndex == 'number') {
-                this.options.consensusStartIndex = opt.consensusStartIndex;
+        if (opt && opt.consensusDotThreshold) {
+            if (typeof opt.consensusDotThreshold == 'number') {
+                this.options.consensusDotThreshold = opt.consensusDotThreshold;
             }
         }
         /** check rowMarginBottom value */
-        if (opt && opt.rowMarginBottom !== undefined) {
-            const rSize = opt.rowMarginBottom;
+        if (opt && opt.lineSeparation !== undefined) {
+            const rSize = opt.lineSeparation;
             const rNum = +rSize.substr(0, rSize.length - 2);
             const rUnit = rSize.substr(rSize.length - 2, 2);
             if (isNaN(rNum) || (rUnit !== 'px' && rUnit !== 'vw' && rUnit !== 'em')) {
-                // wrong rowMarginBottom format
+                // wrong lineSeparation format
             }
             else {
-                this.options.rowMarginBottom = rSize;
+                this.options.lineSeparation = rSize;
             }
         }
         else {
-            // rowMarginBottom not set
-            this.options.rowMarginBottom = '5px'; // default reset
+            // lineSeparation not set
+            this.options.lineSeparation = '5px'; // default reset
         }
         /** check oneLineSetting value */
-        if (opt && opt.oneLineSetting) {
-            if (typeof opt.oneLineSetting !== 'boolean' && opt.oneLineSetting) {
-                // wrong oneLineSetting format
+        if (opt && opt.wrapLine) {
+            if (typeof opt.wrapLine == 'boolean') {
+                this.options.wrapLine = opt.wrapLine;
             }
-            else {
-                this.options.oneLineSetting = opt.oneLineSetting;
-            }
-        }
-        else {
-            this.options.oneLineSetting = false;
         }
         /** check oneLineWidth */
-        if (opt && opt.oneLineWidth) {
-            const oneLineWidth = opt.oneLineWidth;
-            const olNum = +oneLineWidth.substr(0, oneLineWidth.length - 2);
-            const olUnit = oneLineWidth.substr(oneLineWidth.length - 2, 2);
+        if (opt && opt.viewerWidth) {
+            const viewerWidth = opt.viewerWidth;
+            const olNum = +viewerWidth.substr(0, viewerWidth.length - 2);
+            const olUnit = viewerWidth.substr(viewerWidth.length - 2, 2);
             if (isNaN(olNum) || (olUnit !== 'px' && olUnit !== 'vw' && olUnit !== 'em')) {
                 // wrong oneLineWidth format
             }
             else {
-                this.options.oneLineWidth = oneLineWidth;
+                this.options.viewerWidth = viewerWidth;
             }
         }
         return this.options;
@@ -1187,18 +1132,18 @@ class ProSeqViewer {
         let startIndexes;
         let tooltips;
         let data;
+        /** check and process parameters input */
+        inputs.options = this.params.process(inputs.options);
         /** check and consensus input  and global colorScheme */
         if (inputs.options) {
             [inputs.sequences, inputs.regions] = this.consensus.process(inputs.sequences, inputs.regions, inputs.options);
         }
-        /** check and process parameters input */
-        inputs.options = this.params.process(inputs.options);
         /** check and process patterns input */
         inputs.patterns = this.patterns.process(inputs.patterns, inputs.sequences);
         /** check and process colors input */
         inputs.regions = this.regions.process(inputs);
         /** check and process icons input */
-        let icons = this.icons.process(inputs.regions, inputs.sequences, inputs.iconsHtml, inputs.icons);
+        let icons = this.icons.process(inputs.regions, inputs.sequences, inputs.icons);
         /** check and process sequences input */
         data = this.rows.process(inputs.sequences, icons, inputs.regions, inputs.options);
         /** check and process labels input */
@@ -1210,13 +1155,13 @@ class ProSeqViewer {
         /** listen selection events */
         this.events.onRegionSelected();
     }
-    generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, fontSize, tooltips, data, rowMarginBottom, lateralIndexes) {
+    generateLabels(idx, labels, startIndexes, indexesLocation, chunkSize, fontSize, tooltips, data, lineSeparation) {
         let labelshtml = '';
         let labelsContainer = '';
         const noGapsLabels = [];
         if (labels.length > 0) {
-            if (topIndexes) {
-                labelshtml += `<span class="lbl-hidden" style="margin-bottom:${rowMarginBottom};"></span>`;
+            if (indexesLocation == 'top') {
+                labelshtml += `<span class="lbl-hidden" style="margin-bottom:${lineSeparation};"></span>`;
             }
             let flag;
             let count = -1;
@@ -1236,10 +1181,10 @@ class ProSeqViewer {
                     noGapsLabels[seqN] = '';
                     if (idx) {
                         // line with only icons, no need for index
-                        labelshtml += `<span class="lbl-hidden" style="margin-bottom:${rowMarginBottom}"><span class="lbl"> ${noGapsLabels[seqN]}</span></span>`;
+                        labelshtml += `<span class="lbl-hidden" style="margin-bottom:${lineSeparation}"><span class="lbl"> ${noGapsLabels[seqN]}</span></span>`;
                     }
                     else {
-                        labelshtml += `<span class="lbl-hidden" style="margin-bottom:${rowMarginBottom}"><span class="lbl"></span></span>`;
+                        labelshtml += `<span class="lbl-hidden" style="margin-bottom:${lineSeparation}"><span class="lbl"></span></span>`;
                     }
                 }
                 else {
@@ -1247,7 +1192,7 @@ class ProSeqViewer {
                     if (idx) {
                         if (!chunkSize) {
                             // lateral index regular
-                            labelshtml += `<span class="lbl-hidden" style="width: ${fontSize};margin-bottom:${rowMarginBottom}">
+                            labelshtml += `<span class="lbl-hidden" style="width: ${fontSize};margin-bottom:${lineSeparation}">
                             <span class="lbl" >${(startIndexes[count] - 1) + idx}</span></span>`;
                         }
                         else {
@@ -1259,17 +1204,17 @@ class ProSeqViewer {
                             }
                             // lateral index gap
                             noGapsLabels[seqN] = noGaps;
-                            labelshtml += `<span class="lbl-hidden" style="width:  ${fontSize};margin-bottom:${rowMarginBottom}">
+                            labelshtml += `<span class="lbl-hidden" style="width:  ${fontSize};margin-bottom:${lineSeparation}">
                             <span class="lbl" >${(startIndexes[count] - 1) + noGapsLabels[seqN]}</span></span>`;
                         }
                     }
                     else {
-                        labelshtml += `<span class="lbl-hidden" style="margin-bottom:${rowMarginBottom}"><span class="lbl">${labels[count]}${tooltips[count]}</span></span>`;
+                        labelshtml += `<span class="lbl-hidden" style="margin-bottom:${lineSeparation}"><span class="lbl">${labels[count]}${tooltips[count]}</span></span>`;
                     }
                 }
                 flag = false;
             }
-            if (lateralIndexes) {
+            if (indexesLocation == 'lateral') {
                 labelsContainer = `<span class="lblContainer" style="display: inline-block">${labelshtml}</span>`;
             }
             else {
@@ -1279,19 +1224,17 @@ class ProSeqViewer {
         }
         return labelsContainer;
     }
-    addTopIndexes(topIndexes, chunkSize, x, maxTop, rowMarginBottom) {
+    addTopIndexes(chunkSize, x, maxTop, rowMarginBottom) {
         let cells = '';
         // adding top indexes
-        if (topIndexes) {
-            let chunkTopIndex;
-            if (x % chunkSize === 0 && x <= maxTop) {
-                chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${x}</span>`;
-            }
-            else {
-                chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}">0</span>`;
-            }
-            cells += chunkTopIndex;
+        let chunkTopIndex;
+        if (x % chunkSize === 0 && x <= maxTop) {
+            chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${x}</span>`;
         }
+        else {
+            chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}">0</span>`;
+        }
+        cells += chunkTopIndex;
         return cells;
     }
     createGUI(data, labels, startIndexes, tooltips, options, labelsFlag) {
@@ -1302,13 +1245,11 @@ class ProSeqViewer {
         }
         const chunkSize = options.chunkSize;
         const fontSize = options.fontSize;
-        const spaceSize = options.spaceSize;
-        const topIndexes = options.topIndexes;
-        const lateralIndexes = options.lateralIndexes;
-        const lateralIndexesGap = options.lateralIndexesGap;
-        const oneLineSetting = options.oneLineSetting;
-        const oneLineWidth = options.oneLineWidth;
-        const rowMarginBottom = options.rowMarginBottom + ';';
+        const chunkSeparation = options.chunkSeparation;
+        const indexesLocation = options.indexesLocation;
+        const wrapLine = options.wrapLine;
+        const viewerWidth = options.viewerWidth;
+        const lineSeparation = options.lineSeparation + ';';
         const fNum = +fontSize.substr(0, fontSize.length - 2);
         const fUnit = fontSize.substr(fontSize.length - 2, 2);
         // maxIdx = length of the longest sequence
@@ -1329,7 +1270,7 @@ class ProSeqViewer {
             maxIdx += (chunkSize - (maxIdx % chunkSize)) % chunkSize;
         }
         // generate labels
-        const labelsContainer = this.generateLabels(false, labels, startIndexes, topIndexes, false, indexWidth, tooltips, data, rowMarginBottom, lateralIndexes);
+        const labelsContainer = this.generateLabels(false, labels, startIndexes, indexesLocation, false, indexWidth, tooltips, data, lineSeparation);
         let index = '';
         let cards = '';
         let cell;
@@ -1338,17 +1279,21 @@ class ProSeqViewer {
         let html = '';
         let idxNum = 0;
         let idx;
+        let cells = '';
         for (let x = 1; x <= maxIdx; x++) {
-            let cells = this.addTopIndexes(topIndexes, chunkSize, x, maxTop, rowMarginBottom);
+            if (indexesLocation == 'top') {
+                cells = this.addTopIndexes(chunkSize, x, maxTop, lineSeparation);
+            }
+            ;
             for (let y = 0; y < data.length; y++) {
                 entity = data[y][x];
-                style = 'font-size: 1em;display:block;height:1em;line-height:1em;margin-bottom:' + rowMarginBottom;
+                style = 'font-size: 1em;display:block;height:1em;line-height:1em;margin-bottom:' + lineSeparation;
                 if (y === data.length - 1) {
-                    style = 'font-size: 1em;display:block;line-height:1em;margin-bottom:' + rowMarginBottom;
+                    style = 'font-size: 1em;display:block;line-height:1em;margin-bottom:' + lineSeparation;
                 }
                 if (!entity) {
                     // emptyfiller
-                    style = 'font-size: 1em;display:block;color: rgba(0, 0, 0, 0);height:1em;line-height:1em;margin-bottom:' + rowMarginBottom;
+                    style = 'font-size: 1em;display:block;color: rgba(0, 0, 0, 0);height:1em;line-height:1em;margin-bottom:' + lineSeparation;
                     cell = `<span style="${style}">A</span>`; // mock char, this has to be done to have chunks all of the same length (last chunk can't be shorter)
                 }
                 else {
@@ -1371,29 +1316,29 @@ class ProSeqViewer {
             cells = '';
             if (chunkSize > 0 && x % chunkSize === 0) {
                 // considering the row of top indexes
-                if (topIndexes) {
+                if (indexesLocation == 'top') {
                 }
                 else {
                     idxNum += chunkSize; // lateral index (set only if top indexes missing)
                     idx = idxNum - (chunkSize - 1);
                 }
                 // adding labels
-                if (lateralIndexesGap && !topIndexes) {
-                    const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, false, indexWidth, false, data, rowMarginBottom, lateralIndexes);
-                    if (oneLineSetting || labels[0] === '') {
+                if (indexesLocation != 'top') {
+                    const gapsContainer = this.generateLabels(idx, labels, startIndexes, indexesLocation, false, indexWidth, false, data, lineSeparation);
+                    if (wrapLine || labels[0] === '') {
                         index = gapsContainer; // lateral number indexes + labels
                     }
                     else {
                         index = labelsContainer + gapsContainer; // lateral number indexes + labels
                     }
                 }
-                else if (!lateralIndexesGap && !topIndexes) {
-                    const gapsContainer = this.generateLabels(idx, labels, startIndexes, topIndexes, chunkSize, indexWidth, false, data, rowMarginBottom, lateralIndexes);
-                    if (oneLineSetting || !labelsFlag) {
+                else if (indexesLocation != 'top') {
+                    const gapsContainer = this.generateLabels(idx, labels, startIndexes, indexesLocation, chunkSize, indexWidth, false, data, lineSeparation);
+                    if (wrapLine || !labelsFlag) {
                         index = gapsContainer; // lateral number indexes + labels
                     }
                     else {
-                        if (lateralIndexes) {
+                        if (indexesLocation == 'lateral') {
                             index = labelsContainer + gapsContainer; // lateral number indexes + labels
                         }
                         else {
@@ -1407,13 +1352,13 @@ class ProSeqViewer {
                 index = `<div class="idx hidden">${index}</div>`;
                 style = `font-size: ${fontSize};`;
                 if (x !== maxIdx) {
-                    style += 'padding-right: ' + spaceSize + 'em;';
+                    style += 'padding-right: ' + chunkSeparation + 'em;';
                 }
                 else {
-                    style += 'margin-right: ' + spaceSize + 'em;';
+                    style += 'margin-right: ' + chunkSeparation + 'em;';
                 }
                 let chunk = '';
-                if (labelsFlag || options.consensusType || lateralIndexes) {
+                if (labelsFlag || options.consensusType || indexesLocation == 'lateral') {
                     chunk = `<div class="cnk" style="${style}">${index}<div class="crds">${cards}</div></div>`;
                 }
                 else {
@@ -1424,9 +1369,9 @@ class ProSeqViewer {
                 html += chunk;
             }
         }
-        if (oneLineSetting) {
+        if (wrapLine) {
             sqvBody.innerHTML = `<div class="root" style="display: flex"><div style="${style}">${labelsContainer}</div>
-                        <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;width:${oneLineWidth}"> ${html}</div></div>`;
+                        <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;width:${viewerWidth}"> ${html}</div></div>`;
         }
         else {
             sqvBody.innerHTML = `<div class="root">${html}</div>`;
@@ -1450,9 +1395,6 @@ class ProSeqViewer {
                             return;
                         }
                     }
-                    // if (chunks[i].getBoundingClientRect().top == 0) {
-                    //   newTop = chunks[i].getBoundingClientRect().height
-                    // }
                     if (newTop > oldTop) {
                         chunks[i].firstElementChild.className = 'idx';
                         oldTop = newTop;
@@ -1515,6 +1457,7 @@ class RowsModel {
                         continue;
                     }
                     const positions = colors_model_1.ColorsModel.getPositions(coloring, rowNum);
+                    // positions = start, end, target (bgcolor || fgcolor)
                     if (positions.length > 0) {
                         for (const e of positions) {
                             for (let i = e.start; i <= e.end; i++) {
@@ -1544,12 +1487,12 @@ class RowsModel {
         return allData;
     }
     process(sequences, icons, regions, opt) {
-        // check and set global colorScheme
-        if (opt && opt.colorScheme) {
+        // check and set global sequenceColor
+        if (opt && opt.sequenceColor) {
             // @ts-ignore
             for (const sequence of sequences) {
-                if (!sequence.colorScheme) {
-                    sequence.colorScheme = opt.colorScheme;
+                if (!sequence.sequenceColor) {
+                    sequence.sequenceColor = opt.sequenceColor;
                 }
             }
         }

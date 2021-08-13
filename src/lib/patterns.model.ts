@@ -1,3 +1,4 @@
+
 export class PatternsModel {
 
   // find index of matched regex positions and create array of regions with color

@@ -2,7 +2,7 @@ export interface Sequences {
   sequence: string,
   id?: number,
   label?: string,
-  colorScheme?: string,
+  sequenceColor?: string,
   labelTooltip?: string,
   startIndex?: number
 }
@@ -37,44 +37,23 @@ export interface Icons {
 
 export interface Options {
   fontSize?: string,
-
   chunkSize?: number, // number of chunk letters
-  spaceSize?: number, // space between chunks TODO rename into chunkSeparation
-  oneLineWidth?: string, // TODO rename to sidebarWidth
-
-  // indexesLocation: string,  // "top" / "lateral" / "both"
-  topIndexes?: boolean,  // TODO test if possibile to have both lateral and top indexes, otherwise drop one of the two options
-  lateralIndexes?: boolean,  // TODO see comment above
-
-  consensusStartIndex?: number,  // TODO check if possible to remove
-  lateralIndexesGap?: boolean, // TODO check if possible to remove
-
-  oneLineSetting?: boolean,  // TODO rename to wrapLine
-  rowMarginBottom?: string,  // TODO rename to lineSeparation
+  chunkSeparation?: number, // space between chunks
+  sidebarWidth?: string,
+  indexesLocation?: string, // "top" / "lateral"
+  wrapLine?: boolean,
+  lineSeparation?: string,
 
   // TODO refactor as appropriate
-  // consensusColorIdentity: string | {}, // {50: ["bg_color", "fg_color"]},
-  // consensusColorMapping: string | {}, // {G: ["+", "bg_color", "fg_color"]}
-  // consensusDotThreshold: number,
-  // sequenceColor?: string | {},
-  // sequenceColorMatrix?: string | {}
+  // sequenceColorMatrix?: string | {} <-- blosum&co
+  // consensusColorIdentity: string | {}, // {50: ["bg_color", "fg_color"]}, <-- consensusIdentical
+  // consensusColorMapping: string | {}, // {G: ["+", "bg_color", "fg_color"]} <-- consensusPhysical
+
 // TODO refactor as appropriate, see above
-  colorScheme?: string,
+  sequenceColor?: string | {}, // colorscheme, introduce option for custom input
   consensusType?: string,
-  consensusThreshold?: number
+  consensusDotThreshold?: number
 
-}
-
-// TODO check whether it is necessary or not
-export interface IconsHtml {
-  id: number,
-  lollipop?: string,
-  arrowLeft?: number,
-  arrowRight?: string,
-  strand?: string,
-  noSecondary?: string,
-  helix?: string,
-  turn?: string
 }
 
 export interface Input {
@@ -83,5 +62,4 @@ export interface Input {
   patterns?: Array<Patterns>,
   icons?: Array<Icons>,
   options?: Options,
-  iconsHtml?: Array<IconsHtml> // TODO maybe remove
 }

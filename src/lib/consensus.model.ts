@@ -1,5 +1,4 @@
 import {Palettes} from './palettes';
-import {start} from "repl";
 
 export class ConsensusModel {
 
@@ -32,7 +31,7 @@ export class ConsensusModel {
     return consensusInfo;
   }
 
-  static createConsensus(type, consensus, consensus2, sequences, regions, threshold, startIndex) {
+  static createConsensus(type, consensus, consensus2, sequences, regions, threshold) {
 
 
     if (threshold < 50) {
@@ -100,7 +99,7 @@ export class ConsensusModel {
       consensusSequence += maxLetter;
     }
 
-    sequences.push({id, sequence: consensusSequence, label, startIndex});
+    sequences.push({id, sequence: consensusSequence, label});
 
     return [sequences, regions];
   }
@@ -156,7 +155,7 @@ process(sequences, regions, options) {
       }
     }
 
-    if (options.colorScheme === 'blosum62') {
+    if (options.sequenceColor === 'blosum62') {
         regions = [];
         sequences.sort( (a, b) => a.id - b.id);
 
@@ -190,11 +189,11 @@ process(sequences, regions, options) {
 
         }
 
-      } else if (options.colorScheme) {
+      } else if (options.sequenceColor) {
       regions = [];
       for (const sequence of sequences) {
-        sequence.colorScheme = options.colorScheme;
-        regions.push({sequenceId: sequence.id, start:  1, end: sequence.sequence.length, colorScheme: options.colorScheme});
+        sequence.sequenceColor = options.sequenceColor;
+        regions.push({sequenceId: sequence.id, start:  1, end: sequence.sequence.length, sequenceColor: options.sequenceColor});
       }
     }
 
@@ -203,13 +202,13 @@ process(sequences, regions, options) {
     switch (options.consensusType) {
       case 'identity': {
         consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences);
-        [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusThreshold, options.consensusStartIndex);
+        [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusDotThreshold);
         break;
       }
       case 'physical': {
         consensusInfoPhysical = ConsensusModel.setConsensusInfo('physical', sequences);
         if (!consensusInfoIdentity) { consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences); }
-        [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusThreshold, options.consensusStartIndex);
+        [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusDotThreshold);
         break;
       }
     }

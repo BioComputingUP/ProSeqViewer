@@ -2,7 +2,7 @@ import {Icons} from './icons';
 
 export class IconsModel {
 
-  process(regions, sequences, iconsHtml, iconsPaths) {
+  process(regions, sequences, iconsPaths) {
     const rows = {};
     if (regions && sequences) {
       for (const seq of sequences) {
@@ -56,10 +56,8 @@ export class IconsModel {
                       break;
                     }
                     default: {
-                      // customizable icons
-                      if (iconsHtml && iconsHtml[reg.icon]) {
-                        icon = iconsHtml[reg.icon];
-                      }
+                      // customizable icons (svg)
+                        icon = reg.icon;
                       break;
                     }
                   }

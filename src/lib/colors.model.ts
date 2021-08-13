@@ -5,7 +5,7 @@ interface InpColor {
   color?: string;
   start: number;
   end: number;
-  colorScheme?: string;
+  sequenceColor?: string;
 }
 
 /** Output Colors */
@@ -66,29 +66,29 @@ export class ColorsModel {
       allInputs.regions = [];
     }
 
-    if (allInputs.options && !allInputs.options.colorScheme) {
-      const colorSchemeRegions = [];
+    if (allInputs.options && !allInputs.options.sequenceColor) {
+      const sequenceColorRegions = [];
       for (const sequence of allInputs.sequences) {
-        if (sequence.colorScheme) {
+        if (sequence.sequenceColor) {
           // @ts-ignore
-          colorSchemeRegions.push({sequenceId: sequence.id, start: 1, end: sequence.sequence.length, colorScheme: sequence.colorScheme});
+          csequenceColorRegions.push({sequenceId: sequence.id, start: 1, end: sequence.sequence.length, sequenceColor: sequence.sequenceColor});
         }
       }
       for (const reg of allInputs.regions) {
         if (!reg.backgroundColor && reg.sequenceId !== -99999999999998 ) {
-          colorSchemeRegions.push(reg);
+          sequenceColorRegions.push(reg);
         }
       }
 
-      if (colorSchemeRegions.length > 0) {
-        allInputs.regions = colorSchemeRegions;
+      if (sequenceColorRegions.length > 0) {
+        allInputs.regions = sequenceColorRegions;
       }
     }
 
     const allRegions = Array.prototype.concat(allInputs.icons, allInputs.regions, allInputs.patterns); // ordering
     let newRegions = this.fixMissingIds(allRegions, allInputs.sequences);
     newRegions = this.transformInput(allRegions, newRegions, allInputs.sequences, allInputs.options);
-    this.transformColors(allInputs.options.colorScheme);
+    this.transformColors(allInputs.options.sequenceColor);
     return newRegions;
   }
 
@@ -105,28 +105,28 @@ export class ColorsModel {
     if (!globalColor) {
       for (const seq of sequences) {
 
-        let reg = {sequenceId: seq.id, backgroundColor: '', start: 1, end: seq.sequence.length, colorScheme: ''};
-        if (seq.colorScheme) {
+        let reg = {sequenceId: seq.id, backgroundColor: '', start: 1, end: seq.sequence.length, sequenceColor: ''};
+        if (seq.sequenceColor) {
 
-          reg.backgroundColor = seq.colorScheme;
-          reg.colorScheme = seq.colorScheme;
-          info = this.setColorscheme(reg, seq);
+          reg.backgroundColor = seq.sequenceColor;
+          reg.sequenceColor = seq.sequenceColor;
+          info = this.setSequenceColor(reg, seq);
         }
       }
     }
 
-    // overwrite region color if colorscheme is set
+    // overwrite region color if sequenceColor is set
     // @ts-ignore
     for (const reg of newRegions) {
 
-      let colorScheme;
+      let sequenceColor;
       if (reg.icon) { continue; }
       if (sequences.find(x => x.id === reg.sequenceId)) {
 
-        colorScheme = sequences.find(x => x.id === reg.sequenceId).colorScheme;
-        if (colorScheme && !globalColor) {
-          // Colorscheme is set. Cannot set backgroundColor
-          reg.colorScheme = colorScheme; }
+        sequenceColor = sequences.find(x => x.id === reg.sequenceId).sequenceColor;
+        if (sequenceColor && !globalColor) {
+          // sequenceColor is set. Cannot set backgroundColor
+          reg.sequenceColor = sequenceColor; }
         }
 
 
@@ -137,16 +137,16 @@ export class ColorsModel {
 
       ColorsModel.palette[info.type][info.sequenceId].positions
             .push({start: reg.start, end: reg.end, target: info.letterStyle});
-      if (colorScheme && colorScheme.includes('binary')) {
+      if (sequenceColor && sequenceColor.includes('binary')) {
 
         // @ts-ignore
-        ColorsModel.palette[info.type].binaryColors = this.getBinaryColors(colorScheme);
+        ColorsModel.palette[info.type].binaryColors = this.getBinaryColors(sequenceColor);
       }
       }
     return newRegions;
   }
 
-  private setColorscheme(reg, seq) {
+  private setSequenceColor(reg, seq) {
     let info;
 
     info = this.processColor(reg);
@@ -154,9 +154,9 @@ export class ColorsModel {
     ColorsModel.palette[info.type][info.sequenceId].positions
       .push({start: reg.start, end: reg.end, target: info.letterStyle});
 
-    if (seq.colorScheme.includes('binary')) {
+    if (seq.sequenceColor.includes('binary')) {
       // @ts-ignore
-      ColorsModel.palette[info.type].binaryColors = this.getBinaryColors(seq.colorScheme);
+      ColorsModel.palette[info.type].binaryColors = this.getBinaryColors(seq.sequenceColor);
     }
     return info;
   }
@@ -184,7 +184,7 @@ export class ColorsModel {
     return newRegions;
   }
 
-  private transformColors(colorscheme) {
+  private transformColors(sequenceColor) {
 
     let arrColors;
     let n;
@@ -241,14 +241,14 @@ export class ColorsModel {
           }
           break;
         }
-        case colorscheme: {
+        case sequenceColor: {
           // tslint:disable-next-line:forin
           for (const row in ColorsModel.palette[type]) {
             c = ColorsModel.palette[type][row];
             if (c.positions.length > 0) {
 
               for (const pos of c.positions) {
-                pos.backgroundColor = colorscheme;
+                pos.backgroundColor = sequenceColor;
               }
             }
           }
@@ -281,7 +281,7 @@ export class ColorsModel {
     }
 
     // define color or palette
-    if (e.colorScheme) { result.type = e.colorScheme; }
+    if (e.sequenceColor) { result.type = e.sequenceColor; }
 
 
     if (result.type.includes('binary')) { result.type = 'binary'; }

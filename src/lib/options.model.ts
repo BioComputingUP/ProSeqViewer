@@ -3,20 +3,15 @@ export class OptionsModel {
   options =  {
     fontSize: '14px',
     chunkSize: 10,
-    spaceSize: 1, // relative to fontSize
-    emptyFiller: ' ', // fills gap at the end of the MSA sequences // TODO remove
-    topIndexes: false,
-    lateralIndexes: true,
-    lateralIndexesGap: false,
-    lateralIndexStart: 0,
-    sidebarWidth: '2em',
-    oneLineSetting: false,
-    oneLineWidth: '300px',
+    chunkSeparation: 1, // relative to fontSize
+    emptyFiller: ' ', // fills gap at the end of the MSA sequences
+    indexesLocation: null,
+    wrapLine: false,
+    viewerWidth: '300px',
     consensusType: null,
-    consensusThreshold: 90,
-    consensusStartIndex: 1,
-    rowMarginBottom: '5px',
-    colorScheme: undefined
+    consensusDotThreshold: 90,
+    lineSeparation: '5px',
+    sequenceColor: undefined
   };
 
   process(opt) {
@@ -37,20 +32,6 @@ export class OptionsModel {
       this.options.fontSize = '14px'; // default reset
     }
 
-
-    /** check input sidebarWidth */
-    if (opt && opt.sidebarWidth) {
-      const sidebarWidth = opt.sidebarWidth;
-      const sNum = +sidebarWidth.substr(0, sidebarWidth.length - 2);
-      const sUnit = sidebarWidth.substr(sidebarWidth.length - 2, 2);
-
-      if (isNaN(sNum) || (sUnit !== 'px' && sUnit !== 'vw' && sUnit !== 'em')) {
-        // wrong sidebarWidth format
-      } else {
-        this.options.sidebarWidth = sidebarWidth;
-      }
-    }
-
     /** check input chunkSize */
     if (opt && opt.chunkSize) {
 
@@ -63,54 +44,32 @@ export class OptionsModel {
     }
 
     /** check input spaceSize */
-    if (opt && opt.spaceSize) {
+    if (opt && opt.chunkSeparation) {
 
-      const cSize = +opt.spaceSize;
-      if (isNaN(cSize) || cSize < 0) {
-        // wrong spaceSize format
-      } else {
-        this.options.spaceSize = cSize;
+      const chunkSeparation = +opt.chunkSeparation;
+      if (chunkSeparation >= 0) {
+        this.options.chunkSeparation = chunkSeparation;
       }
     }
 
     if (opt && opt.chunkSize == 0) {
       this.options.chunkSize = 1;
-      this.options.spaceSize = 0;
+      this.options.chunkSeparation = 0;
     }
 
-    /** check topIndexes value */
-    if (opt && opt.topIndexes) {
-      if (typeof opt.topIndexes !== 'boolean') {
-        // wrong index type
-      } else {
-        this.options.topIndexes = opt.topIndexes;
+    /** check indexesLocation value */
+    if (opt && opt.indexesLocation) {
+      if (opt.indexesLocation == "top" || opt.indexesLocation == "lateral") {
+        this.options.indexesLocation = opt.indexesLocation;
       }
     }
 
-    /** check lateralIndexes value */
-    if (opt && !opt.lateralIndexes) {
-      if (typeof opt.lateralIndexes !== 'boolean') {
+    /** check sequenceColor value */
+    if (opt && opt.sequenceColor) {
+      if (typeof opt.sequenceColor !== 'string') {
         // wrong index type
       } else {
-        this.options.lateralIndexes = opt.lateralIndexes;
-      }
-    }
-
-    /** check colorScheme value */
-    if (opt && opt.colorScheme) {
-      if (typeof opt.colorScheme !== 'string') {
-        // wrong index type
-      } else {
-        this.options.colorScheme = opt.colorScheme;
-      }
-    }
-
-    /** check lateralIndexesGap value */
-    if (opt && opt.lateralIndexesGap) {
-      if (typeof opt.lateralIndexesGap !== 'boolean') {
-        // wrong index type
-      } else {
-        this.options.lateralIndexesGap = opt.lateralIndexesGap;
+        this.options.sequenceColor = opt.sequenceColor;
       }
     }
 
@@ -125,56 +84,45 @@ export class OptionsModel {
     }
 
     /** check consensusThreshold value */
-    if (opt && opt.consensusThreshold) {
-      if (typeof opt.consensusThreshold == 'number') {
-        this.options.consensusThreshold = opt.consensusThreshold;
-      }
-    }
-
-    /** check consensusStartIndex value */
-    if (opt && opt.consensusStartIndex) {
-      if (typeof opt.consensusStartIndex == 'number') {
-        this.options.consensusStartIndex = opt.consensusStartIndex;
+    if (opt && opt.consensusDotThreshold) {
+      if (typeof opt.consensusDotThreshold == 'number') {
+        this.options.consensusDotThreshold = opt.consensusDotThreshold;
       }
     }
 
     /** check rowMarginBottom value */
-    if (opt && opt.rowMarginBottom !== undefined) {
-      const rSize = opt.rowMarginBottom;
+    if (opt && opt.lineSeparation !== undefined) {
+      const rSize = opt.lineSeparation;
       const rNum = +rSize.substr(0, rSize.length - 2);
       const rUnit = rSize.substr(rSize.length - 2, 2);
 
       if (isNaN(rNum) || (rUnit !== 'px' && rUnit !== 'vw' && rUnit !== 'em')) {
-        // wrong rowMarginBottom format
+        // wrong lineSeparation format
       } else {
-        this.options.rowMarginBottom = rSize;
+        this.options.lineSeparation = rSize;
       }
     } else {
-      // rowMarginBottom not set
-      this.options.rowMarginBottom = '5px'; // default reset
+      // lineSeparation not set
+      this.options.lineSeparation = '5px'; // default reset
     }
 
     /** check oneLineSetting value */
-    if (opt && opt.oneLineSetting) {
-      if (typeof opt.oneLineSetting !== 'boolean' && opt.oneLineSetting) {
-        // wrong oneLineSetting format
-      } else {
-        this.options.oneLineSetting = opt.oneLineSetting;
+    if (opt && opt.wrapLine) {
+      if (typeof opt.wrapLine == 'boolean') {
+        this.options.wrapLine = opt.wrapLine;
       }
-    } else {
-      this.options.oneLineSetting = false;
     }
 
     /** check oneLineWidth */
-    if (opt && opt.oneLineWidth) {
-      const oneLineWidth = opt.oneLineWidth;
-      const olNum = +oneLineWidth.substr(0, oneLineWidth.length - 2);
-      const olUnit = oneLineWidth.substr(oneLineWidth.length - 2, 2);
+    if (opt && opt.viewerWidth) {
+      const viewerWidth = opt.viewerWidth;
+      const olNum = +viewerWidth.substr(0, viewerWidth.length - 2);
+      const olUnit = viewerWidth.substr(viewerWidth.length - 2, 2);
 
       if (isNaN(olNum) || (olUnit !== 'px' && olUnit !== 'vw' && olUnit !== 'em')) {
        // wrong oneLineWidth format
       } else {
-        this.options.oneLineWidth = oneLineWidth;
+        this.options.viewerWidth = viewerWidth;
       }
     }
     return this.options;

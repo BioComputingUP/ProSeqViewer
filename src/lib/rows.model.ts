@@ -41,9 +41,8 @@ export class RowsModel {
           }
 
           const positions = ColorsModel.getPositions(coloring, rowNum);
-
+          // positions = start, end, target (bgcolor || fgcolor)
           if (positions.length > 0) {
-
             for (const e of positions) {
               for (let i = e.start; i <= e.end; i++) {
                 if (!data[i]) {
@@ -72,12 +71,12 @@ export class RowsModel {
 
   process(sequences, icons, regions, opt) {
 
-    // check and set global colorScheme
-    if (opt && opt.colorScheme) {
+    // check and set global sequenceColor
+    if (opt && opt.sequenceColor) {
       // @ts-ignore
       for (const sequence of sequences) {
-        if (!sequence.colorScheme) {
-          sequence.colorScheme = opt.colorScheme;
+        if (!sequence.sequenceColor) {
+          sequence.sequenceColor = opt.sequenceColor;
         }
       }
     }
