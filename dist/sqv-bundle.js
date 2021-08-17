@@ -499,10 +499,7 @@ class ConsensusModel {
             steps.push(+key); // 42
         }
         steps = steps.sort((a, b) => a < b ? 1 : a > b ? -1 : 0);
-        console.log(steps);
         for (const step of steps) {
-            console.log(frequency);
-            console.log(step);
             if (frequency >= step) {
                 backgroundColor = finalPalette[step][0];
                 color = finalPalette[step][1];
@@ -557,13 +554,15 @@ class ConsensusModel {
             if (options.sequenceColorMatrixPalette) {
                 palette = options.sequenceColorMatrixPalette;
             }
+            console.log(palette);
             let key;
             // tslint:disable-next-line:prefer-for-of
             for (let i = 0; i < min.sequence.length; i++) {
                 for (const sequence of sequences) {
                     if (sequence.id === min.id) {
                         key = sequence.sequence[i] + sequence.sequence[i];
-                        if (palette[key]) {
+                        if (key in palette) {
+                            console.log(palette[key]);
                             regions.push({ sequenceId: sequence.id, start: i + 1, end: i + 1,
                                 backgroundColor: palette[key].backgroundColor });
                         }
@@ -571,7 +570,8 @@ class ConsensusModel {
                     else {
                         // score with first sequence
                         key = sequence.sequence[i] + min.sequence[i];
-                        if (palette[key]) {
+                        if (key in palette) {
+                            console.log(palette[key]);
                             regions.push({ sequenceId: sequence.id, start: i + 1, end: i + 1,
                                 backgroundColor: palette[key].backgroundColor });
                         }
@@ -591,6 +591,7 @@ class ConsensusModel {
                 regions.push({ sequenceId: sequence.id, start: 1, end: sequence.sequence.length, sequenceColor: options.sequenceColor });
             }
         }
+        console.log(regions);
         let consensusInfoIdentity;
         let consensusInfoPhysical;
         if (options.consensusColorIdentity) {
@@ -843,7 +844,7 @@ class OptionsModel {
         }
         /** check sequenceColor value */
         if (opt && opt.sequenceColorMatrix) {
-            if (typeof opt.sequenceColor !== 'string') {
+            if (typeof opt.sequenceColorMatrix !== 'string') {
                 this.options.sequenceColorMatrix = 'custom';
                 this.options.sequenceColorMatrixPalette = opt.sequenceColorMatrix;
             }

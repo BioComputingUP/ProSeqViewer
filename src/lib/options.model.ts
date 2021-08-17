@@ -81,7 +81,7 @@ export class OptionsModel {
 
     /** check sequenceColor value */
     if (opt && opt.sequenceColorMatrix) {
-      if (typeof opt.sequenceColor !== 'string' ) {
+      if (typeof opt.sequenceColorMatrix !== 'string' ) {
         this.options.sequenceColorMatrix = 'custom';
         this.options.sequenceColorMatrixPalette = opt.sequenceColorMatrix;
       } else {

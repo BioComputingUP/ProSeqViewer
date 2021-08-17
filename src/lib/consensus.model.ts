@@ -182,6 +182,7 @@ process(sequences, regions, options) {
         if (options.sequenceColorMatrixPalette) {
           palette = options.sequenceColorMatrixPalette
         }
+        console.log(palette)
         let key;
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < min.sequence.length; i++) {
@@ -189,7 +190,8 @@ process(sequences, regions, options) {
 
             if (sequence.id === min.id) {
               key = sequence.sequence[i] + sequence.sequence[i]
-              if (palette[key]) {
+              if (key in palette) {
+                console.log(palette[key])
                 regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
                   backgroundColor: palette[key].backgroundColor});
               }
@@ -198,8 +200,8 @@ process(sequences, regions, options) {
 
               // score with first sequence
               key = sequence.sequence[i] + min.sequence[i]
-              if (palette[key]) {
-
+              if (key in palette) {
+                console.log(palette[key])
                 regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
                   backgroundColor: palette[key].backgroundColor});
               } else if (palette[min.sequence[i] + sequence.sequence[i]]) {
@@ -220,7 +222,7 @@ process(sequences, regions, options) {
         regions.push({sequenceId: sequence.id, start:  1, end: sequence.sequence.length, sequenceColor: options.sequenceColor});
       }
     }
-
+    console.log(regions)
     let consensusInfoIdentity;
     let consensusInfoPhysical;
 
