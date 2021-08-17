@@ -42,18 +42,14 @@ export interface Options {
   sidebarWidth?: string,
   indexesLocation?: string, // "top" / "lateral"
   wrapLine?: boolean,
-  lineSeparation?: string,
+  lineSeparation?: string, // margin bottom of  horizontal rows
 
-  // TODO refactor as appropriate
-  // sequenceColorMatrix?: string | {} <-- blosum&co
-  // consensusColorIdentity: string | {}, // {50: ["bg_color", "fg_color"]}, <-- consensusIdentical
-  // consensusColorMapping: string | {}, // {G: ["+", "bg_color", "fg_color"]} <-- consensusPhysical
-
-// TODO refactor as appropriate, see above
   sequenceColor?: string | {}, // colorscheme, introduce option for custom input
-  consensusType?: string,
   consensusDotThreshold?: number
+  sequenceColorMatrix?: string | {} // blosum&co
 
+  consensusColorIdentity?: string | {}, // {50: ["bg_color", "fg_color"]}, <-- consensusIdentical
+  consensusColorMapping?: string | {}, // {G: ["+", "bg_color", "fg_color"]} <-- consensusPhysical
 }
 
 export interface Input {

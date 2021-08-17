@@ -15,7 +15,9 @@ export class ConsensusModel {
           let letter = sequence.sequence[i];
           if (type === 'physical') {
             if (sequence.id === idIdentity) { continue; }
-            letter = Palettes.letterTransform[letter];
+            if (letter in Palettes.consensusAaLesk) {
+              letter = Palettes.consensusAaLesk[letter][0];
+            }
           } else {
             if (sequence.id === idPhysical) { continue; }
           }
@@ -31,7 +33,7 @@ export class ConsensusModel {
     return consensusInfo;
   }
 
-  static createConsensus(type, consensus, consensus2, sequences, regions, threshold) {
+  static createConsensus(type, consensus, consensus2, sequences, regions, threshold, palette) {
 
 
     if (threshold < 50) {
@@ -80,22 +82,22 @@ export class ConsensusModel {
         const frequencyId = (maxIndexId / sequences.length) * 100;
         if (frequencyId >= threshold) {
           maxLetter = maxLetterId;
-          [backgroundColor, color] = ConsensusModel.setColorsIdentity(frequencyId);
+          [backgroundColor, color] = ConsensusModel.setColorsIdentity(frequencyId, palette, 'physical');
         } else {
+
           if (frequency >= threshold) {
-            [backgroundColor, color] = ConsensusModel.setColorsPhysical(maxLetter);
+            [backgroundColor, color] = ConsensusModel.setColorsPhysical(maxLetter, palette);
           }
         }
 
       } else {
-        [backgroundColor, color] = ConsensusModel.setColorsIdentity(frequency);
+        [backgroundColor, color] = ConsensusModel.setColorsIdentity(frequency, palette, 'identity');
       }
       if (frequency < threshold) {
         maxLetter = '.';
       }
       // + 1 because residues start from 1 and not 0
       regions.push({start: +column + 1, end: +column + 1, sequenceId: id, backgroundColor, color });
-
       consensusSequence += maxLetter;
     }
 
@@ -104,42 +106,58 @@ export class ConsensusModel {
     return [sequences, regions];
   }
 
-  static setColorsIdentity(frequency) {
+  static setColorsIdentity(frequency, palette, flag) {
     let backgroundColor;
     let color;
-    const step1 = 100;
-    const step2 = 70;
-    const step3 = 40;
-    const step4 = 10;
-    const step5 = 0;
-    if (frequency === step1) {
-      backgroundColor = Palettes.consensus[step1].backgroundColor;
-      color = Palettes.consensus[step1].color;
-    } else if (frequency > step2) {
-      backgroundColor = Palettes.consensus[step2].backgroundColor;
-      color = Palettes.consensus[step2].color;
-    }  else if (frequency > step3) {
-      backgroundColor = Palettes.consensus[step3].backgroundColor;
-      color = Palettes.consensus[step3].color;
-    }  else if (frequency > step4) {
-      backgroundColor = Palettes.consensus[step4].backgroundColor;
-      color = Palettes.consensus[step4].color;
+    let finalPalette;
+
+    if (palette && typeof palette !== 'string' && flag == 'identity') {
+      finalPalette = palette;
     } else {
-      backgroundColor = Palettes.consensus[step5].backgroundColor;
-      color = Palettes.consensus[step5].color;
+      finalPalette = Palettes.consensusLevelsIdentity;
+    }
+    let steps = [];
+    for (let key in finalPalette) {
+        steps.push(+key); // 42
+    }
+    steps = steps.sort((a,b) =>  a < b ? 1 : a > b ? -1 : 0)
+
+    for (const step of steps) {
+
+      if (frequency >= step) {
+        backgroundColor = finalPalette[step][0];
+        color = finalPalette[step][1];
+        break;
+      }
     }
     return [backgroundColor, color];
   }
 
-  static setColorsPhysical(letter) {
+  static setColorsPhysical(letter, palette) {
+    let finalPalette;
     let backgroundColor;
     let color;
-    backgroundColor = Palettes.physicalProp[letter].backgroundColor;
-    color = Palettes.physicalProp[letter].color;
+
+    if (palette && typeof palette !== 'string') {
+      finalPalette = palette;
+    } else {
+      finalPalette = Palettes.consensusAaLesk;
+    }
+    console.log(finalPalette)
+
+    for (const el in finalPalette) {
+
+      if (finalPalette[el][0] == letter) {
+        backgroundColor = finalPalette[el][1];
+        color = finalPalette[el][2];
+        break;
+      }
+    }
     return [backgroundColor, color];
   }
 
 process(sequences, regions, options) {
+    if (!regions) { regions = []}
     let maxIdx = 0;
 
     for (const row of sequences) {
@@ -155,35 +173,41 @@ process(sequences, regions, options) {
       }
     }
 
-    if (options.sequenceColor === 'blosum62') {
+    if (options.sequenceColorMatrix) {
         regions = [];
         sequences.sort( (a, b) => a.id - b.id);
-
         const min = sequences[0];
 
+        let palette = Palettes.substitutionMatrixBlosum;
+        if (options.sequenceColorMatrixPalette) {
+          palette = options.sequenceColorMatrixPalette
+        }
+        let key;
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < min.sequence.length; i++) {
           for (const sequence of sequences) {
-            let score;
+
             if (sequence.id === min.id) {
-              score = Palettes.blosum62[sequence.sequence[i] + sequence.sequence[i]];
-              // score with itself
-
-              if (!score) { score = '-'; }
-              regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
-                backgroundColor: Palettes.blosum[score].backgroundColor});
-
-            } else {
-              // score with first sequence
-              if (Palettes.blosum62[sequence.sequence[i] + min.sequence[i]]) {
-                score = Palettes.blosum62[sequence.sequence[i] + min.sequence[i]];
-              } else {
-                score = Palettes.blosum62[min.sequence[i] + sequence.sequence[i]];
+              key = sequence.sequence[i] + sequence.sequence[i]
+              if (palette[key]) {
+                regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
+                  backgroundColor: palette[key].backgroundColor});
               }
 
-              if (!score) { score = '-'; }
-              regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
-                backgroundColor: Palettes.blosum[score].backgroundColor});
+            } else {
+
+              // score with first sequence
+              key = sequence.sequence[i] + min.sequence[i]
+              if (palette[key]) {
+
+                regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
+                  backgroundColor: palette[key].backgroundColor});
+              } else if (palette[min.sequence[i] + sequence.sequence[i]]) {
+                key = min.sequence[i] + sequence.sequence[i]
+                regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
+                  backgroundColor: palette[key].backgroundColor});
+              }
+
             }
           }
 
@@ -199,18 +223,14 @@ process(sequences, regions, options) {
 
     let consensusInfoIdentity;
     let consensusInfoPhysical;
-    switch (options.consensusType) {
-      case 'identity': {
+
+      if (options.consensusColorIdentity) {
         consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences);
-        [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusDotThreshold);
-        break;
-      }
-      case 'physical': {
+        [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusDotThreshold, options.consensusColorIdentity);
+      } else if (options.consensusColorMapping) {
         consensusInfoPhysical = ConsensusModel.setConsensusInfo('physical', sequences);
         if (!consensusInfoIdentity) { consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences); }
-        [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusDotThreshold);
-        break;
-      }
+        [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusDotThreshold, options.consensusColorMapping);
     }
 
     return [sequences, regions];

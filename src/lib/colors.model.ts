@@ -88,7 +88,7 @@ export class ColorsModel {
     const allRegions = Array.prototype.concat(allInputs.icons, allInputs.regions, allInputs.patterns); // ordering
     let newRegions = this.fixMissingIds(allRegions, allInputs.sequences);
     newRegions = this.transformInput(allRegions, newRegions, allInputs.sequences, allInputs.options);
-    this.transformColors(allInputs.options.sequenceColor);
+    this.transformColors(allInputs.options);
     return newRegions;
   }
 
@@ -184,8 +184,8 @@ export class ColorsModel {
     return newRegions;
   }
 
-  private transformColors(sequenceColor) {
-
+  private transformColors(opt) {
+    const sequenceColor = opt.sequenceColor
     let arrColors;
     let n;
     let c;
@@ -223,27 +223,11 @@ export class ColorsModel {
           }
           break;
         }
-        case 'custom': {
-          // tslint:disable-next-line:forin
-          for (const row in ColorsModel.palette[type]) {
-            c = ColorsModel.palette[type][row];
-
-            // tslint:disable-next-line:forin
-            for (const e in c.positions) {
-              t = c.positions[e];
-              if (t.backgroundColor) {
-                t.backgroundColor = this.checkColor(t.backgroundColor);
-              }
-              if (t.backgroundColor === -1) {
-                delete c.positions[e];
-              }
-            }
-          }
-          break;
-        }
         case sequenceColor: {
           // tslint:disable-next-line:forin
+          // ColorsModel.palette[type]: an obj with regions and color associated es. positions: 1-200, zappo
           for (const row in ColorsModel.palette[type]) {
+
             c = ColorsModel.palette[type][row];
             if (c.positions.length > 0) {
 

@@ -11,7 +11,12 @@ export class OptionsModel {
     consensusType: null,
     consensusDotThreshold: 90,
     lineSeparation: '5px',
-    sequenceColor: undefined
+    sequenceColor: undefined,
+    customPalette: undefined,
+    sequenceColorMatrix: undefined,
+    sequenceColorMatrixPalette: undefined,
+    consensusColorIdentity: undefined,
+    consensusColorMapping: undefined
   };
 
   process(opt) {
@@ -66,21 +71,31 @@ export class OptionsModel {
 
     /** check sequenceColor value */
     if (opt && opt.sequenceColor) {
-      if (typeof opt.sequenceColor !== 'string') {
-        // wrong index type
+      if (typeof opt.sequenceColor !== 'string' ) {
+        this.options.sequenceColor = 'custom';
+        this.options.customPalette = opt.sequenceColor;
       } else {
         this.options.sequenceColor = opt.sequenceColor;
       }
     }
 
-    /** check consensusType value */
-
-    if (opt && opt.consensusType) {
-      if (typeof opt.consensusType !== 'string') {
-        // wrong consensus type
+    /** check sequenceColor value */
+    if (opt && opt.sequenceColorMatrix) {
+      if (typeof opt.sequenceColor !== 'string' ) {
+        this.options.sequenceColorMatrix = 'custom';
+        this.options.sequenceColorMatrixPalette = opt.sequenceColorMatrix;
       } else {
-        this.options.consensusType = opt.consensusType;
+        this.options.sequenceColorMatrix = opt.sequenceColorMatrix;
       }
+    }
+
+
+    /** check consensusType value */
+    if (opt && opt.consensusColorIdentity) {
+        this.options.consensusColorIdentity = opt.consensusColorIdentity
+    }
+    if (opt && opt.consensusColorMapping) {
+      this.options.consensusColorMapping = opt.consensusColorMapping
     }
 
     /** check consensusThreshold value */

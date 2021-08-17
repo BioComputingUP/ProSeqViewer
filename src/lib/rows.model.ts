@@ -4,7 +4,7 @@ import {ColorsModel} from './colors.model';
 export class RowsModel {
   substitutiveId = 99999999999999;
 
-  private processRows(rows, icons, regions) {
+  private processRows(rows, icons, regions, opt) {
 
     const allData = [];
 
@@ -49,10 +49,14 @@ export class RowsModel {
                   continue;
                 }
 
-                if (e.backgroundColor && !e.backgroundColor.startsWith('#')) {
-                  data[i].backgroundColor = Palettes[e.backgroundColor][data[i].char];
+                if (e.backgroundColor && !e.backgroundColor.startsWith('#')) { // is a palette
+                  if (e.backgroundColor == 'custom') {
+                    data[i].backgroundColor = opt.customPalette[data[i].char];
+                  } else {
+                    data[i].backgroundColor = Palettes[e.backgroundColor][data[i].char]; // e.backgroundcolor = zappo, clustal..
+                  }
                 } else {
-                  data[i].backgroundColor = e.backgroundColor;
+                  data[i].backgroundColor = e.backgroundColor; // is a region or pattern
                 }
                 data[i].target = e.target + 'background-color:' + data[i].backgroundColor;
               }
@@ -127,6 +131,6 @@ export class RowsModel {
         rows[id][idxKey] = {char};
       }
     }
-    return this.processRows(rows, icons, regions);
+    return this.processRows(rows, icons, regions, opt);
   }
 }

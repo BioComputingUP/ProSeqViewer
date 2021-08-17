@@ -56,7 +56,7 @@ class ColorsModel {
         const allRegions = Array.prototype.concat(allInputs.icons, allInputs.regions, allInputs.patterns); // ordering
         let newRegions = this.fixMissingIds(allRegions, allInputs.sequences);
         newRegions = this.transformInput(allRegions, newRegions, allInputs.sequences, allInputs.options);
-        this.transformColors(allInputs.options.sequenceColor);
+        this.transformColors(allInputs.options);
         return newRegions;
     }
     // transform input structure
@@ -141,7 +141,8 @@ class ColorsModel {
         }
         return newRegions;
     }
-    transformColors(sequenceColor) {
+    transformColors(opt) {
+        const sequenceColor = opt.sequenceColor;
         let arrColors;
         let n;
         let c;
@@ -177,25 +178,9 @@ class ColorsModel {
                     }
                     break;
                 }
-                case 'custom': {
-                    // tslint:disable-next-line:forin
-                    for (const row in ColorsModel.palette[type]) {
-                        c = ColorsModel.palette[type][row];
-                        // tslint:disable-next-line:forin
-                        for (const e in c.positions) {
-                            t = c.positions[e];
-                            if (t.backgroundColor) {
-                                t.backgroundColor = this.checkColor(t.backgroundColor);
-                            }
-                            if (t.backgroundColor === -1) {
-                                delete c.positions[e];
-                            }
-                        }
-                    }
-                    break;
-                }
                 case sequenceColor: {
                     // tslint:disable-next-line:forin
+                    // ColorsModel.palette[type]: an obj with regions and color associated es. positions: 1-200, zappo
                     for (const row in ColorsModel.palette[type]) {
                         c = ColorsModel.palette[type][row];
                         if (c.positions.length > 0) {
@@ -412,7 +397,9 @@ class ConsensusModel {
                     if (sequence.id === idIdentity) {
                         continue;
                     }
-                    letter = palettes_1.Palettes.letterTransform[letter];
+                    if (letter in palettes_1.Palettes.consensusAaLesk) {
+                        letter = palettes_1.Palettes.consensusAaLesk[letter][0];
+                    }
                 }
                 else {
                     if (sequence.id === idPhysical) {
@@ -433,7 +420,7 @@ class ConsensusModel {
         }
         return consensusInfo;
     }
-    static createConsensus(type, consensus, consensus2, sequences, regions, threshold) {
+    static createConsensus(type, consensus, consensus2, sequences, regions, threshold, palette) {
         if (threshold < 50) {
             threshold = 100 - threshold;
         }
@@ -476,16 +463,16 @@ class ConsensusModel {
                 const frequencyId = (maxIndexId / sequences.length) * 100;
                 if (frequencyId >= threshold) {
                     maxLetter = maxLetterId;
-                    [backgroundColor, color] = ConsensusModel.setColorsIdentity(frequencyId);
+                    [backgroundColor, color] = ConsensusModel.setColorsIdentity(frequencyId, palette, 'physical');
                 }
                 else {
                     if (frequency >= threshold) {
-                        [backgroundColor, color] = ConsensusModel.setColorsPhysical(maxLetter);
+                        [backgroundColor, color] = ConsensusModel.setColorsPhysical(maxLetter, palette);
                     }
                 }
             }
             else {
-                [backgroundColor, color] = ConsensusModel.setColorsIdentity(frequency);
+                [backgroundColor, color] = ConsensusModel.setColorsIdentity(frequency, palette, 'identity');
             }
             if (frequency < threshold) {
                 maxLetter = '.';
@@ -497,44 +484,57 @@ class ConsensusModel {
         sequences.push({ id, sequence: consensusSequence, label });
         return [sequences, regions];
     }
-    static setColorsIdentity(frequency) {
+    static setColorsIdentity(frequency, palette, flag) {
         let backgroundColor;
         let color;
-        const step1 = 100;
-        const step2 = 70;
-        const step3 = 40;
-        const step4 = 10;
-        const step5 = 0;
-        if (frequency === step1) {
-            backgroundColor = palettes_1.Palettes.consensus[step1].backgroundColor;
-            color = palettes_1.Palettes.consensus[step1].color;
-        }
-        else if (frequency > step2) {
-            backgroundColor = palettes_1.Palettes.consensus[step2].backgroundColor;
-            color = palettes_1.Palettes.consensus[step2].color;
-        }
-        else if (frequency > step3) {
-            backgroundColor = palettes_1.Palettes.consensus[step3].backgroundColor;
-            color = palettes_1.Palettes.consensus[step3].color;
-        }
-        else if (frequency > step4) {
-            backgroundColor = palettes_1.Palettes.consensus[step4].backgroundColor;
-            color = palettes_1.Palettes.consensus[step4].color;
+        let finalPalette;
+        if (palette && typeof palette !== 'string' && flag == 'identity') {
+            finalPalette = palette;
         }
         else {
-            backgroundColor = palettes_1.Palettes.consensus[step5].backgroundColor;
-            color = palettes_1.Palettes.consensus[step5].color;
+            finalPalette = palettes_1.Palettes.consensusLevelsIdentity;
+        }
+        let steps = [];
+        for (let key in finalPalette) {
+            steps.push(+key); // 42
+        }
+        steps = steps.sort((a, b) => a < b ? 1 : a > b ? -1 : 0);
+        console.log(steps);
+        for (const step of steps) {
+            console.log(frequency);
+            console.log(step);
+            if (frequency >= step) {
+                backgroundColor = finalPalette[step][0];
+                color = finalPalette[step][1];
+                break;
+            }
         }
         return [backgroundColor, color];
     }
-    static setColorsPhysical(letter) {
+    static setColorsPhysical(letter, palette) {
+        let finalPalette;
         let backgroundColor;
         let color;
-        backgroundColor = palettes_1.Palettes.physicalProp[letter].backgroundColor;
-        color = palettes_1.Palettes.physicalProp[letter].color;
+        if (palette && typeof palette !== 'string') {
+            finalPalette = palette;
+        }
+        else {
+            finalPalette = palettes_1.Palettes.consensusAaLesk;
+        }
+        console.log(finalPalette);
+        for (const el in finalPalette) {
+            if (finalPalette[el][0] == letter) {
+                backgroundColor = finalPalette[el][1];
+                color = finalPalette[el][2];
+                break;
+            }
+        }
         return [backgroundColor, color];
     }
     process(sequences, regions, options) {
+        if (!regions) {
+            regions = [];
+        }
         let maxIdx = 0;
         for (const row of sequences) {
             if (maxIdx < row.sequence.length) {
@@ -549,36 +549,37 @@ class ConsensusModel {
                 }
             }
         }
-        if (options.sequenceColor === 'blosum62') {
+        if (options.sequenceColorMatrix) {
             regions = [];
             sequences.sort((a, b) => a.id - b.id);
             const min = sequences[0];
+            let palette = palettes_1.Palettes.substitutionMatrixBlosum;
+            if (options.sequenceColorMatrixPalette) {
+                palette = options.sequenceColorMatrixPalette;
+            }
+            let key;
             // tslint:disable-next-line:prefer-for-of
             for (let i = 0; i < min.sequence.length; i++) {
                 for (const sequence of sequences) {
-                    let score;
                     if (sequence.id === min.id) {
-                        score = palettes_1.Palettes.blosum62[sequence.sequence[i] + sequence.sequence[i]];
-                        // score with itself
-                        if (!score) {
-                            score = '-';
+                        key = sequence.sequence[i] + sequence.sequence[i];
+                        if (palette[key]) {
+                            regions.push({ sequenceId: sequence.id, start: i + 1, end: i + 1,
+                                backgroundColor: palette[key].backgroundColor });
                         }
-                        regions.push({ sequenceId: sequence.id, start: i + 1, end: i + 1,
-                            backgroundColor: palettes_1.Palettes.blosum[score].backgroundColor });
                     }
                     else {
                         // score with first sequence
-                        if (palettes_1.Palettes.blosum62[sequence.sequence[i] + min.sequence[i]]) {
-                            score = palettes_1.Palettes.blosum62[sequence.sequence[i] + min.sequence[i]];
+                        key = sequence.sequence[i] + min.sequence[i];
+                        if (palette[key]) {
+                            regions.push({ sequenceId: sequence.id, start: i + 1, end: i + 1,
+                                backgroundColor: palette[key].backgroundColor });
                         }
-                        else {
-                            score = palettes_1.Palettes.blosum62[min.sequence[i] + sequence.sequence[i]];
+                        else if (palette[min.sequence[i] + sequence.sequence[i]]) {
+                            key = min.sequence[i] + sequence.sequence[i];
+                            regions.push({ sequenceId: sequence.id, start: i + 1, end: i + 1,
+                                backgroundColor: palette[key].backgroundColor });
                         }
-                        if (!score) {
-                            score = '-';
-                        }
-                        regions.push({ sequenceId: sequence.id, start: i + 1, end: i + 1,
-                            backgroundColor: palettes_1.Palettes.blosum[score].backgroundColor });
                     }
                 }
             }
@@ -592,20 +593,16 @@ class ConsensusModel {
         }
         let consensusInfoIdentity;
         let consensusInfoPhysical;
-        switch (options.consensusType) {
-            case 'identity': {
+        if (options.consensusColorIdentity) {
+            consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences);
+            [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusDotThreshold, options.consensusColorIdentity);
+        }
+        else if (options.consensusColorMapping) {
+            consensusInfoPhysical = ConsensusModel.setConsensusInfo('physical', sequences);
+            if (!consensusInfoIdentity) {
                 consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences);
-                [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusDotThreshold);
-                break;
             }
-            case 'physical': {
-                consensusInfoPhysical = ConsensusModel.setConsensusInfo('physical', sequences);
-                if (!consensusInfoIdentity) {
-                    consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences);
-                }
-                [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusDotThreshold);
-                break;
-            }
+            [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusDotThreshold, options.consensusColorMapping);
         }
         return [sequences, regions];
     }
@@ -782,7 +779,12 @@ class OptionsModel {
             consensusType: null,
             consensusDotThreshold: 90,
             lineSeparation: '5px',
-            sequenceColor: undefined
+            sequenceColor: undefined,
+            customPalette: undefined,
+            sequenceColorMatrix: undefined,
+            sequenceColorMatrixPalette: undefined,
+            consensusColorIdentity: undefined,
+            consensusColorMapping: undefined
         };
     }
     process(opt) {
@@ -832,20 +834,29 @@ class OptionsModel {
         /** check sequenceColor value */
         if (opt && opt.sequenceColor) {
             if (typeof opt.sequenceColor !== 'string') {
-                // wrong index type
+                this.options.sequenceColor = 'custom';
+                this.options.customPalette = opt.sequenceColor;
             }
             else {
                 this.options.sequenceColor = opt.sequenceColor;
             }
         }
-        /** check consensusType value */
-        if (opt && opt.consensusType) {
-            if (typeof opt.consensusType !== 'string') {
-                // wrong consensus type
+        /** check sequenceColor value */
+        if (opt && opt.sequenceColorMatrix) {
+            if (typeof opt.sequenceColor !== 'string') {
+                this.options.sequenceColorMatrix = 'custom';
+                this.options.sequenceColorMatrixPalette = opt.sequenceColorMatrix;
             }
             else {
-                this.options.consensusType = opt.consensusType;
+                this.options.sequenceColorMatrix = opt.sequenceColorMatrix;
             }
+        }
+        /** check consensusType value */
+        if (opt && opt.consensusColorIdentity) {
+            this.options.consensusColorIdentity = opt.consensusColorIdentity;
+        }
+        if (opt && opt.consensusColorMapping) {
+            this.options.consensusColorMapping = opt.consensusColorMapping;
         }
         /** check consensusThreshold value */
         if (opt && opt.consensusDotThreshold) {
@@ -956,84 +967,74 @@ Palettes.nucleotide = {
 Palettes.purinepyrimidine = {
     A: '#FF83FA', C: '#40E0D0', G: '#FF83FA', T: '#40E0D0', U: '#40E0D0', R: '#FF83FA', Y: '#40E0D0'
 };
-// consensusLevelsIdentity
-// static consensusLevelIdentity = {
-//   '100': ['#0A0A0A', '#FFFFFF']
-// }
-// TODO remove
-Palettes.consensus = {
-    100: { backgroundColor: '#0A0A0A', color: '#FFFFFF' },
-    70: { backgroundColor: '#333333', color: '#FFFFFF' },
-    40: { backgroundColor: '#707070', color: '#FFFFFF' },
-    10: { backgroundColor: '#A3A3A3', color: '#FFFFFF' },
-    0: { backgroundColor: '#FFFFFF', color: '#FFFFFF' }
+Palettes.consensusLevelsIdentity = {
+    100: ['#0A0A0A', '#FFFFFF'],
+    70: ['#333333', '#FFFFFF'],
+    40: ['#707070', '#FFFFFF'],
+    10: ['#A3A3A3', '#FFFFFF'],
+    0: ['#FFFFFF', '#FFFFFF']
 };
 // colour scheme in Lesk, Introduction to Bioinformatics
-// static consensusAaLesk = {
-//   G: ['n', '#f09048', '#FFFFFF'],
-// }
-// TODO remove
-Palettes.letterTransform = {
-    A: 'n', G: 'n', S: 'n', T: 'n',
-    C: 'h', V: 'h', I: 'h', L: 'h', P: 'h', F: 'h', Y: 'h', M: 'h', W: 'h',
-    N: 'p', Q: 'p', H: 'p',
-    D: '~', E: '~',
-    K: '+', R: '+'
+Palettes.consensusAaLesk = {
+    A: ['n', '#f09048', '#FFFFFF'],
+    G: ['n', '#f09048', '#FFFFFF'],
+    S: ['n', '#f09048', '#FFFFFF'],
+    T: ['n', '#f09048', '#FFFFFF'],
+    C: ['h', '#558B6E', '#FFFFFF'],
+    V: ['h', '#558B6E', '#FFFFFF'],
+    I: ['h', '#558B6E', '#FFFFFF'],
+    L: ['h', '#558B6E', '#FFFFFF'],
+    P: ['h', '#558B6E', '#FFFFFF'],
+    F: ['h', '#558B6E', '#FFFFFF'],
+    Y: ['h', '#558B6E', '#FFFFFF'],
+    M: ['h', '#558B6E', '#FFFFFF'],
+    W: ['h', '#558B6E', '#FFFFFF'],
+    N: ['p', '#D4358D', '#FFFFFF'],
+    Q: ['p', '#D4358D', '#FFFFFF'],
+    H: ['p', '#D4358D', '#FFFFFF'],
+    D: ['~', '#A10702', '#FFFFFF'],
+    E: ['~', '#A10702', '#FFFFFF'],
+    K: ['+', '#3626A7', '#FFFFFF'],
+    R: ['+', '#3626A7', '#FFFFFF'] // +: positively charged
 };
-// TODO remove
-// // lesk
-Palettes.physicalProp = {
-    n: { backgroundColor: '#f09048', color: '#FFFFFF' },
-    h: { backgroundColor: '#558B6E', color: '#FFFFFF' },
-    p: { backgroundColor: '#D4358D', color: '#FFFFFF' },
-    '~': { backgroundColor: '#A10702', color: '#FFFFFF' },
-    '+': { backgroundColor: '#3626A7', color: '#FFFFFF' },
-    '.': { backgroundColor: '#FFFFFF', color: '#14000B' },
+Palettes.substitutionMatrixBlosum = { WF: { backgroundColor: '#CFDBF2' }, QQ: { backgroundColor: '#A1B8E3' },
+    HH: { backgroundColor: '#7294D5' }, YY: { backgroundColor: '#81A0D9' }, ZZ: { backgroundColor: '#A1B8E3' },
+    CC: { backgroundColor: '#6288D0' }, PP: { backgroundColor: '#81A0D9' }, VI: { backgroundColor: '#B0C4E8' },
+    VM: { backgroundColor: '#CFDBF2' }, KK: { backgroundColor: '#A1B8E3' }, ZK: { backgroundColor: '#CFDBF2' },
+    DN: { backgroundColor: '#CFDBF2' }, SS: { backgroundColor: '#A1B8E3' }, QR: { backgroundColor: '#CFDBF2' },
+    NN: { backgroundColor: '#91ACDE' }, YF: { backgroundColor: '#B0C4E8' }, VL: { backgroundColor: '#CFDBF2' },
+    KR: { backgroundColor: '#C0CFED' }, ED: { backgroundColor: '#C0CFED' }, VV: { backgroundColor: '#A1B8E3' },
+    MI: { backgroundColor: '#CFDBF2' }, MM: { backgroundColor: '#A1B8E3' }, ZD: { backgroundColor: '#CFDBF2' },
+    FF: { backgroundColor: '#91ACDE' }, BD: { backgroundColor: '#A1B8E3' }, HN: { backgroundColor: '#CFDBF2' },
+    TT: { backgroundColor: '#A1B8E3' }, SN: { backgroundColor: '#CFDBF2' }, LL: { backgroundColor: '#A1B8E3' },
+    EQ: { backgroundColor: '#C0CFED' }, YW: { backgroundColor: '#C0CFED' }, EE: { backgroundColor: '#A1B8E3' },
+    KQ: { backgroundColor: '#CFDBF2' }, WW: { backgroundColor: '#3867BC' }, ML: { backgroundColor: '#C0CFED' },
+    KE: { backgroundColor: '#CFDBF2' }, ZE: { backgroundColor: '#A1B8E3' }, ZQ: { backgroundColor: '#B0C4E8' },
+    BE: { backgroundColor: '#CFDBF2' }, DD: { backgroundColor: '#91ACDE' }, SA: { backgroundColor: '#CFDBF2' },
+    YH: { backgroundColor: '#C0CFED' }, GG: { backgroundColor: '#91ACDE' }, AA: { backgroundColor: '#A1B8E3' },
+    II: { backgroundColor: '#A1B8E3' }, TS: { backgroundColor: '#CFDBF2' }, RR: { backgroundColor: '#A1B8E3' },
+    LI: { backgroundColor: '#C0CFED' }, ZB: { backgroundColor: '#CFDBF2' }, BN: { backgroundColor: '#B0C4E8' },
+    BB: { backgroundColor: '#A1B8E3' }
 };
-// TODO change to string
-// static substitutionMatrixBlosum = {
-//     WF: {backgroundColor: '#CFDBF2'},
-// }
-// TODO remove
-Palettes.blosum = {
-    '-4': { backgroundColor: '#FFFFFF' },
-    '-3': { backgroundColor: '#FFFFFF' },
-    '-2': { backgroundColor: '#FFFFFF' },
-    '-1': { backgroundColor: '#FFFFFF' },
-    0: { backgroundColor: '#FFFFFF' },
-    1: { backgroundColor: '#CFDBF2' },
-    2: { backgroundColor: '#C0CFED' },
-    3: { backgroundColor: '#B0C4E8' },
-    4: { backgroundColor: '#A1B8E3' },
-    5: { backgroundColor: '#A1B8E3' },
-    6: { backgroundColor: '#91ACDE' },
-    7: { backgroundColor: '#81A0D9' },
-    8: { backgroundColor: '#7294D5' },
-    9: { backgroundColor: '#6288D0' },
-    10: { backgroundColor: '#4371C7' },
-    11: { backgroundColor: '#3867BC' },
-    '-': { backgroundColor: '#FFFFFF' }
-};
-// TODO remove
-// // blosumMatrixMapping
-Palettes.blosum62 = { WF: 1, LR: -2, SP: -1, VT: '0', QQ: 5, NA: -2, ZY: -2, WR: -3, QA: -1, SD: '0', HH: 8, SH: -1, HD: -1, LN: -3, WA: -3,
-    YM: -1, GR: -2, YI: -1, YE: -2, BY: -3, YA: -2, VD: -3, BS: '0', YY: 7, GN: '0', EC: -4, YQ: -1, ZZ: 4, VA: '0', CC: 9, MR: -1, VE: -2,
-    TN: '0', PP: 7, VI: 3, VS: -2, ZP: -1, VM: 1, TF: -2, VQ: -2, KK: 5, PD: -1, IH: -3, ID: -3, TR: -1, PL: -3, KG: -2, MN: -2,
-    PH: -2, FQ: -3, ZG: -2, XL: -1, TM: -1, ZC: -3, XH: -1, DR: -2, BW: -4, XD: -1, ZK: 1, FA: -2, ZW: -3, FE: -3, DN: 1, BK: '0',
-    XX: -1, FI: '0', BG: -1, XT: '0', FM: '0', BC: -3, ZI: -3, ZV: -2, SS: 4, LQ: -2, WE: -3, QR: 1, NN: 6, WM: -1, QC: -3, WI: -3, SC: -1,
-    LA: -1, SG: '0', LE: -3, WQ: -2, HG: -2, SK: '0', QN: '0', NR: '0', HC: -3, YN: -2, GQ: -2, YF: 3, CA: '0', VL: 1, GE: -2, GA: '0',
-    KR: 2, ED: 2, YR: -2, MQ: '0', TI: -1, CD: -3, VF: -1, TA: '0', TP: -1, BP: -2, TE: -1, VN: -3, PG: -2, MA: -1, KH: -1, VR: -3,
-    PC: -3, ME: -2, KL: -2, VV: 4, MI: 1, TQ: -1, IG: -4, PK: -1, MM: 5, KD: -1, IC: -1, ZD: 1, FR: -3, XK: -1, QD: '0', XG: -1, ZL: -3,
-    XC: -2, ZH: '0', BL: -4, BH: '0', FF: 6, XW: -2, BD: 4, DA: -2, SL: -2, XS: '0', FN: -3, SR: -1, WD: -4, VY: -1, WL: -2, HR: '0',
-    WH: -2, HN: 1, WT: -2, TT: 5, SF: -2, WP: -4, LD: -4, BI: -3, LH: -3, SN: 1, BT: -1, LL: 4, YK: -2, EQ: 2, YG: -3, ZS: '0', YC: -2,
-    GD: -1, BV: -3, EA: -1, YW: 2, EE: 5, YS: -2, CN: -3, VC: -1, TH: -2, PR: -2, VG: -3, TL: -1, VK: -2, KQ: 1, RA: -1, IR: -3, TD: -1,
-    PF: -4, IN: -3, KI: -3, MD: -3, VW: -3, WW: 11, MH: -2, PN: -2, KA: -1, ML: 2, KE: 1, ZE: 4, XN: -1, ZA: -1, ZM: -1, XF: -1,
-    KC: -3, BQ: '0', XB: -1, BM: -3, FC: -2, ZQ: 3, XZ: -1, FG: -3, BE: 1, XV: -1, FK: -3, BA: -2, XR: -1, DD: 6, WG: -2, ZF: -3, SQ: '0',
-    WC: -2, WK: -3, HQ: '0', LC: -1, WN: -4, SA: 1, LG: -4, WS: -3, SE: '0', HE: '0', SI: -2, HA: -2, SM: -1, YL: -1, YH: 2,
-    YD: -3, ER: '0', XP: -2, GG: 6, GC: -3, EN: '0', YT: -2, YP: -3, TK: -1, AA: 4, PQ: -1, TC: -1, VH: -3, TG: -2, IQ: -3, ZT: -1,
-    CR: -3, VP: -2, PE: -1, MC: -1, KN: '0', II: 4, PA: -1, MG: -3, TS: 1, IE: -3, PM: -2, MK: -1, IA: -1, PI: -3, RR: 5, XM: -1, LI: 2,
-    XI: -1, ZB: 1, XE: -1, ZN: '0', XA: '0', BR: -1, BN: 3, FD: -3, XY: -1, ZR: '0', FH: -1, BF: -3, FL: '0', XQ: -1, BB: 4
-};
+// original blosum matrix with values < 0, removed from my matrix since we color them white
+// static blosum62 = { WF: 1, LR: -2, SP: -1, VT: '0', QQ: 5, NA: -2, ZY: -2, WR: -3, QA: -1, SD: '0', HH: 8, SH: -1, HD: -1, LN: -3, WA: -3,
+//   YM: -1, GR: -2, YI: -1, YE: -2, BY: -3, YA: -2, VD: -3, BS: '0', YY: 7, GN: '0', EC: -4, YQ: -1, ZZ: 4, VA: '0', CC: 9, MR: -1, VE: -2,
+//   TN: '0', PP: 7, VI: 3, VS: -2, ZP: -1, VM: 1, TF: -2, VQ: -2, KK: 5, PD: -1, IH: -3, ID: -3, TR: -1, PL: -3, KG: -2, MN: -2,
+//   PH: -2, FQ: -3, ZG: -2, XL: -1, TM: -1, ZC: -3, XH: -1, DR: -2, BW: -4, XD: -1, ZK: 1, FA: -2, ZW: -3, FE: -3, DN: 1, BK: '0',
+//   XX: -1, FI: '0', BG: -1, XT: '0', FM: '0', BC: -3, ZI: -3, ZV: -2, SS: 4, LQ: -2, WE: -3, QR: 1, NN: 6, WM: -1, QC: -3, WI: -3, SC: -1,
+//   LA: -1, SG: '0', LE: -3, WQ: -2, HG: -2, SK: '0', QN: '0', NR: '0', HC: -3, YN: -2, GQ: -2, YF: 3, CA: '0', VL: 1, GE: -2, GA: '0',
+//   KR: 2, ED: 2, YR: -2, MQ: '0', TI: -1, CD: -3, VF: -1, TA: '0', TP: -1, BP: -2, TE: -1, VN: -3, PG: -2, MA: -1, KH: -1, VR: -3,
+//   PC: -3, ME: -2, KL: -2, VV: 4, MI: 1, TQ: -1, IG: -4, PK: -1, MM: 5, KD: -1, IC: -1, ZD: 1, FR: -3, XK: -1, QD: '0', XG: -1, ZL: -3,
+//   XC: -2, ZH: '0', BL: -4, BH: '0', FF: 6, XW: -2, BD: 4, DA: -2, SL: -2, XS: '0', FN: -3, SR: -1, WD: -4, VY: -1, WL: -2, HR: '0',
+//   WH: -2, HN: 1, WT: -2, TT: 5, SF: -2, WP: -4, LD: -4, BI: -3, LH: -3, SN: 1, BT: -1, LL: 4, YK: -2, EQ: 2, YG: -3, ZS: '0', YC: -2,
+//   GD: -1, BV: -3, EA: -1, YW: 2, EE: 5, YS: -2, CN: -3, VC: -1, TH: -2, PR: -2, VG: -3, TL: -1, VK: -2, KQ: 1, RA: -1, IR: -3, TD: -1,
+//   PF: -4, IN: -3, KI: -3, MD: -3, VW: -3, WW: 11, MH: -2, PN: -2, KA: -1, ML: 2, KE: 1, ZE: 4, XN: -1, ZA: -1, ZM: -1, XF: -1,
+//   KC: -3, BQ: '0', XB: -1, BM: -3, FC: -2, ZQ: 3, XZ: -1, FG: -3, BE: 1, XV: -1, FK: -3, BA: -2, XR: -1, DD: 6, WG: -2, ZF: -3, SQ: '0',
+//   WC: -2, WK: -3, HQ: '0', LC: -1, WN: -4, SA: 1, LG: -4, WS: -3, SE: '0', HE: '0', SI: -2, HA: -2, SM: -1, YL: -1, YH: 2,
+//   YD: -3, ER: '0', XP: -2, GG: 6, GC: -3, EN: '0', YT: -2, YP: -3, TK: -1, AA: 4, PQ: -1, TC: -1, VH: -3, TG: -2, IQ: -3, ZT: -1,
+//   CR: -3, VP: -2, PE: -1, MC: -1, KN: '0', II: 4, PA: -1, MG: -3, TS: 1, IE: -3, PM: -2, MK: -1, IA: -1, PI: -3, RR: 5, XM: -1, LI: 2,
+//   XI: -1, ZB: 1, XE: -1, ZN: '0', XA: '0', BR: -1, BN: 3, FD: -3, XY: -1, ZR: '0', FH: -1, BF: -3, FL: '0', XQ: -1, BB: 4
+// };
 
 
 /***/ }),
@@ -1426,7 +1427,7 @@ class RowsModel {
     constructor() {
         this.substitutiveId = 99999999999999;
     }
-    processRows(rows, icons, regions) {
+    processRows(rows, icons, regions, opt) {
         const allData = [];
         // decide which color is more important in case of overwriting
         const coloringOrder = ['custom', 'clustal', 'zappo', 'gradient', 'binary'];
@@ -1464,11 +1465,16 @@ class RowsModel {
                                 if (!data[i]) {
                                     continue;
                                 }
-                                if (e.backgroundColor && !e.backgroundColor.startsWith('#')) {
-                                    data[i].backgroundColor = palettes_1.Palettes[e.backgroundColor][data[i].char];
+                                if (e.backgroundColor && !e.backgroundColor.startsWith('#')) { // is a palette
+                                    if (e.backgroundColor == 'custom') {
+                                        data[i].backgroundColor = opt.customPalette[data[i].char];
+                                    }
+                                    else {
+                                        data[i].backgroundColor = palettes_1.Palettes[e.backgroundColor][data[i].char]; // e.backgroundcolor = zappo, clustal..
+                                    }
                                 }
                                 else {
-                                    data[i].backgroundColor = e.backgroundColor;
+                                    data[i].backgroundColor = e.backgroundColor; // is a region or pattern
                                 }
                                 data[i].target = e.target + 'background-color:' + data[i].backgroundColor;
                             }
@@ -1540,7 +1546,7 @@ class RowsModel {
                 rows[id][idxKey] = { char };
             }
         }
-        return this.processRows(rows, icons, regions);
+        return this.processRows(rows, icons, regions, opt);
     }
 }
 exports.RowsModel = RowsModel;
