@@ -8,9 +8,8 @@ export class EventsModel {
     for (const sqv of sequenceViewers) {
 
       sqv.addEventListener('dblclick', r => {
-        console.log(r)
 
-          const evt = new CustomEvent('onRegionSelected', { detail: r });
+          const evt = new CustomEvent('onRegionSelected', {detail: {char: r.srcElement.innerHTML, x: r.srcElement.dataset.resX, y:  r.srcElement.dataset.resY}} );
           window.dispatchEvent(evt);
 
         });

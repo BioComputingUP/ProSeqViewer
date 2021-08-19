@@ -23,7 +23,6 @@ export class RowsModel {
     let data;
     let coloringRowNums;
     let tmp;
-    let log: string;
     // loop through data rows
     for (const rowNum of rowNumsOrdered) {
       tmp = ordered[rowNum];

@@ -71,7 +71,7 @@ export class ColorsModel {
       for (const sequence of allInputs.sequences) {
         if (sequence.sequenceColor) {
           // @ts-ignore
-          csequenceColorRegions.push({sequenceId: sequence.id, start: 1, end: sequence.sequence.length, sequenceColor: sequence.sequenceColor});
+          sequenceColorRegions.push({sequenceId: sequence.id, start: 1, end: sequence.sequence.length, sequenceColor: sequence.sequenceColor});
         }
       }
       for (const reg of allInputs.regions) {

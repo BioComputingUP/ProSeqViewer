@@ -92,24 +92,24 @@ export class Palettes {
     R: ['+', '#3626A7', '#FFFFFF']  // +: positively charged
   }
 
-  static substitutionMatrixBlosum = { WF: {backgroundColor: '#CFDBF2'}, QQ: {backgroundColor: '#A1B8E3'},
-      HH: {backgroundColor: '#7294D5'}, YY: {backgroundColor: '#81A0D9'}, ZZ: {backgroundColor: '#A1B8E3'},
-      CC: {backgroundColor: '#6288D0'}, PP: {backgroundColor: '#81A0D9'}, VI: {backgroundColor: '#B0C4E8'},
-      VM: {backgroundColor: '#CFDBF2'}, KK: {backgroundColor: '#A1B8E3'}, ZK: {backgroundColor: '#CFDBF2'},
-      DN: {backgroundColor: '#CFDBF2'}, SS: {backgroundColor: '#A1B8E3'}, QR: {backgroundColor: '#CFDBF2'},
-      NN: {backgroundColor: '#91ACDE'}, YF: {backgroundColor: '#B0C4E8'}, VL: {backgroundColor: '#CFDBF2'},
-      KR: {backgroundColor: '#C0CFED'}, ED: {backgroundColor: '#C0CFED'}, VV: {backgroundColor: '#A1B8E3'},
-      MI: {backgroundColor: '#CFDBF2'}, MM: {backgroundColor: '#A1B8E3'}, ZD: {backgroundColor: '#CFDBF2'},
-      FF: {backgroundColor: '#91ACDE'}, BD: {backgroundColor: '#A1B8E3'}, HN: {backgroundColor: '#CFDBF2'},
-      TT: {backgroundColor: '#A1B8E3'}, SN: {backgroundColor: '#CFDBF2'}, LL: {backgroundColor: '#A1B8E3'},
-      EQ: {backgroundColor: '#C0CFED'}, YW: {backgroundColor: '#C0CFED'}, EE: {backgroundColor: '#A1B8E3'},
-      KQ: {backgroundColor: '#CFDBF2'}, WW: {backgroundColor: '#3867BC'}, ML: {backgroundColor: '#C0CFED'},
-      KE: {backgroundColor: '#CFDBF2'}, ZE: {backgroundColor: '#A1B8E3'}, ZQ: {backgroundColor: '#B0C4E8'},
-      BE: {backgroundColor: '#CFDBF2'}, DD: {backgroundColor: '#91ACDE'}, SA: {backgroundColor: '#CFDBF2'},
-      YH: {backgroundColor: '#C0CFED'}, GG: {backgroundColor: '#91ACDE'}, AA: {backgroundColor: '#A1B8E3'},
-      II: {backgroundColor: '#A1B8E3'}, TS: {backgroundColor: '#CFDBF2'}, RR: {backgroundColor: '#A1B8E3'},
-      LI: {backgroundColor: '#C0CFED'}, ZB: {backgroundColor: '#CFDBF2'}, BN: {backgroundColor: '#B0C4E8'},
-      BB: {backgroundColor: '#A1B8E3'}
+  static substitutionMatrixBlosum = { WF: [ '#CFDBF2', '#000000'], QQ: [ '#A1B8E3', '#000000'],
+      HH: [ '#7294D5', '#000000'], YY: [ '#81A0D9', '#000000'], ZZ: [ '#A1B8E3', '#000000'],
+      CC: [ '#6288D0', '#000000'], PP: [ '#81A0D9', '#000000'], VI: [ '#B0C4E8', '#000000'],
+      VM: [ '#CFDBF2', '#000000'], KK: [ '#A1B8E3', '#000000'], ZK: [ '#CFDBF2', '#000000'],
+      DN: [ '#CFDBF2', '#000000'], SS: [ '#A1B8E3', '#000000'], QR: [ '#CFDBF2', '#CFDBF2'],
+      NN: [ '#91ACDE', '#000000'], YF: [ '#B0C4E8', '#000000'], VL: [ '#CFDBF2', '#000000'],
+      KR: [ '#C0CFED', '#000000'], ED: [ '#C0CFED', '#000000'], VV: [ '#A1B8E3', '#000000'],
+      MI: [ '#CFDBF2', '#000000'], MM: [ '#A1B8E3', '#000000'], ZD: [ '#CFDBF2', '#000000'],
+      FF: [ '#91ACDE', '#000000'], BD: [ '#A1B8E3', '#000000'], HN: [ '#CFDBF2', '#000000'],
+      TT: [ '#A1B8E3', '#000000'], SN: [ '#CFDBF2', '#000000'], LL: [ '#A1B8E3', '#000000'],
+      EQ: [ '#C0CFED', '#000000'], YW: [ '#C0CFED', '#000000'], EE: [ '#A1B8E3', '#000000'],
+      KQ: [ '#CFDBF2', '#000000'], WW: [ '#3867BC', '#000000'], ML: [ '#C0CFED', '#000000'],
+      KE: [ '#CFDBF2', '#000000'], ZE: [ '#A1B8E3', '#000000'], ZQ: [ '#B0C4E8', '#000000'],
+      BE: [ '#CFDBF2', '#000000'], DD: [ '#91ACDE', '#000000'], SA: [ '#CFDBF2', '#000000'],
+      YH: [ '#C0CFED', '#000000'], GG: [ '#91ACDE', '#000000'], AA: [ '#A1B8E3', '#000000'],
+      II: [ '#A1B8E3', '#000000'], TS: [ '#CFDBF2', '#000000'], RR: [ '#A1B8E3', '#000000'],
+      LI: [ '#C0CFED', '#000000'], ZB: [ '#CFDBF2', '#000000'], BN: [ '#B0C4E8', '#000000'],
+      BB: [ '#A1B8E3', '#000000']
     };
 }
 

@@ -141,4 +141,7 @@ export class SelectionModel {
     }, false);
 
 
-}}
+    // window.dispatchEvent(evt); // todo x
+
+
+  }}

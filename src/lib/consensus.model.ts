@@ -193,7 +193,7 @@ process(sequences, regions, options) {
               if (key in palette) {
                 console.log(palette[key])
                 regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
-                  backgroundColor: palette[key].backgroundColor});
+                  backgroundColor: palette[key][0], color: palette[key][1]});
               }
 
             } else {
@@ -203,11 +203,11 @@ process(sequences, regions, options) {
               if (key in palette) {
                 console.log(palette[key])
                 regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
-                  backgroundColor: palette[key].backgroundColor});
+                  backgroundColor: palette[key][0]});
               } else if (palette[min.sequence[i] + sequence.sequence[i]]) {
                 key = min.sequence[i] + sequence.sequence[i]
                 regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
-                  backgroundColor: palette[key].backgroundColor});
+                  backgroundColor: palette[key][0], color: palette[key][1]});
               }
 
             }
@@ -222,7 +222,7 @@ process(sequences, regions, options) {
         regions.push({sequenceId: sequence.id, start:  1, end: sequence.sequence.length, sequenceColor: options.sequenceColor});
       }
     }
-    console.log(regions)
+
     let consensusInfoIdentity;
     let consensusInfoPhysical;
 
