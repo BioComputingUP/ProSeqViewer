@@ -143,7 +143,6 @@ export class ConsensusModel {
     } else {
       finalPalette = Palettes.consensusAaLesk;
     }
-    console.log(finalPalette)
 
     for (const el in finalPalette) {
 
@@ -182,7 +181,7 @@ process(sequences, regions, options) {
         if (options.sequenceColorMatrixPalette) {
           palette = options.sequenceColorMatrixPalette
         }
-        console.log(palette)
+
         let key;
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < min.sequence.length; i++) {
@@ -191,7 +190,7 @@ process(sequences, regions, options) {
             if (sequence.id === min.id) {
               key = sequence.sequence[i] + sequence.sequence[i]
               if (key in palette) {
-                console.log(palette[key])
+
                 regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
                   backgroundColor: palette[key][0], color: palette[key][1]});
               }
@@ -201,7 +200,6 @@ process(sequences, regions, options) {
               // score with first sequence
               key = sequence.sequence[i] + min.sequence[i]
               if (key in palette) {
-                console.log(palette[key])
                 regions.push({sequenceId: sequence.id, start: i + 1, end: i + 1,
                   backgroundColor: palette[key][0]});
               } else if (palette[min.sequence[i] + sequence.sequence[i]]) {

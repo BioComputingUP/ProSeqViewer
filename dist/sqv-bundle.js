@@ -518,7 +518,6 @@ class ConsensusModel {
         else {
             finalPalette = palettes_1.Palettes.consensusAaLesk;
         }
-        console.log(finalPalette);
         for (const el in finalPalette) {
             if (finalPalette[el][0] == letter) {
                 backgroundColor = finalPalette[el][1];
@@ -554,7 +553,6 @@ class ConsensusModel {
             if (options.sequenceColorMatrixPalette) {
                 palette = options.sequenceColorMatrixPalette;
             }
-            console.log(palette);
             let key;
             // tslint:disable-next-line:prefer-for-of
             for (let i = 0; i < min.sequence.length; i++) {
@@ -562,7 +560,6 @@ class ConsensusModel {
                     if (sequence.id === min.id) {
                         key = sequence.sequence[i] + sequence.sequence[i];
                         if (key in palette) {
-                            console.log(palette[key]);
                             regions.push({ sequenceId: sequence.id, start: i + 1, end: i + 1,
                                 backgroundColor: palette[key][0], color: palette[key][1] });
                         }
@@ -571,7 +568,6 @@ class ConsensusModel {
                         // score with first sequence
                         key = sequence.sequence[i] + min.sequence[i];
                         if (key in palette) {
-                            console.log(palette[key]);
                             regions.push({ sequenceId: sequence.id, start: i + 1, end: i + 1,
                                 backgroundColor: palette[key][0] });
                         }
@@ -1151,7 +1147,7 @@ class ProSeqViewer {
         /** create/update sqv-body html */
         this.createGUI(data, labels, startIndexes, tooltips, inputs.options, labelsFlag);
         /** listen copy paste events */
-        this.selection.process();
+        // this.selection.process();
         /** listen selection events */
         this.events.onRegionSelected();
     }
@@ -1559,26 +1555,35 @@ exports.RowsModel = RowsModel;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SelectionModel = void 0;
 class SelectionModel {
+    selectionhighlight(elements) {
+        // @ts-ignore
+        for (const selection of elements) {
+            const x = +selection.getAttribute('data-res-x');
+            const y = +selection.getAttribute('data-res-y');
+            // on every drag reselect the whole area ...
+            if (x >= +this.start.x && x <= +this.lastOver.x &&
+                y >= +this.start.y && y <= +this.lastOver.y &&
+                selection.getAttribute('data-res-id') === this.lastOver.sqvId) {
+                selection.classList.add('highlight');
+            }
+            else {
+                selection.classList.remove('highlight');
+            }
+        }
+    }
     process() {
         const sequenceViewers = document.getElementsByClassName('cell');
         window.onmousedown = () => {
             // remove selection on new click
-            if (this.selection) {
-                for (const el of this.selection) {
-                    el.classList.remove('highlight');
-                }
+            const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
+            // @ts-ignore
+            for (const selection of elements) {
+                selection.classList.remove('highlight');
             }
         };
         // @ts-ignore
         for (const sqv of sequenceViewers) {
             sqv.onmousedown = (e) => {
-                if (this.selection) {
-                    for (const el of this.selection) {
-                        el.classList.remove('highlight');
-                    }
-                }
-                this.selection = [];
-                this.alreadySelected = {};
                 let id;
                 let element;
                 if (e.path) {
@@ -1591,9 +1596,12 @@ class SelectionModel {
                     element = e.originalTarget;
                     id = document.getElementById(element.dataset.resId);
                 }
+                this.lastId = element.dataset.resId;
                 this.lastSqv = id;
-                this.isDown = true;
                 this.start = { y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId };
+                this.lastOver = { y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId };
+                const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
+                this.selectionhighlight(elements);
             };
             sqv.onmouseover = (e) => {
                 let element;
@@ -1603,25 +1611,10 @@ class SelectionModel {
                 else {
                     element = e.originalTarget;
                 }
-                if (this.isDown) {
+                if (this.start) {
                     this.lastOver = { y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId };
-                    for (let i = +this.start.y; i <= +this.lastOver.y; i++) {
-                        const elements = document.querySelectorAll('[data-res-y=' + CSS.escape(i.toString()) + ']');
-                        // highlight selected elements
-                        // @ts-ignore
-                        for (const selection of elements) {
-                            // on every drag reselect the whole area ...
-                            if (+selection.getAttribute('data-res-x') >= +this.start.x && +selection.getAttribute('data-res-x') <= +this.lastOver.x &&
-                                selection.getAttribute('data-res-id') === this.lastOver.sqvId) {
-                                // ... but push only new elements
-                                if (!this.alreadySelected[selection.dataset.resY + '-' + selection.dataset.resX]) {
-                                    this.selection.push(selection);
-                                    selection.classList.add('highlight');
-                                }
-                                this.alreadySelected[selection.dataset.resY + '-' + selection.dataset.resX] = 'selected';
-                            }
-                        }
-                    }
+                    const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
+                    this.selectionhighlight(elements);
                 }
             };
         }
@@ -1633,7 +1626,7 @@ class SelectionModel {
             else {
                 element = e.originalTarget;
             }
-            if (this.isDown) {
+            if (this.start) {
                 // lastSelection out of cells
                 if (!element.dataset.resY) {
                     this.end = { y: this.lastOver.y, x: this.lastOver.x, sqvId: this.lastOver.sqvId };
@@ -1642,10 +1635,12 @@ class SelectionModel {
                     // lastSelection on a cell
                     this.end = { y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId };
                 }
-                this.isDown = false;
+                this.start = undefined;
             }
         };
         document.body.addEventListener('keydown', (e) => {
+            const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
+            // @ts-ignore
             e = e || window.event;
             const key = e.which || e.keyCode; // keyCode detection
             const ctrl = e.ctrlKey ? e.ctrlKey : ((key === 17)); // ctrl detection
@@ -1653,19 +1648,23 @@ class SelectionModel {
                 let textToPaste = '';
                 const textDict = {};
                 let row = '';
-                for (const el in this.selection) {
-                    if (!textDict[this.selection[el].getAttribute('data-res-y')]) {
-                        textDict[this.selection[el].getAttribute('data-res-y')] = '';
+                // tslint:disable-next-line:forin
+                // @ts-ignore
+                for (const selection of elements) {
+                    if (selection.classList.contains('highlight')) {
+                        if (!textDict[selection.getAttribute('data-res-y')]) {
+                            textDict[selection.getAttribute('data-res-y')] = '';
+                        }
+                        // new line when new row
+                        if (selection.getAttribute('data-res-y') !== row && row !== '') {
+                            textDict[selection.getAttribute('data-res-y')] += selection.innerText;
+                        }
+                        else {
+                            textDict[selection.getAttribute('data-res-y')] += selection.innerText;
+                        }
+                        selection.classList.remove('highlight');
+                        row = selection.getAttribute('data-res-y');
                     }
-                    // new line when new row
-                    if (this.selection[el].getAttribute('data-res-y') !== row && row !== '') {
-                        textDict[this.selection[el].getAttribute('data-res-y')] += this.selection[el].innerText;
-                    }
-                    else {
-                        textDict[this.selection[el].getAttribute('data-res-y')] += this.selection[el].innerText;
-                    }
-                    this.selection[el].classList.remove('highlight');
-                    row = this.selection[el].getAttribute('data-res-y');
                 }
                 let flag;
                 for (const textRow in textDict) {
@@ -1684,9 +1683,10 @@ class SelectionModel {
                 dummy.select();
                 document.execCommand('copy');
                 document.body.removeChild(dummy);
+                const evt = new CustomEvent('onAreaSelected', { detail: { text: textToPaste, eventType: 'area selection' } });
+                window.dispatchEvent(evt);
             }
         }, false);
-        // window.dispatchEvent(evt); // todo x
     }
 }
 exports.SelectionModel = SelectionModel;

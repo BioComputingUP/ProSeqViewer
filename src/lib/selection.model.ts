@@ -10,19 +10,35 @@ export class SelectionModel {
 
   start: Cell;
   end: Cell;
-  isDown: boolean;
   lastOver: Cell;
   lastSqv;
-  selection;
-  alreadySelected;
+  lastId;
+
+  private selectionhighlight(elements) {
+    // @ts-ignore
+    for (const selection of elements) {
+      const x = +selection.getAttribute('data-res-x');
+      const y = +selection.getAttribute('data-res-y');
+      // on every drag reselect the whole area ...
+      if (x >= +this.start.x && x <= +this.lastOver.x &&
+        y >= +this.start.y && y <= +this.lastOver.y &&
+        selection.getAttribute('data-res-id') === this.lastOver.sqvId ) {
+        selection.classList.add('highlight');
+      } else {
+        selection.classList.remove('highlight');
+      }
+    }
+  }
 
   public process() {
     const sequenceViewers = document.getElementsByClassName('cell');
 
     window.onmousedown = () => {
       // remove selection on new click
-      if (this.selection) {
-        for ( const el of this.selection) { el.classList.remove('highlight');  }
+      const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
+      // @ts-ignore
+      for (const selection of elements) {
+        selection.classList.remove('highlight');
       }
     };
 
@@ -30,11 +46,6 @@ export class SelectionModel {
     for (const sqv of sequenceViewers) {
 
       sqv.onmousedown = (e: any) => {
-        if (this.selection) {
-          for ( const el of this.selection) { el.classList.remove('highlight');  }
-        }
-        this.selection = [];
-        this.alreadySelected = {};
 
         let id;
         let element;
@@ -47,35 +58,27 @@ export class SelectionModel {
           element = e.originalTarget;
           id = document.getElementById(element.dataset.resId);
         }
-
+        this.lastId = element.dataset.resId;
         this.lastSqv = id;
-        this.isDown = true;
+
         this.start = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
+        this.lastOver = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
+
+        const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
+        this.selectionhighlight(elements);
+
       };
 
       sqv.onmouseover = (e: any) => {
         let element;
         if (e.path) { element = e.path[0]; } else { element = e.originalTarget; }
 
-        if (this.isDown) {
+        if (this.start) {
           this.lastOver = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
-          for (let i = +this.start.y; i <= +this.lastOver.y; i++) {
-            const elements = document.querySelectorAll('[data-res-y=' + CSS.escape(i.toString()) + ']');
-            // highlight selected elements
-            // @ts-ignore
-            for (const selection of elements) {
-              // on every drag reselect the whole area ...
-              if (+selection.getAttribute('data-res-x') >= +this.start.x && +selection.getAttribute('data-res-x') <= +this.lastOver.x &&
-                selection.getAttribute('data-res-id') === this.lastOver.sqvId ) {
-                // ... but push only new elements
-                if (!this.alreadySelected[selection.dataset.resY + '-' + selection.dataset.resX]) {
-                  this.selection.push(selection);
-                  selection.classList.add('highlight');
-                }
-                this.alreadySelected[selection.dataset.resY + '-' + selection.dataset.resX] = 'selected';
-              }
-            }
-          }
+
+          const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
+          this.selectionhighlight(elements);
+
         }
       };
     }
@@ -84,7 +87,7 @@ export class SelectionModel {
 
       let element;
       if (e.path) { element = e.path[0]; } else { element = e.originalTarget; }
-      if (this.isDown) {
+      if (this.start) {
 
         // lastSelection out of cells
         if (!element.dataset.resY) {
@@ -93,11 +96,13 @@ export class SelectionModel {
           // lastSelection on a cell
           this.end = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
         }
-        this.isDown = false;
-    }
-  };
+        this.start = undefined;
+      }
+    };
 
     document.body.addEventListener('keydown', (e: any) => {
+      const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
+      // @ts-ignore
 
       e = e || window.event;
       const key = e.which || e.keyCode; // keyCode detection
@@ -106,23 +111,27 @@ export class SelectionModel {
         let textToPaste = '';
         const textDict = {};
         let row = '';
-        for ( const el in this.selection) {
-          if (!textDict[this.selection[el].getAttribute('data-res-y')]) {
-            textDict[this.selection[el].getAttribute('data-res-y')] = '';
+        // tslint:disable-next-line:forin
+        // @ts-ignore
+        for ( const selection of elements) {
+          if  (selection.classList.contains('highlight')) {
+            if (!textDict[selection.getAttribute('data-res-y')]) {
+              textDict[selection.getAttribute('data-res-y')] = '';
+            }
+            // new line when new row
+            if (selection.getAttribute('data-res-y') !== row && row !== '') {
+              textDict[selection.getAttribute('data-res-y')] += selection.innerText;
+            } else {
+              textDict[selection.getAttribute('data-res-y')] += selection.innerText;
+            }
+            selection.classList.remove('highlight');
+            row = selection.getAttribute('data-res-y');
           }
-          // new line when new row
-          if (this.selection[el].getAttribute('data-res-y') !== row && row !== '') {
-            textDict[this.selection[el].getAttribute('data-res-y')] += this.selection[el].innerText;
-          } else {
-            textDict[this.selection[el].getAttribute('data-res-y')] += this.selection[el].innerText;
-          }
-          this.selection[el].classList.remove('highlight');
-          row = this.selection[el].getAttribute('data-res-y');
         }
 
         let flag;
         for (const textRow in textDict) {
-          if (flag){
+          if (flag) {
             textToPaste +=  '\n' + textDict[textRow];
           } else {
             textToPaste +=  textDict[textRow];
@@ -134,14 +143,17 @@ export class SelectionModel {
         const dummy = document.createElement('textarea');
         document.body.appendChild(dummy);
         dummy.value = textToPaste;
+
+
         dummy.select();
         document.execCommand('copy');
         document.body.removeChild(dummy);
+
+
+        const evt = new CustomEvent('onAreaSelected', {detail: {text: textToPaste, eventType: 'area selection'}} );
+        window.dispatchEvent(evt);
       }
     }, false);
-
-
-    // window.dispatchEvent(evt); // todo x
 
 
   }}
