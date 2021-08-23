@@ -770,7 +770,7 @@ class OptionsModel {
             emptyFiller: ' ',
             indexesLocation: null,
             wrapLine: false,
-            viewerWidth: '300px',
+            viewerWidth: null,
             consensusType: null,
             consensusDotThreshold: 90,
             lineSeparation: '5px',
@@ -875,11 +875,9 @@ class OptionsModel {
             // lineSeparation not set
             this.options.lineSeparation = '5px'; // default reset
         }
-        /** check oneLineSetting value */
-        if (opt && opt.wrapLine) {
-            if (typeof opt.wrapLine == 'boolean') {
-                this.options.wrapLine = opt.wrapLine;
-            }
+        /** check wrapline value */
+        if (typeof opt.wrapLine == 'boolean') {
+            this.options.wrapLine = !opt.wrapLine;
         }
         /** check oneLineWidth */
         if (opt && opt.viewerWidth) {
@@ -1366,8 +1364,14 @@ class ProSeqViewer {
             }
         }
         if (wrapLine) {
-            sqvBody.innerHTML = `<div class="root" style="display: flex"><div style="${style}">${labelsContainer}</div>
+            if (viewerWidth) {
+                sqvBody.innerHTML = `<div class="root" style="display: flex"><div style="${style}">${labelsContainer}</div>
                         <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;width:${viewerWidth}"> ${html}</div></div>`;
+            }
+            else {
+                sqvBody.innerHTML = `<div class="root" style="display: flex"><div style="${style}">${labelsContainer}</div>
+                        <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;"> ${html}</div></div>`;
+            }
         }
         else {
             sqvBody.innerHTML = `<div class="root">${html}</div>`;

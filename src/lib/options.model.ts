@@ -7,7 +7,7 @@ export class OptionsModel {
     emptyFiller: ' ', // fills gap at the end of the MSA sequences
     indexesLocation: null,
     wrapLine: false,
-    viewerWidth: '300px',
+    viewerWidth: null,
     consensusType: null,
     consensusDotThreshold: 90,
     lineSeparation: '5px',
@@ -121,12 +121,12 @@ export class OptionsModel {
       this.options.lineSeparation = '5px'; // default reset
     }
 
-    /** check oneLineSetting value */
-    if (opt && opt.wrapLine) {
-      if (typeof opt.wrapLine == 'boolean') {
-        this.options.wrapLine = opt.wrapLine;
-      }
+    /** check wrapline value */
+
+    if (typeof opt.wrapLine == 'boolean') {
+      this.options.wrapLine = !opt.wrapLine;
     }
+
 
     /** check oneLineWidth */
     if (opt && opt.viewerWidth) {
