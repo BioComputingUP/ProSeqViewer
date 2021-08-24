@@ -103,7 +103,6 @@ export class SelectionModel {
     document.body.addEventListener('keydown', (e: any) => {
       const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
       // @ts-ignore
-
       e = e || window.event;
       const key = e.which || e.keyCode; // keyCode detection
       const ctrl = e.ctrlKey ? e.ctrlKey : ((key === 17)); // ctrl detection
@@ -138,20 +137,21 @@ export class SelectionModel {
             flag = true;
           }
         }
-
-        // copy to clipboard for the paste event
-        const dummy = document.createElement('textarea');
-        document.body.appendChild(dummy);
-        dummy.value = textToPaste;
-
-
-        dummy.select();
-        document.execCommand('copy');
-        document.body.removeChild(dummy);
+        if (textToPaste !== '') {
+          // copy to clipboard for the paste event
+          const dummy = document.createElement('textarea');
+          document.body.appendChild(dummy);
+          dummy.value = textToPaste;
 
 
-        const evt = new CustomEvent('onAreaSelected', {detail: {text: textToPaste, eventType: 'area selection'}} );
-        window.dispatchEvent(evt);
+          dummy.select();
+          document.execCommand('copy');
+          document.body.removeChild(dummy);
+
+
+          const evt = new CustomEvent('onAreaSelected', {detail: {text: textToPaste, eventType: 'area selection'}} );
+          window.dispatchEvent(evt);
+        }
       }
     }, false);
 

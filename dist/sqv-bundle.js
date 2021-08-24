@@ -876,7 +876,7 @@ class OptionsModel {
             this.options.lineSeparation = '5px'; // default reset
         }
         /** check wrapline value */
-        if (opt.wrapLine && typeof opt.wrapLine == 'boolean') {
+        if (opt && opt.wrapLine && typeof opt.wrapLine == 'boolean') {
             this.options.wrapLine = !opt.wrapLine;
         }
         /** check oneLineWidth */
@@ -1680,15 +1680,17 @@ class SelectionModel {
                         flag = true;
                     }
                 }
-                // copy to clipboard for the paste event
-                const dummy = document.createElement('textarea');
-                document.body.appendChild(dummy);
-                dummy.value = textToPaste;
-                dummy.select();
-                document.execCommand('copy');
-                document.body.removeChild(dummy);
-                const evt = new CustomEvent('onAreaSelected', { detail: { text: textToPaste, eventType: 'area selection' } });
-                window.dispatchEvent(evt);
+                if (textToPaste !== '') {
+                    // copy to clipboard for the paste event
+                    const dummy = document.createElement('textarea');
+                    document.body.appendChild(dummy);
+                    dummy.value = textToPaste;
+                    dummy.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(dummy);
+                    const evt = new CustomEvent('onAreaSelected', { detail: { text: textToPaste, eventType: 'area selection' } });
+                    window.dispatchEvent(evt);
+                }
             }
         }, false);
     }
