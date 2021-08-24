@@ -123,7 +123,7 @@ export class OptionsModel {
 
     /** check wrapline value */
 
-    if (typeof opt.wrapLine == 'boolean') {
+    if (opt.wrapLine && typeof opt.wrapLine == 'boolean') {
       this.options.wrapLine = !opt.wrapLine;
     }
 
