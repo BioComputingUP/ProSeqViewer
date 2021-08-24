@@ -14,23 +14,48 @@ export class SelectionModel {
   lastSqv;
   lastId;
 
-  private selectionhighlight(elements) {
+  private selectionhighlight(elements, options) {
     // @ts-ignore
-    for (const selection of elements) {
-      const x = +selection.getAttribute('data-res-x');
-      const y = +selection.getAttribute('data-res-y');
-      // on every drag reselect the whole area ...
-      if (x >= +this.start.x && x <= +this.lastOver.x &&
-        y >= +this.start.y && y <= +this.lastOver.y &&
-        selection.getAttribute('data-res-id') === this.lastOver.sqvId ) {
-        selection.classList.add('highlight');
-      } else {
-        selection.classList.remove('highlight');
+    switch (options.selection) {
+      case 'columnselection': {
+        for (const selection of elements) {
+          const x = +selection.getAttribute('data-res-x');
+          const y = +selection.getAttribute('data-res-y');
+          // on every drag reselect the whole area ...
+          if (y >= +this.start.y && y <= 100000 && // I should look for max y, but I will spare time for now..
+            x >= +this.start.x && x <= +this.lastOver.x &&
+            selection.getAttribute('data-res-id') === this.lastOver.sqvId ) {
+            selection.classList.add('highlight');
+          } else {
+            selection.classList.remove('highlight');
+          }
+        }
+        break;
+      }
+      case 'areaselection': {
+        for (const selection of elements) {
+          const x = +selection.getAttribute('data-res-x');
+          const y = +selection.getAttribute('data-res-y');
+          // on every drag reselect the whole area ...
+          if (x >= +this.start.x && x <= +this.lastOver.x &&
+            y >= +this.start.y && y <= +this.lastOver.y &&
+            selection.getAttribute('data-res-id') === this.lastOver.sqvId ) {
+            selection.classList.add('highlight');
+          } else {
+            selection.classList.remove('highlight');
+          }
+        }
+        break;
       }
     }
+
+
+
   }
 
-  public process() {
+  public process(options) {
+    if (!options || !options.selection) { return }
+
     const sequenceViewers = document.getElementsByClassName('cell');
 
     window.onmousedown = () => {
@@ -65,7 +90,7 @@ export class SelectionModel {
         this.lastOver = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
 
         const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
-        this.selectionhighlight(elements);
+        this.selectionhighlight(elements, options);
 
       };
 
@@ -77,7 +102,7 @@ export class SelectionModel {
           this.lastOver = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
 
           const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
-          this.selectionhighlight(elements);
+          this.selectionhighlight(elements, options);
 
         }
       };

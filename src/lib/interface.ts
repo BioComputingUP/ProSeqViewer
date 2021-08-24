@@ -50,6 +50,8 @@ export interface Options {
 
   consensusColorIdentity?: string | {}, // {50: ["bg_color", "fg_color"]}, <-- consensusIdentical
   consensusColorMapping?: string | {}, // {G: ["+", "bg_color", "fg_color"]} <-- consensusPhysical
+
+  selection?: string
 }
 
 export interface Input {

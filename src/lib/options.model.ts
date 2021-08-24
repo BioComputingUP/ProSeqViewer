@@ -16,7 +16,8 @@ export class OptionsModel {
     sequenceColorMatrix: undefined,
     sequenceColorMatrixPalette: undefined,
     consensusColorIdentity: undefined,
-    consensusColorMapping: undefined
+    consensusColorMapping: undefined,
+    selection: undefined
   };
 
   process(opt) {
@@ -66,6 +67,14 @@ export class OptionsModel {
     if (opt && opt.indexesLocation) {
       if (opt.indexesLocation == "top" || opt.indexesLocation == "lateral") {
         this.options.indexesLocation = opt.indexesLocation;
+      }
+    }
+
+    /** check selection value */
+
+    if (opt && opt.selection) {
+      if (opt.selection == "columnselection" || opt.selection == "areaselection") {
+        this.options.selection = opt.selection;
       }
     }
 
