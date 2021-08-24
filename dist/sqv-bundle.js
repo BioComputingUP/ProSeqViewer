@@ -550,6 +550,7 @@ class ConsensusModel {
             sequences.sort((a, b) => a.id - b.id);
             const min = sequences[0];
             let palette = palettes_1.Palettes.substitutionMatrixBlosum;
+            console.log(palette);
             if (options.sequenceColorMatrixPalette) {
                 palette = options.sequenceColorMatrixPalette;
             }
@@ -994,7 +995,7 @@ Palettes.substitutionMatrixBlosum = { WF: ['#CFDBF2', '#000000'], QQ: ['#A1B8E3'
     HH: ['#7294D5', '#000000'], YY: ['#81A0D9', '#000000'], ZZ: ['#A1B8E3', '#000000'],
     CC: ['#6288D0', '#000000'], PP: ['#81A0D9', '#000000'], VI: ['#B0C4E8', '#000000'],
     VM: ['#CFDBF2', '#000000'], KK: ['#A1B8E3', '#000000'], ZK: ['#CFDBF2', '#000000'],
-    DN: ['#CFDBF2', '#000000'], SS: ['#A1B8E3', '#000000'], QR: ['#CFDBF2', '#CFDBF2'],
+    DN: ['#CFDBF2', '#000000'], SS: ['#A1B8E3', '#000000'], QR: ['#CFDBF2', '#000000'],
     NN: ['#91ACDE', '#000000'], YF: ['#B0C4E8', '#000000'], VL: ['#CFDBF2', '#000000'],
     KR: ['#C0CFED', '#000000'], ED: ['#C0CFED', '#000000'], VV: ['#A1B8E3', '#000000'],
     MI: ['#CFDBF2', '#000000'], MM: ['#A1B8E3', '#000000'], ZD: ['#CFDBF2', '#000000'],
