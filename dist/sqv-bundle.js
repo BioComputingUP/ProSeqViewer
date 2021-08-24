@@ -770,7 +770,7 @@ class OptionsModel {
             emptyFiller: ' ',
             indexesLocation: null,
             wrapLine: false,
-            viewerWidth: null,
+            viewerWidth: false,
             consensusType: null,
             consensusDotThreshold: 90,
             lineSeparation: '5px',
@@ -876,7 +876,7 @@ class OptionsModel {
             this.options.lineSeparation = '5px'; // default reset
         }
         /** check wrapline value */
-        if (typeof opt.wrapLine == 'boolean') {
+        if (opt.wrapLine && typeof opt.wrapLine == 'boolean') {
             this.options.wrapLine = !opt.wrapLine;
         }
         /** check oneLineWidth */
