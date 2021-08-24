@@ -1,6 +1,6 @@
 {
   "name": "proseqviewer",
-  "version": "1.0.79",
+  "version": "1.0.80",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
