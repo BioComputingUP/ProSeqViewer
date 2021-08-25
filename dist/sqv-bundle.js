@@ -1720,7 +1720,7 @@ class SelectionModel {
                     dummy.select();
                     document.execCommand('copy');
                     document.body.removeChild(dummy);
-                    const evt = new CustomEvent('onAreaSelected', { detail: { text: textToPaste, eventType: 'area selection' } });
+                    const evt = new CustomEvent('onHighlightSelection', { detail: { text: textToPaste, eventType: 'highlight selection' } });
                     window.dispatchEvent(evt);
                 }
             }
