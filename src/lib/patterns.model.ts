@@ -31,9 +31,10 @@ export class PatternsModel {
   }
 
   regexMatch(str, pattern, regions, element) {
+    const re = new RegExp(pattern, "g");
     let match;
     // tslint:disable-next-line:no-conditional-assignment
-    while ((match = pattern.exec(str)) != null) {
+    while ((match = re.exec(str)) != null) {
       regions.push({start: +match.index + 1, end: +match.index + +match[0].length,
         backgroundColor: element.backgroundColor, color: element.color, backgroundImage: element.backgroundImage,
         borderColor: element.borderColor, borderStyle: element.borderStyle, sequenceId: element.sequenceId});

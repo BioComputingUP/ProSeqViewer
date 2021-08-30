@@ -15,6 +15,7 @@ export class SelectionModel {
   lastId;
 
   private selectionhighlight(elements, options) {
+    console.log(options.selection)
     // @ts-ignore
     switch (options.selection) {
       case 'columnselection': {

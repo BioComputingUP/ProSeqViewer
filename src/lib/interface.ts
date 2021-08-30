@@ -19,7 +19,7 @@ export interface Regions {
 
 export interface Patterns {
   sequenceId: number,
-  pattern: any, // TODO try string
+  pattern: string,
   start?: number,
   end?: number,
   backgroundColor?: string,

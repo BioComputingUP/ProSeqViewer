@@ -1078,9 +1078,11 @@ class PatternsModel {
         return regions;
     }
     regexMatch(str, pattern, regions, element) {
+        console.log(pattern);
+        const re = new RegExp(pattern, "g");
         let match;
         // tslint:disable-next-line:no-conditional-assignment
-        while ((match = pattern.exec(str)) != null) {
+        while ((match = re.exec(str)) != null) {
             regions.push({ start: +match.index + 1, end: +match.index + +match[0].length,
                 backgroundColor: element.backgroundColor, color: element.color, backgroundImage: element.backgroundImage,
                 borderColor: element.borderColor, borderStyle: element.borderStyle, sequenceId: element.sequenceId });
@@ -1127,7 +1129,37 @@ class ProSeqViewer {
             this.calculateIdxs(true);
         }; // had to add this to cover mobidb toggle event
     }
+    calculateIdxs(flag) {
+        for (const id of ProSeqViewer.sqvList) {
+            // console.log(document.getElementById(id))
+            if (document.getElementById(id) != null) {
+                const sqvBody = document.getElementById(id);
+                const chunks = sqvBody.getElementsByClassName('cnk');
+                let oldTop = 0;
+                let newTop;
+                // tslint:disable-next-line:prefer-for-of
+                for (let i = 0; i < chunks.length; i++) {
+                    newTop = chunks[i].getBoundingClientRect().top;
+                    if (flag) {
+                        // avoid calculating if idx already set
+                        if (chunks[i].firstElementChild.className === 'idx') {
+                            return;
+                        }
+                    }
+                    if (newTop > oldTop) {
+                        chunks[i].firstElementChild.className = 'idx';
+                        oldTop = newTop;
+                    }
+                    else {
+                        chunks[i].firstElementChild.className = 'idx hidden';
+                    }
+                }
+            }
+        }
+    }
     draw(inputs) {
+        const sqvBody = document.getElementById(this.divId);
+        sqvBody.innerHTML = `<div class="root"> <div class="loading">loading</div> </div>`;
         ProSeqViewer.sqvList.push(this.divId);
         let labels;
         let labelsFlag;
@@ -1136,6 +1168,7 @@ class ProSeqViewer {
         let data;
         /** check and process parameters input */
         inputs.options = this.params.process(inputs.options);
+        console.log(inputs.options);
         /** check and consensus input  and global colorScheme */
         if (inputs.options) {
             [inputs.sequences, inputs.regions] = this.consensus.process(inputs.sequences, inputs.regions, inputs.options);
@@ -1241,6 +1274,19 @@ class ProSeqViewer {
     }
     createGUI(data, labels, startIndexes, tooltips, options, labelsFlag) {
         const sqvBody = document.getElementById(this.divId);
+        // convert to nodes to improve rendering (idea to try):
+        // Create new element
+        // const root = document.createElement('div');
+        // // Add class to element
+        // root.className = 'my-new-element';
+        // // Add color
+        // root.style.color = 'red';
+        // // Fill element with html
+        // root.innerHTML = ``;
+        // // Add element node to DOM graph
+        // sqvBody.appendChild(root);
+        // // Exit
+        // return;
         if (!sqvBody) {
             // Cannot find sqv-body element
             return;
@@ -1371,48 +1417,31 @@ class ProSeqViewer {
                 html += chunk;
             }
         }
+        let innerHTML;
         if (wrapLine) {
             if (viewerWidth) {
-                sqvBody.innerHTML = `<div class="root" style="display: flex"><div style="${style}">${labelsContainer}</div>
-                        <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;width:${viewerWidth}"> ${html}</div></div>`;
+                innerHTML = `<div class="root" style="display: flex">
+                        <div>loading</div>
+                        <div style="${style}">${labelsContainer}</div>
+                        <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;width:${viewerWidth}"> ${html}</div>
+                        </div>`;
             }
             else {
-                sqvBody.innerHTML = `<div class="root" style="display: flex"><div style="${style}">${labelsContainer}</div>
-                        <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;"> ${html}</div></div>`;
+                innerHTML = `<div class="root" style="display: flex">
+                        <div>loading</div>
+                        <div style="${style}">${labelsContainer}</div>
+                        <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;"> ${html}</div>
+                        </div>`;
             }
         }
         else {
-            sqvBody.innerHTML = `<div class="root">${html}</div>`;
+            innerHTML = `<div class="root">
+                    <div class="loading">loading</div>
+                    ${html}
+                    </div>`;
         }
+        sqvBody.innerHTML = innerHTML;
         window.dispatchEvent(new Event('resize'));
-    }
-    calculateIdxs(flag) {
-        for (const id of ProSeqViewer.sqvList) {
-            // console.log(document.getElementById(id))
-            if (document.getElementById(id) != null) {
-                const sqvBody = document.getElementById(id);
-                const chunks = sqvBody.getElementsByClassName('cnk');
-                let oldTop = 0;
-                let newTop;
-                // tslint:disable-next-line:prefer-for-of
-                for (let i = 0; i < chunks.length; i++) {
-                    newTop = chunks[i].getBoundingClientRect().top;
-                    if (flag) {
-                        // avoid calculating if idx already set
-                        if (chunks[i].firstElementChild.className === 'idx') {
-                            return;
-                        }
-                    }
-                    if (newTop > oldTop) {
-                        chunks[i].firstElementChild.className = 'idx';
-                        oldTop = newTop;
-                    }
-                    else {
-                        chunks[i].firstElementChild.className = 'idx hidden';
-                    }
-                }
-            }
-        }
     }
 }
 window.ProSeqViewer = ProSeqViewer;
@@ -1568,6 +1597,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SelectionModel = void 0;
 class SelectionModel {
     selectionhighlight(elements, options) {
+        console.log(options.selection);
         // @ts-ignore
         switch (options.selection) {
             case 'columnselection': {
