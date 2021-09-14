@@ -92,7 +92,6 @@ export class ProSeqViewer {
 
     /** check and process parameters input */
     inputs.options = this.params.process(inputs.options);
-    console.log(inputs.options)
 
     /** check and consensus input  and global colorScheme */
     if (inputs.options){ [inputs.sequences, inputs.regions ] = this.consensus.process(inputs.sequences, inputs.regions, inputs.options); }
@@ -314,7 +313,7 @@ export class ProSeqViewer {
         // adding labels
         if (indexesLocation != 'top') {
           const gapsContainer = this.generateLabels(idx, labels, startIndexes, indexesLocation, false, indexWidth, false, data, lineSeparation);
-          if (wrapLine || labels[0] === '') {
+          if (labels[0] === '') {
             index = gapsContainer;  // lateral number indexes + labels
           } else {
             index = labelsContainer  + gapsContainer;  // lateral number indexes + labels
@@ -322,7 +321,7 @@ export class ProSeqViewer {
 
           } else if (indexesLocation != 'top') {
           const gapsContainer = this.generateLabels(idx, labels, startIndexes, indexesLocation, chunkSize, indexWidth, false, data, lineSeparation);
-          if (wrapLine || !labelsFlag) {
+          if (!labelsFlag) {
             index = gapsContainer;  // lateral number indexes + labels
           } else {
             if(indexesLocation == 'lateral'){
@@ -354,27 +353,19 @@ export class ProSeqViewer {
     }
     let innerHTML;
 
+
     if (wrapLine) {
-      if (viewerWidth) {
-        innerHTML = `<div class="root" style="display: flex">
-                        <div>loading</div>
-                        <div style="${style}">${labelsContainer}</div>
+      innerHTML = `<div class="root">   ${html} </div>`;
+
+      } else {
+
+      innerHTML = `<div class="root" style="display: flex">
                         <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;width:${viewerWidth}"> ${html}</div>
                         </div>`;
-      } else {
-        innerHTML = `<div class="root" style="display: flex">
-                        <div>loading</div>
-                        <div style="${style}">${labelsContainer}</div>
-                        <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;"> ${html}</div>
-                        </div>`;
-      }
 
-    } else {
-      innerHTML = `<div class="root">
-                    <div class="loading">loading</div>
-                    ${html}
-                    </div>`;
     }
+
+
 
     sqvBody.innerHTML = innerHTML;
 

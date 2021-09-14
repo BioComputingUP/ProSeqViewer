@@ -6,7 +6,7 @@ export class OptionsModel {
     chunkSeparation: 1, // relative to fontSize
     emptyFiller: ' ', // fills gap at the end of the MSA sequences
     indexesLocation: null,
-    wrapLine: false,
+    wrapLine: true,
     viewerWidth: false,
     consensusType: null,
     consensusDotThreshold: 90,
@@ -132,8 +132,8 @@ export class OptionsModel {
 
     /** check wrapline value */
 
-    if (opt && opt.wrapLine && typeof opt.wrapLine == 'boolean') {
-      this.options.wrapLine = !opt.wrapLine;
+    if (opt && typeof opt.wrapLine == 'boolean') {
+      this.options.wrapLine = opt.wrapLine;
     }
 
     /** check oneLineWidth */
@@ -141,10 +141,10 @@ export class OptionsModel {
       const viewerWidth = opt.viewerWidth;
       const olNum = +viewerWidth.substr(0, viewerWidth.length - 2);
       const olUnit = viewerWidth.substr(viewerWidth.length - 2, 2);
-
       if (isNaN(olNum) || (olUnit !== 'px' && olUnit !== 'vw' && olUnit !== 'em')) {
        // wrong oneLineWidth format
       } else {
+        console.log(viewerWidth)
         this.options.viewerWidth = viewerWidth;
       }
     }

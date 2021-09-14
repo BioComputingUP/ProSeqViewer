@@ -770,7 +770,7 @@ class OptionsModel {
             chunkSeparation: 1,
             emptyFiller: ' ',
             indexesLocation: null,
-            wrapLine: false,
+            wrapLine: true,
             viewerWidth: false,
             consensusType: null,
             consensusDotThreshold: 90,
@@ -884,8 +884,8 @@ class OptionsModel {
             this.options.lineSeparation = '5px'; // default reset
         }
         /** check wrapline value */
-        if (opt && opt.wrapLine && typeof opt.wrapLine == 'boolean') {
-            this.options.wrapLine = !opt.wrapLine;
+        if (opt && typeof opt.wrapLine == 'boolean') {
+            this.options.wrapLine = opt.wrapLine;
         }
         /** check oneLineWidth */
         if (opt && opt.viewerWidth) {
@@ -896,6 +896,7 @@ class OptionsModel {
                 // wrong oneLineWidth format
             }
             else {
+                console.log(viewerWidth);
                 this.options.viewerWidth = viewerWidth;
             }
         }
@@ -1167,7 +1168,6 @@ class ProSeqViewer {
         let data;
         /** check and process parameters input */
         inputs.options = this.params.process(inputs.options);
-        console.log(inputs.options);
         /** check and consensus input  and global colorScheme */
         if (inputs.options) {
             [inputs.sequences, inputs.regions] = this.consensus.process(inputs.sequences, inputs.regions, inputs.options);
@@ -1372,7 +1372,7 @@ class ProSeqViewer {
                 // adding labels
                 if (indexesLocation != 'top') {
                     const gapsContainer = this.generateLabels(idx, labels, startIndexes, indexesLocation, false, indexWidth, false, data, lineSeparation);
-                    if (wrapLine || labels[0] === '') {
+                    if (labels[0] === '') {
                         index = gapsContainer; // lateral number indexes + labels
                     }
                     else {
@@ -1381,7 +1381,7 @@ class ProSeqViewer {
                 }
                 else if (indexesLocation != 'top') {
                     const gapsContainer = this.generateLabels(idx, labels, startIndexes, indexesLocation, chunkSize, indexWidth, false, data, lineSeparation);
-                    if (wrapLine || !labelsFlag) {
+                    if (!labelsFlag) {
                         index = gapsContainer; // lateral number indexes + labels
                     }
                     else {
@@ -1418,26 +1418,12 @@ class ProSeqViewer {
         }
         let innerHTML;
         if (wrapLine) {
-            if (viewerWidth) {
-                innerHTML = `<div class="root" style="display: flex">
-                        <div>loading</div>
-                        <div style="${style}">${labelsContainer}</div>
-                        <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;width:${viewerWidth}"> ${html}</div>
-                        </div>`;
-            }
-            else {
-                innerHTML = `<div class="root" style="display: flex">
-                        <div>loading</div>
-                        <div style="${style}">${labelsContainer}</div>
-                        <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;"> ${html}</div>
-                        </div>`;
-            }
+            innerHTML = `<div class="root">   ${html} </div>`;
         }
         else {
-            innerHTML = `<div class="root">
-                    <div class="loading">loading</div>
-                    ${html}
-                    </div>`;
+            innerHTML = `<div class="root" style="display: flex">
+                        <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;width:${viewerWidth}"> ${html}</div>
+                        </div>`;
         }
         sqvBody.innerHTML = innerHTML;
         window.dispatchEvent(new Event('resize'));
