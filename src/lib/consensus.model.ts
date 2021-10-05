@@ -178,7 +178,7 @@ process(sequences, regions, options) {
         const min = sequences[0];
 
         let palette = Palettes.substitutionMatrixBlosum;
-        console.log(palette)
+        // console.log(palette)
         if (options.sequenceColorMatrixPalette) {
           palette = options.sequenceColorMatrixPalette
         }

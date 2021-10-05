@@ -144,7 +144,6 @@ export class OptionsModel {
       if (isNaN(olNum) || (olUnit !== 'px' && olUnit !== 'vw' && olUnit !== 'em')) {
        // wrong oneLineWidth format
       } else {
-        console.log(viewerWidth)
         this.options.viewerWidth = viewerWidth;
       }
     }
