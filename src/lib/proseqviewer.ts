@@ -81,7 +81,7 @@ export class ProSeqViewer {
 
   public draw(inputs: Input) {
     const sqvBody = document.getElementById(this.divId);
-    sqvBody.innerHTML = `<div class="root"> <div class="loading">loading</div> </div>`;
+    sqvBody.innerHTML = `<div class="root"> <div class="loading">input error</div> </div>`;
     ProSeqViewer.sqvList.push(this.divId);
 
     let labels;
@@ -305,24 +305,21 @@ export class ProSeqViewer {
 
       if (chunkSize > 0 && x % chunkSize === 0) {
         // considering the row of top indexes
-        if (indexesLocation == 'top') {
-        } else {
+        if (indexesLocation != 'top') {
           idxNum += chunkSize; // lateral index (set only if top indexes missing)
           idx = idxNum - (chunkSize - 1);
-        }
-        // adding labels
-        if (indexesLocation != 'top') {
-          const gapsContainer = this.generateLabels(idx, labels, startIndexes, indexesLocation, false, indexWidth, false, data, lineSeparation);
+          // adding labels
+          const gapsContainer = this.generateLabels(idx, labels, startIndexes, indexesLocation, chunkSize, indexWidth, false, data, lineSeparation);
+
           if (labels[0] === '') {
-            index = gapsContainer;  // lateral number indexes + labels
+            index = gapsContainer;  // lateral number indexes
           } else {
             index = labelsContainer  + gapsContainer;  // lateral number indexes + labels
           }
 
-          } else if (indexesLocation != 'top') {
-          const gapsContainer = this.generateLabels(idx, labels, startIndexes, indexesLocation, chunkSize, indexWidth, false, data, lineSeparation);
+
           if (!labelsFlag) {
-            index = gapsContainer;  // lateral number indexes + labels
+            index = gapsContainer;  // lateral number indexes
           } else {
             if(indexesLocation == 'lateral'){
               index = labelsContainer  + gapsContainer;  // lateral number indexes + labels
@@ -350,6 +347,7 @@ export class ProSeqViewer {
         index = '';
         html += chunk;
       }
+
     }
     let innerHTML;
 
