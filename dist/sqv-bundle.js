@@ -550,7 +550,7 @@ class ConsensusModel {
             sequences.sort((a, b) => a.id - b.id);
             const min = sequences[0];
             let palette = palettes_1.Palettes.substitutionMatrixBlosum;
-            console.log(palette);
+            // console.log(palette)
             if (options.sequenceColorMatrixPalette) {
                 palette = options.sequenceColorMatrixPalette;
             }
@@ -896,7 +896,6 @@ class OptionsModel {
                 // wrong oneLineWidth format
             }
             else {
-                console.log(viewerWidth);
                 this.options.viewerWidth = viewerWidth;
             }
         }
@@ -1626,37 +1625,42 @@ class SelectionModel {
         // if we want to implement different selection events
         // if (!options || !options.selection) { return }
         const sequenceViewers = document.getElementsByClassName('cell');
-        window.onmousedown = () => {
-            // remove selection on new click
-            const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
-            // @ts-ignore
-            for (const selection of elements) {
-                selection.classList.remove('highlight');
+        // remove selection on new click
+        window.onmousedown = (event) => {
+            this.firstOver = true;
+            // right click
+            if (event.which === 1) {
+                const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
+                // @ts-ignore
+                for (const selection of elements) {
+                    selection.classList.remove('highlight');
+                }
             }
         };
         // @ts-ignore
         for (const sqv of sequenceViewers) {
-            sqv.onmousedown = (e) => {
-                let id;
-                let element;
-                if (e.path) {
-                    // chrome support
-                    element = e.path[0];
-                    id = document.getElementById(element.dataset.resId);
-                }
-                else {
-                    // firefox support
-                    element = e.originalTarget;
-                    id = document.getElementById(element.dataset.resId);
-                }
-                this.lastId = element.dataset.resId;
-                this.lastSqv = id;
-                this.start = { y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId };
-                this.lastOver = { y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId };
-                const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
-                this.selectionhighlight(elements, options);
-            };
             sqv.onmouseover = (e) => {
+                if (this.firstOver) {
+                    let id;
+                    let element;
+                    if (e.path) {
+                        // chrome support
+                        element = e.path[0];
+                        id = document.getElementById(element.dataset.resId);
+                    }
+                    else {
+                        // firefox support
+                        element = e.originalTarget;
+                        id = document.getElementById(element.dataset.resId);
+                    }
+                    this.lastId = element.dataset.resId;
+                    this.lastSqv = id;
+                    this.start = { y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId };
+                    this.lastOver = { y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId };
+                    const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
+                    this.selectionhighlight(elements, options);
+                    this.firstOver = false;
+                }
                 let element;
                 if (e.path) {
                     element = e.path[0];

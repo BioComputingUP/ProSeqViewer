@@ -13,6 +13,7 @@ export class SelectionModel {
   end: Cell;
   lastSqv;
   lastId;
+  firstOver;
 
   private selectionhighlight(elements, options) {
 
@@ -70,43 +71,48 @@ export class SelectionModel {
 
     const sequenceViewers = document.getElementsByClassName('cell');
 
-    window.onmousedown = () => {
-      // remove selection on new click
-      const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
-      // @ts-ignore
-      for (const selection of elements) {
-        selection.classList.remove('highlight');
+    // remove selection on new click
+    window.onmousedown = (event) => {
+      this.firstOver = true;
+      // right click
+      if (event.which === 1) {
+        const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
+        // @ts-ignore
+        for (const selection of elements) {
+          selection.classList.remove('highlight');
+        }
       }
+
     };
 
     // @ts-ignore
     for (const sqv of sequenceViewers) {
 
-      sqv.onmousedown = (e: any) => {
-
-        let id;
-        let element;
-        if (e.path) {
-          // chrome support
-          element = e.path[0];
-          id = document.getElementById(element.dataset.resId);
-        } else {
-          // firefox support
-          element = e.originalTarget;
-          id = document.getElementById(element.dataset.resId);
-        }
-        this.lastId = element.dataset.resId;
-        this.lastSqv = id;
-
-        this.start = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
-        this.lastOver = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
-
-        const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
-        this.selectionhighlight(elements, options);
-
-      };
-
       sqv.onmouseover = (e: any) => {
+        if(this.firstOver) {
+
+          let id;
+          let element;
+          if (e.path) {
+            // chrome support
+            element = e.path[0];
+            id = document.getElementById(element.dataset.resId);
+          } else {
+            // firefox support
+            element = e.originalTarget;
+            id = document.getElementById(element.dataset.resId);
+          }
+          this.lastId = element.dataset.resId;
+          this.lastSqv = id;
+
+          this.start = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
+          this.lastOver = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
+
+          const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
+          this.selectionhighlight(elements, options);
+          this.firstOver = false;
+        }
+
         let element;
         if (e.path) { element = e.path[0]; } else { element = e.originalTarget; }
 
