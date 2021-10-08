@@ -11,7 +11,7 @@ ProSeqViewer can be integrated in both modern and dynamic frameworks like [Angul
 as well as in static HTML websites. It is used by [MobiDB](http://mobidb.bio.unipd.it/),
 [DisProt](http://www.disprot.org/), [RepeatsDB](http://repeatsdb.bio.unipd.it/)
 
-###ProSeqViewer features
+### ProSeqViewer features
 
 * Generates pure HTML, compatible with any browser and operating system
 * Easy to install
@@ -21,7 +21,7 @@ as well as in static HTML websites. It is used by [MobiDB](http://mobidb.bio.uni
 * Interactive, capture mouse selections and clicks
 * Responsive, dynamically adapt to window changes
 
-### Documentation
+## Documentation
 
 Full documentation and examples are available [here](https://biocomputingup.github.io/ProSeqViewer-documentation/)
 
