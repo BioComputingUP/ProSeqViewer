@@ -21,11 +21,10 @@ as well as in static HTML websites. It is used by [MobiDB](http://mobidb.bio.uni
 * Interactive, capture mouse selections and clicks
 * Responsive, dynamically adapt to window changes
 
-## Documentation
-
-Full documentation and examples are available [here](https://biocomputingup.github.io/ProSeqViewer-documentation/)
-
-
+## Links
+* [ProSeqViewer library GitHub repository](https://github.com/BioComputingUP/ProSeqViewer)
+* [Documentation website](https://biocomputingup.github.io/ProSeqViewer-documentation/)
+* [NPM package](https://www.npmjs.com/package/proseqviewer)
 
 ## Getting started
 
