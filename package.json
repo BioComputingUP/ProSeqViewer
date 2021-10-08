@@ -3,6 +3,11 @@
   "version": "1.0.91",
   "main": "index.js",
   "types": "index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BioComputingUP/ProSeqViewer"
+  },
+  "homepage": "https://biocomputingup.github.io/ProSeqViewer-documentation/",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -rfv dist && tsc",
