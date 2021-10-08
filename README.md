@@ -142,11 +142,12 @@ psv.draw({sequences, options, icons});
 ```
 
 ## Developers
-
-```angular2html
+If you are a developer you can update the GitHub and NPM repo with these commands
+```bash
 nvm use
 npm install
 npm run buildall
+npm publish
 ```
 
 
