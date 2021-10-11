@@ -119,7 +119,6 @@ export class SelectionModel {
             id = document.getElementById(element.dataset.resId);
           }
           this.lastId = element.dataset.resId;
-          console.log(this.lastId)
           this.lastSqv = id;
 
           this.start = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
