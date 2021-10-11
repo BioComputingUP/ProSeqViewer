@@ -15,6 +15,22 @@ export class SelectionModel {
   lastId;
   firstOver;
 
+  private removeSelection(e) {
+    let element;
+    if (e.path) { element = e.path[0]; } else { element = e.originalTarget; }
+    if (this.start) {
+
+      // lastSelection out of cells
+      if (!element.dataset.resY) {
+        this.end = {y: this.lastOver.y, x: this.lastOver.x, sqvId: this.lastOver.sqvId};
+      } else {
+        // lastSelection on a cell
+        this.end = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
+      }
+      this.start = undefined;
+    }
+  }
+
   private selectionhighlight(elements, options) {
 
     // in case we want to try implement both events, bugged at the moment
@@ -103,6 +119,7 @@ export class SelectionModel {
             id = document.getElementById(element.dataset.resId);
           }
           this.lastId = element.dataset.resId;
+          console.log(this.lastId)
           this.lastSqv = id;
 
           this.start = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
@@ -113,16 +130,19 @@ export class SelectionModel {
           this.firstOver = false;
         }
 
-        let element;
-        if (e.path) { element = e.path[0]; } else { element = e.originalTarget; }
+          let element;
+          if (e.path) { element = e.path[0]; } else { element = e.originalTarget; }
 
-        if (this.start) {
-          this.lastOver = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
+          if (this.start) {
+            this.lastOver = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
 
-          const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
-          this.selectionhighlight(elements, options);
+            const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
+            if (this.lastId == element.dataset.resId) {
+              this.selectionhighlight(elements, options);
+            }
 
-        }
+          }
+
       };
     }
 

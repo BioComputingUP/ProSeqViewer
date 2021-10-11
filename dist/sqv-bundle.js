@@ -1573,6 +1573,26 @@ exports.RowsModel = RowsModel;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SelectionModel = void 0;
 class SelectionModel {
+    removeSelection(e) {
+        let element;
+        if (e.path) {
+            element = e.path[0];
+        }
+        else {
+            element = e.originalTarget;
+        }
+        if (this.start) {
+            // lastSelection out of cells
+            if (!element.dataset.resY) {
+                this.end = { y: this.lastOver.y, x: this.lastOver.x, sqvId: this.lastOver.sqvId };
+            }
+            else {
+                // lastSelection on a cell
+                this.end = { y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId };
+            }
+            this.start = undefined;
+        }
+    }
     selectionhighlight(elements, options) {
         // in case we want to try implement both events, bugged at the moment
         // switch (options.selection) {
@@ -1654,6 +1674,7 @@ class SelectionModel {
                         id = document.getElementById(element.dataset.resId);
                     }
                     this.lastId = element.dataset.resId;
+                    console.log(this.lastId);
                     this.lastSqv = id;
                     this.start = { y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId };
                     this.lastOver = { y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId };
@@ -1671,7 +1692,9 @@ class SelectionModel {
                 if (this.start) {
                     this.lastOver = { y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId };
                     const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
-                    this.selectionhighlight(elements, options);
+                    if (this.lastId == element.dataset.resId) {
+                        this.selectionhighlight(elements, options);
+                    }
                 }
             };
         }
