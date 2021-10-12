@@ -1573,6 +1573,9 @@ exports.RowsModel = RowsModel;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SelectionModel = void 0;
 class SelectionModel {
+    constructor() {
+        this.count = 1;
+    }
     removeSelection(e) {
         let element;
         if (e.path) {
@@ -1630,9 +1633,29 @@ class SelectionModel {
         for (const selection of elements) {
             const x = +selection.getAttribute('data-res-x');
             const y = +selection.getAttribute('data-res-y');
+            let firstX;
+            let lastX;
+            let firstY;
+            let lastY;
+            if (this.start.x >= this.lastOver.x) {
+                firstX = this.lastOver.x;
+                lastX = this.start.x;
+            }
+            else {
+                firstX = this.start.x;
+                lastX = this.lastOver.x;
+            }
+            if (this.start.y >= this.lastOver.y) {
+                firstY = this.lastOver.y;
+                lastY = this.start.y;
+            }
+            else {
+                firstY = this.start.y;
+                lastY = this.lastOver.y;
+            }
             // on every drag reselect the whole area ...
-            if (x >= +this.start.x && x <= +this.lastOver.x &&
-                y >= +this.start.y && y <= +this.lastOver.y &&
+            if (x >= +firstX && x <= +lastX &&
+                y >= +firstY && y <= +lastY &&
                 selection.getAttribute('data-res-id') === this.lastOver.sqvId) {
                 selection.classList.add('highlight');
             }
@@ -1647,7 +1670,11 @@ class SelectionModel {
         const sequenceViewers = document.getElementsByClassName('cell');
         // remove selection on new click
         window.onmousedown = (event) => {
-            this.firstOver = true;
+            this.count += 1;
+            if (this.count == 2) {
+                this.firstOver = true;
+                this.count = 0;
+            }
             // right click
             if (event.which === 1) {
                 const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
@@ -1741,7 +1768,6 @@ class SelectionModel {
                         else {
                             textDict[selection.getAttribute('data-res-y')] += selection.innerText;
                         }
-                        selection.classList.remove('highlight');
                         row = selection.getAttribute('data-res-y');
                     }
                 }

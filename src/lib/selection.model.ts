@@ -1,3 +1,5 @@
+import {start} from "repl";
+
 interface Cell {
   x: string;
   y: string;
@@ -14,6 +16,7 @@ export class SelectionModel {
   lastSqv;
   lastId;
   firstOver;
+  count = 1;
 
   private removeSelection(e) {
     let element;
@@ -70,9 +73,30 @@ export class SelectionModel {
     for (const selection of elements) {
       const x = +selection.getAttribute('data-res-x');
       const y = +selection.getAttribute('data-res-y');
+
+      let firstX;
+      let lastX;
+      let firstY;
+      let lastY;
+      if(this.start.x >= this.lastOver.x) {
+        firstX = this.lastOver.x;
+        lastX = this.start.x;
+      } else {
+        firstX = this.start.x;
+        lastX = this.lastOver.x;
+      }
+
+      if(this.start.y >= this.lastOver.y) {
+        firstY = this.lastOver.y;
+        lastY = this.start.y;
+      } else {
+        firstY = this.start.y;
+        lastY = this.lastOver.y;
+      }
+
       // on every drag reselect the whole area ...
-      if (x >= +this.start.x && x <= +this.lastOver.x &&
-        y >= +this.start.y && y <= +this.lastOver.y &&
+      if (x >= +firstX && x <= +lastX &&
+        y >= +firstY && y <= +lastY &&
         selection.getAttribute('data-res-id') === this.lastOver.sqvId ) {
         selection.classList.add('highlight');
       } else {
@@ -89,7 +113,13 @@ export class SelectionModel {
 
     // remove selection on new click
     window.onmousedown = (event) => {
-      this.firstOver = true;
+      this.count +=1;
+      if (this.count == 2) {
+        this.firstOver = true;
+        this.count = 0;
+      }
+
+
       // right click
       if (event.which === 1) {
         const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
@@ -120,6 +150,7 @@ export class SelectionModel {
           }
           this.lastId = element.dataset.resId;
           this.lastSqv = id;
+
 
           this.start = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
           this.lastOver = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
@@ -185,7 +216,6 @@ export class SelectionModel {
             } else {
               textDict[selection.getAttribute('data-res-y')] += selection.innerText;
             }
-            selection.classList.remove('highlight');
             row = selection.getAttribute('data-res-y');
           }
         }
