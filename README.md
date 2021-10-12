@@ -1,65 +1,154 @@
+
 # ProSeqViewer
 
-This is a code repository for the BioComputingUP ProSeqViewer project.
-Full documentation is work in progress and will be available at: https://biocomputingup.github.io/ProSeqViewer-documentation/.
+ProSeqViewer is a [TypeScript](https://www.typescriptlang.org/) library to visualize annotation
+on single sequences and multiple sequence alignments.
 
-This version is based on [Typescript](https://www.typescriptlang.org/) and compatible with [Angular 2+](https://angular.io/) framework.
-
-Represent biological data with the ProSeqViewer library! Used in [MobiDB](http://mobidb.bio.unipd.it/),
-[DisProt](http://www.disprot.org/) and [RepeatsDB](http://repeatsdb.bio.unipd.it/).
-
-## Dependencies
-
-* [Typescript](https://www.typescriptlang.org/)
+![ProSeqViewer](figure.png?raw=true "ProSeqViewer")
 
 
-[comment]: <> (## Output demo)
+ProSeqViewer can be integrated in both modern and dynamic frameworks like [Angular](https://angular.io/)
+as well as in static HTML websites. It is used by [MobiDB](http://mobidb.bio.unipd.it/),
+[DisProt](http://www.disprot.org/), [RepeatsDB](http://repeatsdb.bio.unipd.it/)
 
-[comment]: <> (![ProSeqViewer]&#40;src/assets/sqvDemo.png&#41;)
+### ProSeqViewer features
+
+* Generates pure HTML, compatible with any browser and operating system
+* Easy to install
+* Lightweight
+* Zero dependencies
+* Fast, able to render large alignments
+* Interactive, capture mouse selections and clicks
+* Responsive, dynamically adapt to window changes
+
+## Links
+* [ProSeqViewer library GitHub repository](https://github.com/BioComputingUP/ProSeqViewer)
+* [Documentation website](https://biocomputingup.github.io/ProSeqViewer-documentation/)
+* [NPM package](https://www.npmjs.com/package/proseqviewer)
 
 ## Getting started
 
-1 Install the library using npm
+### JavaScript installation
+
+Import the JavaScript bundle and CSS from local files
+```html
+<head>
+    <link rel="stylesheet" type="text/css" href="sqv.css">
+    <script src="sqv-bundle.js"></script>
+</head>
+```
+
+Alternatively, import from GitHub
+```html
+<head>
+    <link rel="stylesheet" type="text/css" href="https://rawgithub.com/BioComputingUP/ProSeqViewer/master/dist/assets/proseqviewer.css">
+    <script src="https://rawgithub.com/BioComputingUP/ProSeqViewer/master/dist/sqv-bundle.js"></script>
+</head>
+```
+
+Add component
+```html
+<body>
+    <div id="psv"></div>
+</body>
+```
+
+Create an instance
+```html
+<head>
+    <!--Put this block at the end of your head section-->
+    <script>
+        const sequences = [
+            {sequence: 'TLRAIENFYISNNKISDIPEFVR', id: 1, label: 'ASPA_ECOLI/13-156'},
+            {sequence: 'TLRASENFPITGYKIHEE..MIN', id: 2, label: 'ASPA_BACSU/16-156'},
+            {sequence: 'GTKFPRRIIWS............', id: 3, label: 'FUMC_SACS2/1-124'}
+        ]
+
+        // Input icons
+        const icons = [
+            {sequenceId: 1, start: 2, end: 2, icon: 'lollipop'},
+            {sequenceId: 1, start: 13, end: 13, icon: 'lollipop'}
+        ]
+
+        // Options and configuration
+        const options = {
+            chunkSize: 0, 
+            sequenceColor: 'clustal', 
+            lateralIndexes: false
+        };
+
+        // Initialize the viewer
+        const psv = new ProSeqViewer('psv');
+
+        // Generate the HTML
+        psv.draw({sequences, options, icons});
+    </script>
+</head>
+```
+
+### Angular installation
+
+Install ProSeqViewer from npm
 ```
 npm install proseqviewer
 ```
 
-2 Import the ProSeqViewer in javascript or your angular component
+Add ProSeqViewer CSS to your angular.json file
+```json
+{
+  styles: ["./node_modules/proseqviewer/dist/assets/proseqviewer.css"]
+}
+```
+
+Import in your component
 ```typescript
 import {ProSeqViewer} from 'proseqviewer/dist';
 ```
 
-3 Optional: if you are installing the feature viewer in an Angular 2+ based App, you may
-need to load the feature viewer stylesheet in your angular.json "styles" to
-ensure the correct prioritization of stylesheets.
-```json
-styles: [
-    "./node_modules/proseqviewer/dist/assets/proseqviewer.css"
-]
-```
-
-4 Place the ProSeqViewer in your html
+Add component to your page
 ```html
  <div id="psv"></div>
 ```
 
-5 Create an instance of the ProSeqViewer in javascript and style it
+Create an instance in your component
 ```typescript
-this.proseqviewer = new ProSeqViewer('psv');
+// Input sequences
+const sequences = [
+    {sequence: 'TLRAIENFYISNNKISDIPEFVR', id: 1, label: 'ASPA_ECOLI/13-156'},
+    {sequence: 'TLRASENFPITGYKIHEE..MIN', id: 2, label: 'ASPA_BACSU/16-156'},
+    {sequence: 'GTKFPRRIIWS............', id: 3, label: 'FUMC_SACS2/1-124'}
+]
+
+// Input icons
+const icons = [
+    {sequenceId: 1, start: 2, end: 2, icon: 'lollipop'},
+    {sequenceId: 1, start: 13, end: 13, icon: 'lollipop'}
+]
+
+// Options and configuration
+const options = {
+    chunkSize: 0, 
+    sequenceColor: 'clustal', 
+    lateralIndexes: false
+};
+
+// Initialize the viewer
+const psv = new ProSeqViewer('psv');
+
+// Generate the HTML
+psv.draw({sequences, options, icons});
+
 ```
 
-6 Add inputs -- here an example with minimum required input, for the full list of input settings options check GitHub documentation --.
-```typescript
- this.sequences = [{sequence: 'DFRLE--F---'}]
-```
-7 Execute the function to draw the ProSeqVieweriewer on the page
-```typescript
- this.proseqviewer.draw(this.sequences);
+## Developers
+If you are a developer you can update the GitHub and NPM repo with these commands
+```bash
+nvm use
+npm install
+npm run buildall
+npm publish
 ```
 
-## Support
-
-If you have any problem or suggestion please open an issue.
 
 ## License
 
