@@ -12,27 +12,10 @@ export class SelectionModel {
 
   start: Cell;
   lastOver: Cell;
-  end: Cell;
   lastSqv;
   lastId;
   firstOver;
   count = 1;
-
-  private removeSelection(e) {
-    let element;
-    if (e.path) { element = e.path[0]; } else { element = e.originalTarget; }
-    if (this.start) {
-
-      // lastSelection out of cells
-      if (!element.dataset.resY) {
-        this.end = {y: this.lastOver.y, x: this.lastOver.x, sqvId: this.lastOver.sqvId};
-      } else {
-        // lastSelection on a cell
-        this.end = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
-      }
-      this.start = undefined;
-    }
-  }
 
   private selectionhighlight(elements, options) {
 
@@ -74,25 +57,12 @@ export class SelectionModel {
       const x = +selection.getAttribute('data-res-x');
       const y = +selection.getAttribute('data-res-y');
 
-      let firstX;
-      let lastX;
-      let firstY;
-      let lastY;
-      if(this.start.x >= this.lastOver.x) {
-        firstX = this.lastOver.x;
-        lastX = this.start.x;
-      } else {
-        firstX = this.start.x;
-        lastX = this.lastOver.x;
-      }
 
-      if(this.start.y >= this.lastOver.y) {
-        firstY = this.lastOver.y;
-        lastY = this.start.y;
-      } else {
-        firstY = this.start.y;
-        lastY = this.lastOver.y;
-      }
+      let firstX = Math.min(+this.start.x, +this.lastOver.x);
+      let lastX =  Math.max(+this.start.x, +this.lastOver.x);
+      let firstY = Math.min(+this.start.y, +this.lastOver.y);
+      let lastY = Math.max(+this.start.y, +this.lastOver.y);
+
 
       // on every drag reselect the whole area ...
       if (x >= +firstX && x <= +lastX &&
@@ -164,6 +134,7 @@ export class SelectionModel {
           if (e.path) { element = e.path[0]; } else { element = e.originalTarget; }
 
           if (this.start) {
+
             this.lastOver = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
 
             const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
@@ -177,18 +148,7 @@ export class SelectionModel {
     }
 
     document.body.onmouseup = (e: any) => {
-
-      let element;
-      if (e.path) { element = e.path[0]; } else { element = e.originalTarget; }
       if (this.start) {
-
-        // lastSelection out of cells
-        if (!element.dataset.resY) {
-          this.end = {y: this.lastOver.y, x: this.lastOver.x, sqvId: this.lastOver.sqvId};
-        } else {
-          // lastSelection on a cell
-          this.end = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
-        }
         this.start = undefined;
       }
     };
