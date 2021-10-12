@@ -119,7 +119,7 @@ export class ProSeqViewer {
     this.createGUI(data, labels, startIndexes, tooltips, inputs.options, labelsFlag);
 
     /** listen copy paste events */
-    this.selection.process(inputs.options);
+    this.selection.process();
 
     /** listen selection events */
     this.events.onRegionSelected();

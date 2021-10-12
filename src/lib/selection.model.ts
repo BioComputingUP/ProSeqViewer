@@ -15,43 +15,35 @@ export class SelectionModel {
   lastSqv;
   lastId;
   firstOver;
-  count = 1;
+  event_sequence = [];
 
-  private selectionhighlight(elements, options) {
 
-    // in case we want to try implement both events, bugged at the moment
-    // switch (options.selection) {
-    //   case 'columnselection': {
-    //     for (const selection of elements) {
-    //       const x = +selection.getAttribute('data-res-x');
-    //       const y = +selection.getAttribute('data-res-y');
-    //       // on every drag reselect the whole area ...
-    //       if (y >= +this.start.y && y <= 100000 && // I should look for max y, but I will spare time for now..
-    //         x >= +this.start.x && x <= +this.lastOver.x &&
-    //         selection.getAttribute('data-res-id') === this.lastOver.sqvId ) {
-    //         selection.classList.add('highlight');
-    //       } else {
-    //         selection.classList.remove('highlight');
-    //       }
-    //     }
-    //     break;
-    //   }
-    //   case 'areaselection': {
-    //     for (const selection of elements) {
-    //       const x = +selection.getAttribute('data-res-x');
-    //       const y = +selection.getAttribute('data-res-y');
-    //       // on every drag reselect the whole area ...
-    //       if (x >= +this.start.x && x <= +this.lastOver.x &&
-    //         y >= +this.start.y && y <= +this.lastOver.y &&
-    //         selection.getAttribute('data-res-id') === this.lastOver.sqvId ) {
-    //         selection.classList.add('highlight');
-    //       } else {
-    //         selection.classList.remove('highlight');
-    //       }
-    //     }
-    //     break;
-    //   }
-    // }
+  private set_start(e) {
+    let id;
+    let element;
+    if (e.path) {
+      // chrome support
+      element = e.path[0];
+      id = document.getElementById(element.dataset.resId);
+    } else {
+      // firefox support
+      element = e.originalTarget;
+      id = document.getElementById(element.dataset.resId);
+    }
+    this.lastId = element.dataset.resId;
+    this.lastSqv = id;
+
+
+    this.start = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
+    this.lastOver = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
+
+    const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
+    this.selectionhighlight(elements);
+    this.firstOver = false;
+
+  }
+
+  private selectionhighlight(elements) {
 
     for (const selection of elements) {
       const x = +selection.getAttribute('data-res-x');
@@ -75,60 +67,58 @@ export class SelectionModel {
     }
   }
 
-  public process(options) {
-    // if we want to implement different selection events
-    // if (!options || !options.selection) { return }
-
+  public process() {
     const sequenceViewers = document.getElementsByClassName('cell');
+
+
+
 
     // remove selection on new click
     window.onmousedown = (event) => {
-      this.count +=1;
-      if (this.count == 2) {
-        this.firstOver = true;
-        this.count = 0;
-      }
+
+      this.event_sequence.push(0);
 
 
-      // right click
-      if (event.which === 1) {
+      // @ts-ignore
+      for (const sqv of sequenceViewers) {
+        sqv.onmousedown = (e) => {
+
+            this.set_start(e);
+          }
+        }
+
+
+      if (this.event_sequence[0] == 0 && this.event_sequence[1] == 1 && this.event_sequence[2] == 2 && this.event_sequence[0]== 0) {
+        console.log(event.which)
+        // left click
+
         const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
         // @ts-ignore
         for (const selection of elements) {
           selection.classList.remove('highlight');
         }
+
       }
+      this.firstOver = true;
+      this.event_sequence = [0];
 
     };
 
-    // @ts-ignore
-    for (const sqv of sequenceViewers) {
 
-      sqv.onmouseover = (e: any) => {
-        if(this.firstOver) {
 
-          let id;
-          let element;
-          if (e.path) {
-            // chrome support
-            element = e.path[0];
-            id = document.getElementById(element.dataset.resId);
-          } else {
-            // firefox support
-            element = e.originalTarget;
-            id = document.getElementById(element.dataset.resId);
+      // @ts-ignore
+      for (const sqv of sequenceViewers) {
+
+        sqv.onmouseover = (e: any) => {
+
+          if (!(1 in this.event_sequence)){
+            this.event_sequence.push(1);
           }
-          this.lastId = element.dataset.resId;
-          this.lastSqv = id;
 
+          if(this.firstOver) {
 
-          this.start = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
-          this.lastOver = {y: element.dataset.resY, x: element.dataset.resX, sqvId: element.dataset.resId};
-
-          const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
-          this.selectionhighlight(elements, options);
-          this.firstOver = false;
-        }
+            this.set_start(e);
+          }
 
           let element;
           if (e.path) { element = e.path[0]; } else { element = e.originalTarget; }
@@ -139,18 +129,29 @@ export class SelectionModel {
 
             const elements = document.querySelectorAll('[data-res-id=' + element.dataset.resId + ']');
             if (this.lastId == element.dataset.resId) {
-              this.selectionhighlight(elements, options);
+              this.selectionhighlight(elements);
             }
 
           }
 
-      };
-    }
+        };
+      }
 
-    document.body.onmouseup = (e: any) => {
+
+    document.body.onmouseup = () => {
+      this.event_sequence.push(2);
+      this.firstOver = false;
       if (this.start) {
         this.start = undefined;
       }
+      if (this.event_sequence[0] == 0 && this.event_sequence[1] == 2) {
+          const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
+          // @ts-ignore
+          for (const selection of elements) {
+            selection.classList.remove('highlight');
+          }
+      }
+
     };
 
     document.body.addEventListener('keydown', (e: any) => {
