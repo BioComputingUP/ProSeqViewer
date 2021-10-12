@@ -82,11 +82,9 @@ export class SelectionModel {
       // @ts-ignore
       for (const sqv of sequenceViewers) {
         sqv.onmousedown = (e) => {
-
             this.set_start(e);
           }
         }
-
 
       if (this.event_sequence[0] == 0 && this.event_sequence[1] == 1 && this.event_sequence[2] == 2 && this.event_sequence[0]== 0) {
         console.log(event.which)
@@ -99,7 +97,16 @@ export class SelectionModel {
         }
 
       }
-      this.firstOver = true;
+      console.log(event)
+
+      // if first click outside sqvDiv (first if is valid in Chrome, second in firefox)
+      if (!event.target.dataset.resX) {
+        this.firstOver = true;
+      }
+      if (event.explicitOriginalTarget && event.explicitOriginalTarget.dataset) {
+        this.firstOver = true;
+      }
+
       this.event_sequence = [0];
 
     };
