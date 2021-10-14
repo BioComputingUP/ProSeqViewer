@@ -89,6 +89,7 @@ export class ColorsModel {
     let newRegions = this.fixMissingIds(allRegions, allInputs.sequences);
     newRegions = this.transformInput(allRegions, newRegions, allInputs.sequences, allInputs.options);
     this.transformColors(allInputs.options);
+    console.log(newRegions)
     return newRegions;
   }
 
@@ -189,7 +190,6 @@ export class ColorsModel {
     let arrColors;
     let n;
     let c;
-    let t;
 
 
     for (const type in ColorsModel.palette) {
@@ -255,10 +255,9 @@ export class ColorsModel {
     result.sequenceId = +e.sequenceId;
 
     // transform target in CSS property
-    if (e.color) {e.color = this.checkColor(e.color); result.letterStyle = `color:${e.color};`;
+    if (e.color) {result.letterStyle = `color:${e.color};`;
     }
     if (e.backgroundColor) {
-      e.backgroundColor = this.checkColor(e.backgroundColor);
       result.letterStyle += `background-color:${e.backgroundColor};`; }
     if (e.backgroundImage) {
         result.letterStyle += `background-image: ${e.backgroundImage};`;
@@ -282,84 +281,6 @@ export class ColorsModel {
     return result;
   }
 
-  private checkColor(color: string) {
-    if (color[0] === '(') {
-      return this.checkRgb(color);
-    } else if (color[0] === '#') {
-      return this.checkHex(color);
-    } else {
-      return color[0];
-    }
-  }
-
-  private checkHex(color: string) {
-
-    const c = {
-      0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, a: 10,
-      b: 11, c: 12, d: 13, e: 14, f: 15, A: 10, B: 11, C: 12, D: 13, E: 14, F: 15
-    };
-    let l1;
-    let l2;
-
-    const hex = color.replace('#', '');
-
-    if (hex.length !== 6) {
-      // invalid hex format
-      return -1;
-    }
-
-    for (let i = 0; i < 3; i++) {
-      l1 = c[hex[i * 2]];
-      l2 = c[hex[i * 2 + 1]];
-      if (l1 === undefined || l2 === undefined) {
-        // Invalid char in hex value
-        return -1;
-      }
-    }
-    return color;
-  }
-
-  private checkRgb(color: string) {
-
-    let tmp;
-    let prefix;
-    let result;
-    const rgb = color.replace('(', '')
-      .replace(')', '')
-      .split(',');
-
-    if (rgb.length > 2) {
-
-      for (let i = 0; i < 3; i++) {
-        tmp = +rgb[i];
-        if (isNaN(tmp) || tmp < 0 || tmp > 255) {
-          // wrong value for rgb
-          return -1;
-        }
-      }
-      prefix = 'rgb';
-    }
-
-    if (rgb.length > 3) {
-      tmp = +rgb[3];
-      if (isNaN(tmp) || tmp < 0 || tmp > 1) {
-        // wrong opacity value for rgb
-        return -1;
-      }
-      prefix = 'rgba';
-      result = '(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', ' + rgb[3] + ')';
-    } else {
-      result = '(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')';
-    }
-
-    if (rgb.length <= 2 || rgb.length > 4) {
-      // invalid format for rgb
-      return -1;
-    }
-
-    return prefix + result;
-
-  }
 
   private gradient(n: number) {
     return this.evenlySpacedColors(n);

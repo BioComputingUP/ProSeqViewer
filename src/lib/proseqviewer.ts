@@ -81,7 +81,9 @@ export class ProSeqViewer {
 
   public draw(inputs: Input) {
     const sqvBody = document.getElementById(this.divId);
-    sqvBody.innerHTML = `<div class="root"> <div class="loading">input error</div> </div>`;
+    if (sqvBody) {
+      sqvBody.innerHTML = `<div class="root"> <div class="loading">input error</div> </div>`;
+    }
     ProSeqViewer.sqvList.push(this.divId);
 
     let labels;
@@ -286,6 +288,7 @@ export class ProSeqViewer {
             style = 'font-size: 1em;display:block;color: rgba(0, 0, 0, 0);height:1em;line-height:1em;margin-bottom:' + lineSeparation;
             cell = `<span style="${style}">A</span>`; // mock char, this has to be done to have chunks all of the same length (last chunk can't be shorter)
         } else {
+          console.log(entity.target)
           if (entity.target) { style += `${entity.target}`; }
           if (entity.char && !entity.char.includes('svg')) {
             // y is the row, x is the column
