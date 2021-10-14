@@ -57,7 +57,6 @@ class ColorsModel {
         let newRegions = this.fixMissingIds(allRegions, allInputs.sequences);
         newRegions = this.transformInput(allRegions, newRegions, allInputs.sequences, allInputs.options);
         this.transformColors(allInputs.options);
-        console.log(newRegions);
         return newRegions;
     }
     // transform input structure
@@ -1275,7 +1274,6 @@ class ProSeqViewer {
                     cell = `<span style="${style}">A</span>`; // mock char, this has to be done to have chunks all of the same length (last chunk can't be shorter)
                 }
                 else {
-                    console.log(entity.target);
                     if (entity.target) {
                         style += `${entity.target}`;
                     }

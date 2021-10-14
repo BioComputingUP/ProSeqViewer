@@ -89,7 +89,6 @@ export class ColorsModel {
     let newRegions = this.fixMissingIds(allRegions, allInputs.sequences);
     newRegions = this.transformInput(allRegions, newRegions, allInputs.sequences, allInputs.options);
     this.transformColors(allInputs.options);
-    console.log(newRegions)
     return newRegions;
   }
 

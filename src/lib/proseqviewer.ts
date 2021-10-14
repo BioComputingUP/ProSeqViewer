@@ -288,7 +288,6 @@ export class ProSeqViewer {
             style = 'font-size: 1em;display:block;color: rgba(0, 0, 0, 0);height:1em;line-height:1em;margin-bottom:' + lineSeparation;
             cell = `<span style="${style}">A</span>`; // mock char, this has to be done to have chunks all of the same length (last chunk can't be shorter)
         } else {
-          console.log(entity.target)
           if (entity.target) { style += `${entity.target}`; }
           if (entity.char && !entity.char.includes('svg')) {
             // y is the row, x is the column
