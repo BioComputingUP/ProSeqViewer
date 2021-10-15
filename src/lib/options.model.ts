@@ -7,20 +7,19 @@ export class OptionsModel {
     emptyFiller: ' ', // fills gap at the end of the MSA sequences
     indexesLocation: null,
     wrapLine: true,
-    viewerWidth: false,
-    consensusType: null,
-    consensusDotThreshold: 90,
+    viewerWidth: '',
+    dotThreshold: 90,
     lineSeparation: '5px',
     sequenceColor: undefined,
     customPalette: undefined,
-    sequenceColorMatrix: undefined,
+    sequenceColorMatrix: undefined, // blosum
     sequenceColorMatrixPalette: undefined,
     consensusColorIdentity: undefined,
     consensusColorMapping: undefined,
     selection: undefined
   };
 
-  process(opt) {
+  process(opt, consensus) {
 
     /** check input fontSize */
     if (opt && opt.fontSize) {
@@ -81,36 +80,49 @@ export class OptionsModel {
     /** check sequenceColor value */
     if (opt && opt.sequenceColor) {
       if (typeof opt.sequenceColor !== 'string' ) {
-        this.options.sequenceColor = 'custom';
-        this.options.customPalette = opt.sequenceColor;
-      } else {
-        this.options.sequenceColor = opt.sequenceColor;
-      }
-    }
+        const keys = Object.keys(opt.sequenceColor);
 
-    /** check sequenceColor value */
-    if (opt && opt.sequenceColorMatrix) {
-      if (typeof opt.sequenceColorMatrix !== 'string' ) {
-        this.options.sequenceColorMatrix = 'custom';
-        this.options.sequenceColorMatrixPalette = opt.sequenceColorMatrix;
+        if(keys[0].length === 1) {
+          this.options.sequenceColor = 'custom';
+          this.options.customPalette = opt.sequenceColor;
+        } else {
+          this.options.sequenceColorMatrix = 'custom';
+          this.options.sequenceColorMatrixPalette = opt.sequenceColor;
+        }
       } else {
-        this.options.sequenceColorMatrix = opt.sequenceColorMatrix;
+        if(opt.sequenceColor === "blosum62") {
+          this.options.sequenceColorMatrix = opt.sequenceColor;
+        } else if (opt.sequenceColor === "clustal") {
+          this.options.sequenceColor = opt.sequenceColor;
+        }
       }
     }
 
 
     /** check consensusType value */
-    if (opt && opt.consensusColorIdentity) {
-        this.options.consensusColorIdentity = opt.consensusColorIdentity
-    }
-    if (opt && opt.consensusColorMapping) {
-      this.options.consensusColorMapping = opt.consensusColorMapping
+    if (consensus && consensus.color) {
+
+      if (typeof consensus.color !== 'string' ) {
+        const keys = Object.keys(consensus.color);
+        if(typeof (keys[0]) === 'string') {
+          this.options.consensusColorIdentity = consensus.color
+        } else {
+          this.options.consensusColorMapping = consensus.color
+        }
+      } else {
+        if(consensus.color === "identity") {
+          this.options.consensusColorIdentity = consensus.color
+        } else if (consensus.color === "physical") {
+          this.options.consensusColorMapping = consensus.color
+        }
+      }
     }
 
+
     /** check consensusThreshold value */
-    if (opt && opt.consensusDotThreshold) {
-      if (typeof opt.consensusDotThreshold == 'number') {
-        this.options.consensusDotThreshold = opt.consensusDotThreshold;
+    if (consensus && consensus.dotThreshold) {
+      if (typeof consensus.dotThreshold == 'number') {
+        this.options.dotThreshold = consensus.dotThreshold;
       }
     }
 
@@ -147,6 +159,7 @@ export class OptionsModel {
         this.options.viewerWidth = viewerWidth;
       }
     }
+    console.log(this.options)
     return this.options;
   }
 }

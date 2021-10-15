@@ -227,11 +227,11 @@ process(sequences, regions, options) {
 
       if (options.consensusColorIdentity) {
         consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences);
-        [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.consensusDotThreshold, options.consensusColorIdentity);
+        [sequences, regions] = ConsensusModel.createConsensus('identity', consensusInfoIdentity, false, sequences, regions, options.dotThreshold, options.consensusColorIdentity);
       } else if (options.consensusColorMapping) {
         consensusInfoPhysical = ConsensusModel.setConsensusInfo('physical', sequences);
         if (!consensusInfoIdentity) { consensusInfoIdentity = ConsensusModel.setConsensusInfo('identity', sequences); }
-        [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.consensusDotThreshold, options.consensusColorMapping);
+        [sequences, regions] = ConsensusModel.createConsensus('physical', consensusInfoPhysical, consensusInfoIdentity, sequences, regions, options.dotThreshold, options.consensusColorMapping);
     }
 
     return [sequences, regions];

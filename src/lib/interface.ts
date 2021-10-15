@@ -39,22 +39,23 @@ export interface Options {
   fontSize?: string,
   chunkSize?: number, // number of chunk letters
   chunkSeparation?: number, // space between chunks
-  sidebarWidth?: string,
+  viewerWidth?: string,
   indexesLocation?: string, // "top" / "lateral"
   wrapLine?: boolean,
   lineSeparation?: string, // margin bottom of  horizontal rows
 
   sequenceColor?: string | {}, // colorscheme, introduce option for custom input
-  consensusDotThreshold?: number
-  sequenceColorMatrix?: string | {} // blosum&co
-
-  consensusColorIdentity?: string | {}, // {50: ["bg_color", "fg_color"]}, <-- consensusIdentical
-  consensusColorMapping?: string | {}, // {G: ["+", "bg_color", "fg_color"]} <-- consensusPhysical
-
   selection?: string
 }
 
+export interface Consensus {
+  color: string | {} // blosum
+  dotThreshold?: number
+}
+
+
 export interface Input {
+  consensus: Consensus;
   sequences: Array<Sequences>,
   regions?: Array<Regions>,
   patterns?: Array<Patterns>,
