@@ -49,13 +49,13 @@ export interface Options {
 }
 
 export interface Consensus {
-  color: string | {} // blosum
+  color: string | {},
   dotThreshold?: number
 }
 
 
 export interface Input {
-  consensus: Consensus;
+  consensus?: Consensus;
   sequences: Array<Sequences>,
   regions?: Array<Regions>,
   patterns?: Array<Patterns>,
