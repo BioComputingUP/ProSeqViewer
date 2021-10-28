@@ -159,7 +159,7 @@ export class OptionsModel {
         this.options.viewerWidth = viewerWidth;
       }
     }
-    console.log(this.options)
+
     return this.options;
   }
 }

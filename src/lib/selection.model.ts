@@ -87,7 +87,6 @@ export class SelectionModel {
         }
 
       if (this.event_sequence[0] == 0 && this.event_sequence[1] == 1 && this.event_sequence[2] == 2 && this.event_sequence[0]== 0) {
-        console.log(event.which)
         // left click
 
         const elements = document.querySelectorAll('[data-res-id=' + this.lastId + ']');
@@ -97,7 +96,6 @@ export class SelectionModel {
         }
 
       }
-      console.log(event)
 
       // if first click outside sqvDiv (first if is valid in Chrome, second in firefox)
       if (!event.target.dataset.resX) {
