@@ -59,6 +59,8 @@ export class ProSeqViewer {
 
         let oldTop = 0;
         let newTop;
+
+        // erase old indexes before recalculating them
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < chunks.length; i++) {
           chunks[i].firstElementChild.className = 'idx hidden';
@@ -166,9 +168,9 @@ export class ProSeqViewer {
           noGapsLabels[seqN] = '';
           if (idx) {
             // line with only icons, no need for index
-            labelshtml += `<span class="lbl-hidden" style="margin-bottom:${lineSeparation}"><span> ${noGapsLabels[seqN]}</span></span>`;
+            labelshtml += `<span class="lbl-hidden" style="margin-bottom:${lineSeparation}"><span class="lbl"> ${noGapsLabels[seqN]}</span></span>`;
           } else {
-            labelshtml += `<span class="lbl-hidden" style="margin-bottom:${lineSeparation}"><span></span></span>`;
+            labelshtml += `<span class="lbl-hidden" style="margin-bottom:${lineSeparation}"><span class="lbl"></span></span>`;
           }
 
         } else {
@@ -176,8 +178,8 @@ export class ProSeqViewer {
           if (idx) {
             if (!chunkSize) {
               // lateral index regular
-              labelshtml += `<span class="lbl-hidden" style="width:${fontSize};margin-bottom:${lineSeparation}">
-                            <span>${(startIndexes[count] - 1) + idx}</span></span>`;
+              labelshtml += `<span class="lbl-hidden" style="width: ${fontSize};margin-bottom:${lineSeparation}">
+                            <span class="lbl" >${(startIndexes[count] - 1) + idx}</span></span>`;
             } else {
               let noGaps = 0;
               for (const res in seqNum) {
@@ -187,12 +189,12 @@ export class ProSeqViewer {
               }
               // lateral index gap
               noGapsLabels[seqN] = noGaps;
-              labelshtml += `<span class="lbl-hidden" style="width:${fontSize};margin-bottom:${lineSeparation}">
-                            <span>${(startIndexes[count] - 1) + noGapsLabels[seqN]}</span></span>`;
+              labelshtml += `<span class="lbl-hidden" style="width:  ${fontSize};margin-bottom:${lineSeparation}">
+                            <span class="lbl" >${(startIndexes[count] - 1) + noGapsLabels[seqN]}</span></span>`;
             }
 
           } else {
-            labelshtml += `<span class="lbl-hidden" style="margin-bottom:${lineSeparation}"><span>${labels[count]}${tooltips[count]}</span></span>`;
+            labelshtml += `<span class="lbl-hidden" style="margin-bottom:${lineSeparation}"><span class="lbl">${labels[count]}${tooltips[count]}</span></span>`;
           }
         }
         flag = false;
@@ -217,10 +219,10 @@ export class ProSeqViewer {
 
       let chunkTopIndex;
       if (x % chunkSize === 0 && x <= maxTop) {
-        chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;width:0.6em;margin-bottom:${rowMarginBottom}">${x}</span>`;
+        chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${x}</span>`;
 
       } else {
-        chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;visibility: hidden;margin-bottom:${rowMarginBottom}">0</span>`;
+        chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}">0</span>`;
       }
       cells += chunkTopIndex;
     return cells;
@@ -291,13 +293,12 @@ export class ProSeqViewer {
 
       for (let y = 0; y < data.length; y++) {
         entity = data[y][x];
-        style = 'margin-bottom:' + lineSeparation;
-        if (y === data.length - 1) { style = 'margin-bottom:' + lineSeparation; }
+        style = 'font-size: 1em;display:block;height:1em;line-height:1em;margin-bottom:' + lineSeparation;
+        if (y === data.length - 1) { style = 'font-size: 1em;display:block;line-height:1em;margin-bottom:' + lineSeparation; }
         if (!entity) {
           // emptyfiller
-            style = 'margin-bottom:' + lineSeparation;
-          // mock char, this has to be done to have chunks all of the same length (last chunk can't be shorter)
-            cell = `<span class="cell" style="${style}">A</span>`;
+            style = 'font-size: 1em;display:block;color: rgba(0, 0, 0, 0);height:1em;line-height:1em;margin-bottom:' + lineSeparation;
+            cell = `<span style="${style}">A</span>`; // mock char, this has to be done to have chunks all of the same length (last chunk can't be shorter)
         } else {
 
           if (entity.target) { style += `${entity.target}`; }
@@ -307,42 +308,48 @@ export class ProSeqViewer {
                     style="${style}">${entity.char}</span>`;
           } else {
             style += '-webkit-user-select: none;';
-            cell = `<span class="cell" style="${style}">${entity.char}</span>`;
+            cell = `<span style="${style}">${entity.char}</span>`;
           }
         }
         cells += cell;
       }
-      // width 3/5em to reduce white space around letters
-      cards += `<span class="crd">${cells}</span>`;
+
+      cards += `<div class="crd">${cells}</div>`; // width 3/5em to reduce white space around letters
       cells = '';
 
 
       if (chunkSize > 0 && x % chunkSize === 0) {
         // considering the row of top indexes
         if (indexesLocation != 'top') {
-          // lateral index (set only if top indexes missing)
-          idxNum += chunkSize;
+          idxNum += chunkSize; // lateral index (set only if top indexes missing)
           idx = idxNum - (chunkSize - 1);
           // adding labels
-          const idxContainer = this.generateLabels(idx, labels, startIndexes, indexesLocation, chunkSize, indexWidth, false, data, lineSeparation);
+          const gapsContainer = this.generateLabels(idx, labels, startIndexes, indexesLocation, chunkSize, indexWidth, false, data, lineSeparation);
+
+          if (labels[0] === '') {
+            index = gapsContainer;  // lateral number indexes
+          } else {
+            index = labelsContainer  + gapsContainer;  // lateral number indexes + labels
+          }
+
 
           if (!labelsFlag) {
-            index = idxContainer;  // lateral number indexes
+            index = gapsContainer;  // lateral number indexes
           } else {
             if(indexesLocation == 'lateral'){
-              index = labelsContainer  + idxContainer;  // lateral number indexes + labels
+              index = labelsContainer  + gapsContainer;  // lateral number indexes + labels
             } else {
               index = labelsContainer;  // lateral number indexes + labels
             }
           }
-
-        }
+          } else {
+            index = labelsContainer;
+          }
 
         index = `<div class="idx hidden">${index}</div>`;
         style = `font-size: ${fontSize};`;
 
-        if (x !== maxIdx) { style += 'padding-right: ' + chunkSeparation + 'em;'; }
-        else { style += 'margin-right: ' + chunkSeparation + 'em;'; }
+        if (x !== maxIdx) { style += 'padding-right: ' + chunkSeparation + 'em;'; } else { style += 'margin-right: ' + chunkSeparation + 'em;'; }
 
         let chunk = '';
 
@@ -360,11 +367,14 @@ export class ProSeqViewer {
     let innerHTML;
 
 
-    if (wrapLine) {innerHTML = `<div class="root">   ${html} </div>`;}
-    else {
+    if (wrapLine) {
+      innerHTML = `<div class="root">   ${html} </div>`;
+
+      } else {
+
       innerHTML = `<div class="root" style="display: flex">
                         <div style="display:inline-block;overflow-x:scroll;white-space: nowrap;width:${viewerWidth}"> ${html}</div>
-                   </div>`;
+                        </div>`;
 
     }
 

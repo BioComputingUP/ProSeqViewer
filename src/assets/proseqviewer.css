@@ -2,13 +2,21 @@
   font-family: monospace, monospace;
 }
 
+.container {
+  margin-left: 0;
+}
+
 .cnk {
+  position: relative;
+  white-space: nowrap;
   display: inline-block;
   vertical-align: top;
 }
 
 .idx {
+  position: relative;
   display: inline-block;
+  vertical-align: top;
   -moz-user-select: none;
   -ms-user-select: none;
   -webkit-user-select: none;
@@ -24,6 +32,7 @@
 }
 
 .lbl-hidden {
+  padding-left: 2px;
   padding-right: 5px;
   -webkit-user-select: none;
   display:block;
@@ -31,12 +40,18 @@
   line-height:1em;
   margin-bottom: 1.5em;
   font-style: italic;
+  justify-content: flex-end;
+  flex-direction: column;
+}
+
+.lbl {
+  font-size: 1em;
 }
 
 .cell{
   margin-bottom: 1.5em;
   height: 1em;
-  display: block;
+  display: inline-block;
 }
 
 .highlight {
