@@ -1,10 +1,8 @@
 .root{
   font-family: monospace, monospace;
-  overflow-y: auto;
-
 }
 
-body {
+html {
   overflow-y: scroll;
 }
 
