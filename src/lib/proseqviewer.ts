@@ -55,7 +55,7 @@ export class ProSeqViewer {
 
 
     for (const id of ProSeqViewer.sqvList) {
-      // console.log(document.getElementById(id))
+
       if (document.getElementById(id) != null) {
         const sqvBody = document.getElementById(id);
         const chunks = sqvBody.getElementsByClassName('cnk');
@@ -63,14 +63,9 @@ export class ProSeqViewer {
         let oldTop = 0;
         let newTop = 1;
 
-        // erase old indexes before recalculating them
-        // tslint:disable-next-line:prefer-for-of
-        for (let j = 0; j < chunks.length; j++) {
-          chunks[j].firstElementChild.className = 'idx hidden';
-        }
-
         for (let i = 0; i < chunks.length; i++) {
-
+          // erase old indexes before recalculating them
+          chunks[i].firstElementChild.className = 'idx hidden';
 
           if (flag) {
             // avoid calculating if idx already set

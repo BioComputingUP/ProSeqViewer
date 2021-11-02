@@ -2,10 +2,6 @@
   font-family: monospace, monospace;
 }
 
-html {
-  overflow-y: scroll;
-}
-
 .container {
   margin-left: 0;
 }
