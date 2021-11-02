@@ -1059,26 +1059,23 @@ class ProSeqViewer {
                 const sqvBody = document.getElementById(id);
                 const chunks = sqvBody.getElementsByClassName('cnk');
                 let oldTop = 0;
-                let newTop;
+                let newTop = 1;
                 // erase old indexes before recalculating them
                 // tslint:disable-next-line:prefer-for-of
-                for (let i = 0; i < chunks.length; i++) {
-                    chunks[i].firstElementChild.className = 'idx hidden';
+                for (let j = 0; j < chunks.length; j++) {
+                    chunks[j].firstElementChild.className = 'idx hidden';
                 }
                 for (let i = 0; i < chunks.length; i++) {
-                    newTop = chunks[i].getBoundingClientRect().top;
                     if (flag) {
                         // avoid calculating if idx already set
                         if (chunks[i].firstElementChild.className === 'idx') {
                             return;
                         }
                     }
+                    newTop = chunks[i].getBoundingClientRect().top;
                     if (newTop > oldTop) {
                         chunks[i].firstElementChild.className = 'idx';
                         oldTop = newTop;
-                    }
-                    else {
-                        chunks[i].firstElementChild.className = 'idx hidden';
                     }
                 }
             }

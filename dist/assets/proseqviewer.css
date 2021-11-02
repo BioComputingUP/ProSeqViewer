@@ -1,5 +1,11 @@
 .root{
   font-family: monospace, monospace;
+  overflow-y: auto;
+
+}
+
+body {
+  overflow-y: scroll;
 }
 
 .container {
