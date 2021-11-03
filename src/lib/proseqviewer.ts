@@ -74,7 +74,7 @@ export class ProSeqViewer {
             }
           }
 
-          newTop = chunks[i].getBoundingClientRect().top;
+          newTop = chunks[i].getBoundingClientRect().top + window.scrollY;
 
           if (newTop > oldTop) {
             chunks[i].firstElementChild.className = 'idx';

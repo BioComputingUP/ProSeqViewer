@@ -1054,7 +1054,6 @@ class ProSeqViewer {
     }
     calculateIdxs(flag) {
         for (const id of ProSeqViewer.sqvList) {
-            // console.log(document.getElementById(id))
             if (document.getElementById(id) != null) {
                 const sqvBody = document.getElementById(id);
                 const chunks = sqvBody.getElementsByClassName('cnk');
@@ -1069,7 +1068,7 @@ class ProSeqViewer {
                             return;
                         }
                     }
-                    newTop = chunks[i].getBoundingClientRect().top;
+                    newTop = chunks[i].getBoundingClientRect().top + window.scrollY;
                     if (newTop > oldTop) {
                         chunks[i].firstElementChild.className = 'idx';
                         oldTop = newTop;
