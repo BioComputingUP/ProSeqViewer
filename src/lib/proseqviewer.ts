@@ -142,7 +142,7 @@ export class ProSeqViewer {
     const noGapsLabels = [];
 
     if (labels.length > 0) {
-      if (indexesLocation == 'top') {
+      if (indexesLocation == 'top' || 'both') {
         labelshtml += `<span class="lbl-hidden" style="margin-bottom:${lineSeparation};"></span>`;
       }
       let flag;
@@ -196,7 +196,7 @@ export class ProSeqViewer {
         flag = false;
       }
 
-      if (indexesLocation == 'lateral') {
+      if (indexesLocation == 'lateral' || 'both') {
         labelsContainer = `<span class="lblContainer" style="display: inline-block">${labelshtml}</span>`;
 
       } else {
@@ -285,7 +285,7 @@ export class ProSeqViewer {
     let idx;
     let cells = '';
     for (let x = 1; x <= maxIdx; x++) {
-      if (indexesLocation == 'top') {cells = this.addTopIndexes(chunkSize, x, maxTop, lineSeparation)};
+      if (indexesLocation == 'top' || 'both') {cells = this.addTopIndexes(chunkSize, x, maxTop, lineSeparation)};
 
       for (let y = 0; y < data.length; y++) {
         entity = data[y][x];
@@ -316,7 +316,7 @@ export class ProSeqViewer {
 
       if (chunkSize > 0 && x % chunkSize === 0) {
         // considering the row of top indexes
-        if (indexesLocation != 'top') {
+        if (indexesLocation != 'top' || 'both') {
           idxNum += chunkSize; // lateral index (set only if top indexes missing)
           idx = idxNum - (chunkSize - 1);
           // adding labels
@@ -332,7 +332,7 @@ export class ProSeqViewer {
           if (!labelsFlag) {
             index = gapsContainer;  // lateral number indexes
           } else {
-            if(indexesLocation == 'lateral'){
+            if(indexesLocation == 'lateral' || 'both'){
               index = labelsContainer  + gapsContainer;  // lateral number indexes + labels
             } else {
               index = labelsContainer;  // lateral number indexes + labels
@@ -349,7 +349,7 @@ export class ProSeqViewer {
 
         let chunk = '';
 
-        if (labelsFlag || options.consensusType || indexesLocation == 'lateral') {
+        if (labelsFlag || options.consensusType || indexesLocation == 'lateral' || indexesLocation == 'both') {
           chunk = `<div class="cnk" style="${style}">${index}<div class="crds">${cards}</div></div>`;
         } else {
           chunk = `<div class="cnk" style="${style}"><div class="idx hidden"></div><div class="crds">${cards}</div></div>`;
