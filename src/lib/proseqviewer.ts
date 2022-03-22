@@ -142,7 +142,7 @@ export class ProSeqViewer {
     const noGapsLabels = [];
 
     if (labels.length > 0) {
-      if (indexesLocation == 'top' || 'both') {
+      if (indexesLocation != 'lateral') {
         labelshtml += `<span class="lbl-hidden" style="margin-bottom:${lineSeparation};"></span>`;
       }
       let flag;
@@ -285,7 +285,7 @@ export class ProSeqViewer {
     let idx;
     let cells = '';
     for (let x = 1; x <= maxIdx; x++) {
-      if (indexesLocation == 'top' || 'both') {cells = this.addTopIndexes(chunkSize, x, maxTop, lineSeparation)};
+      if (indexesLocation != 'lateral') {cells = this.addTopIndexes(chunkSize, x, maxTop, lineSeparation)};
 
       for (let y = 0; y < data.length; y++) {
         entity = data[y][x];
@@ -316,7 +316,7 @@ export class ProSeqViewer {
 
       if (chunkSize > 0 && x % chunkSize === 0) {
         // considering the row of top indexes
-        if (indexesLocation != 'top' || 'both') {
+        if (indexesLocation != 'top') {
           idxNum += chunkSize; // lateral index (set only if top indexes missing)
           idx = idxNum - (chunkSize - 1);
           // adding labels
@@ -332,14 +332,10 @@ export class ProSeqViewer {
           if (!labelsFlag) {
             index = gapsContainer;  // lateral number indexes
           } else {
-            if(indexesLocation == 'lateral' || 'both'){
               index = labelsContainer  + gapsContainer;  // lateral number indexes + labels
-            } else {
-              index = labelsContainer;  // lateral number indexes + labels
-            }
           }
           } else {
-            index = labelsContainer;
+            index = labelsContainer; // top
           }
 
         index = `<div class="idx hidden">${index}</div>`;
@@ -349,10 +345,10 @@ export class ProSeqViewer {
 
         let chunk = '';
 
-        if (labelsFlag || options.consensusType || indexesLocation == 'lateral' || indexesLocation == 'both') {
+        if (labelsFlag || options.consensusType || indexesLocation == 'both' || indexesLocation == 'lateral') { // both
           chunk = `<div class="cnk" style="${style}">${index}<div class="crds">${cards}</div></div>`;
         } else {
-          chunk = `<div class="cnk" style="${style}"><div class="idx hidden"></div><div class="crds">${cards}</div></div>`;
+          chunk = `<div class="cnk" style="${style}"><div class="idx hidden"></div><div class="crds">${cards}</div></div>`; // top
         }
         cards = '';
         index = '';
