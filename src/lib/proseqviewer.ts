@@ -209,7 +209,7 @@ export class ProSeqViewer {
     return labelsContainer;
   }
 
-  private addTopIndexes(chunkSize, x, maxTop, rowMarginBottom, topIndexes) {
+  private addTopIndexes(chunkSize, x, topIndex, maxTop, rowMarginBottom, topIndexes, indexesLocation) {
     console.log(x)
     let cells = '';
     let chunkTopIndex;
@@ -227,8 +227,9 @@ export class ProSeqViewer {
       //   cells += chunkTopIndex;
       // } else { // regular indexes
         // adding top indexes
-        if (x % chunkSize === 0 && x <= maxTop) {
-          chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${x}</span>`;
+        console.log(indexesLocation)
+        if (indexesLocation && x % chunkSize === 0 && x <= maxTop) {
+          chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${topIndex[x]}</span>`;
         } else {
           chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}">0</span>`;
         }
@@ -299,8 +300,11 @@ export class ProSeqViewer {
     let idxNum = 0;
     let idx;
     let cells = '';
+    const topIndex = [...Array(maxIdx).keys()]
     for (let x = 1; x <= maxIdx; x++) {
-      if (indexesLocation != 'lateral') {cells = this.addTopIndexes(chunkSize, x, maxTop, lineSeparation, topIndexes)};
+      // top index set or indexesLocation not set
+      console.log(indexesLocation)
+      if (!indexesLocation || indexesLocation != 'lateral') {cells = this.addTopIndexes(chunkSize, x, topIndex, maxTop, lineSeparation, topIndexes, indexesLocation)};
 
       for (let y = 0; y < data.length; y++) {
         entity = data[y][x];
@@ -331,7 +335,7 @@ export class ProSeqViewer {
 
       if (chunkSize > 0 && x % chunkSize === 0) {
         // considering the row of top indexes
-        if (indexesLocation != 'top') {
+        if (indexesLocation && indexesLocation != 'top') {
           idxNum += chunkSize; // lateral index (set only if top indexes missing)
           idx = idxNum - (chunkSize - 1);
           // adding labels

@@ -67,14 +67,14 @@ export class OptionsModel {
 
     /** check indexesLocation value */
     if (opt && opt.indexesLocation) {
-      if (opt.indexesLocation == "top" || opt.indexesLocation == "lateral") {
+      if (opt.indexesLocation == "top" || opt.indexesLocation == "lateral" || opt.indexesLocation == "both") {
         this.options.indexesLocation = opt.indexesLocation;
       }
     }
 
     /** check topIndexes type */
     if (opt && opt.topIndexes) {
-      if (opt.topIndexes.constructor == Object) {
+      if (opt.topIndexes.constructor == Array) {
         this.options.topIndexes = opt.topIndexes;
       }
     }

@@ -753,13 +753,13 @@ class OptionsModel {
         }
         /** check indexesLocation value */
         if (opt && opt.indexesLocation) {
-            if (opt.indexesLocation == "top" || opt.indexesLocation == "lateral") {
+            if (opt.indexesLocation == "top" || opt.indexesLocation == "lateral" || opt.indexesLocation == "both") {
                 this.options.indexesLocation = opt.indexesLocation;
             }
         }
         /** check topIndexes type */
         if (opt && opt.topIndexes) {
-            if (opt.topIndexes.constructor == Object) {
+            if (opt.topIndexes.constructor == Array) {
                 this.options.topIndexes = opt.topIndexes;
             }
         }
@@ -1187,31 +1187,31 @@ class ProSeqViewer {
         }
         return labelsContainer;
     }
-    addTopIndexes(chunkSize, x, maxTop, rowMarginBottom, topIndexes) {
+    addTopIndexes(chunkSize, x, topIndex, maxTop, rowMarginBottom, topIndexes, indexesLocation) {
         console.log(x);
         let cells = '';
         let chunkTopIndex;
+        // personalized top indexes (e.g pdb indexes) -- let's see if we want to implement this
+        // if (Object.keys(topIndexes).length !== 0) {
+        //   if (topIndexes[x]) {
+        //     chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${topIndexes[x]}</span>`;
+        //   } else {
+        //     chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}"></span>`;
+        //   }
+        //   console.log(chunkTopIndex)
+        //
+        //   cells += chunkTopIndex;
+        // } else { // regular indexes
         // adding top indexes
-        // personalized top indexes
-        if (Object.keys(topIndexes).length !== 0) {
-            if (topIndexes[x]) {
-                chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${topIndexes[x]}</span>`;
-            }
-            else {
-                chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}"></span>`;
-            }
-            console.log(chunkTopIndex);
-            cells += chunkTopIndex;
+        console.log(indexesLocation);
+        if (indexesLocation && x % chunkSize === 0 && x <= maxTop) {
+            chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${topIndex[x]}</span>`;
         }
-        else { // regular indexes
-            if (x % chunkSize === 0 && x <= maxTop) {
-                chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${x}</span>`;
-            }
-            else {
-                chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}">0</span>`;
-            }
-            cells += chunkTopIndex;
+        else {
+            chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}">0</span>`;
         }
+        cells += chunkTopIndex;
+        // }
         return cells;
     }
     createGUI(data, labels, startIndexes, tooltips, options, labelsFlag) {
@@ -1271,9 +1271,12 @@ class ProSeqViewer {
         let idxNum = 0;
         let idx;
         let cells = '';
+        const topIndex = [...Array(maxIdx).keys()];
         for (let x = 1; x <= maxIdx; x++) {
-            if (indexesLocation != 'lateral') {
-                cells = this.addTopIndexes(chunkSize, x, maxTop, lineSeparation, topIndexes);
+            // top index set or indexesLocation not set
+            console.log(indexesLocation);
+            if (!indexesLocation || indexesLocation != 'lateral') {
+                cells = this.addTopIndexes(chunkSize, x, topIndex, maxTop, lineSeparation, topIndexes, indexesLocation);
             }
             ;
             for (let y = 0; y < data.length; y++) {
@@ -1307,7 +1310,7 @@ class ProSeqViewer {
             cells = '';
             if (chunkSize > 0 && x % chunkSize === 0) {
                 // considering the row of top indexes
-                if (indexesLocation != 'top') {
+                if (indexesLocation && indexesLocation != 'top') {
                     idxNum += chunkSize; // lateral index (set only if top indexes missing)
                     idx = idxNum - (chunkSize - 1);
                     // adding labels
