@@ -709,7 +709,8 @@ class OptionsModel {
             sequenceColorMatrixPalette: undefined,
             consensusColorIdentity: undefined,
             consensusColorMapping: undefined,
-            selection: undefined
+            selection: undefined,
+            topIndexes: {}
         };
     }
     process(opt, consensus) {
@@ -754,6 +755,12 @@ class OptionsModel {
         if (opt && opt.indexesLocation) {
             if (opt.indexesLocation == "top" || opt.indexesLocation == "lateral") {
                 this.options.indexesLocation = opt.indexesLocation;
+            }
+        }
+        /** check topIndexes type */
+        if (opt && opt.topIndexes) {
+            if (opt.topIndexes.constructor == Object) {
+                this.options.topIndexes = opt.topIndexes;
             }
         }
         /** check selection value */
@@ -1180,17 +1187,31 @@ class ProSeqViewer {
         }
         return labelsContainer;
     }
-    addTopIndexes(chunkSize, x, maxTop, rowMarginBottom) {
+    addTopIndexes(chunkSize, x, maxTop, rowMarginBottom, topIndexes) {
+        console.log(x);
         let cells = '';
-        // adding top indexes
         let chunkTopIndex;
-        if (x % chunkSize === 0 && x <= maxTop) {
-            chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${x}</span>`;
+        // adding top indexes
+        // personalized top indexes
+        if (Object.keys(topIndexes).length !== 0) {
+            if (topIndexes[x]) {
+                chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${topIndexes[x]}</span>`;
+            }
+            else {
+                chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}"></span>`;
+            }
+            console.log(chunkTopIndex);
+            cells += chunkTopIndex;
         }
-        else {
-            chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}">0</span>`;
+        else { // regular indexes
+            if (x % chunkSize === 0 && x <= maxTop) {
+                chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${x}</span>`;
+            }
+            else {
+                chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}">0</span>`;
+            }
+            cells += chunkTopIndex;
         }
-        cells += chunkTopIndex;
         return cells;
     }
     createGUI(data, labels, startIndexes, tooltips, options, labelsFlag) {
@@ -1216,6 +1237,7 @@ class ProSeqViewer {
         const fontSize = options.fontSize;
         const chunkSeparation = options.chunkSeparation;
         const indexesLocation = options.indexesLocation;
+        const topIndexes = options.topIndexes;
         const wrapLine = options.wrapLine;
         const viewerWidth = options.viewerWidth;
         const lineSeparation = options.lineSeparation + ';';
@@ -1251,7 +1273,7 @@ class ProSeqViewer {
         let cells = '';
         for (let x = 1; x <= maxIdx; x++) {
             if (indexesLocation != 'lateral') {
-                cells = this.addTopIndexes(chunkSize, x, maxTop, lineSeparation);
+                cells = this.addTopIndexes(chunkSize, x, maxTop, lineSeparation, topIndexes);
             }
             ;
             for (let y = 0; y < data.length; y++) {
@@ -1300,9 +1322,7 @@ class ProSeqViewer {
                         index = gapsContainer; // lateral number indexes
                     }
                     else {
-                        // if(indexesLocation == 'both'){
                         index = labelsContainer + gapsContainer; // lateral number indexes + labels
-                        // }
                     }
                 }
                 else {
@@ -1310,11 +1330,13 @@ class ProSeqViewer {
                 }
                 index = `<div class="idx hidden">${index}</div>`;
                 style = `font-size: ${fontSize};`;
-                if (x !== maxIdx) {
-                    style += 'padding-right: ' + chunkSeparation + 'em;';
-                }
-                else {
-                    style += 'margin-right: ' + chunkSeparation + 'em;';
+                if (chunkSize !== 1) {
+                    if (x !== maxIdx) {
+                        style += 'padding-right: ' + chunkSeparation + 'em;';
+                    }
+                    else {
+                        style += 'margin-right: ' + chunkSeparation + 'em;';
+                    }
                 }
                 let chunk = '';
                 if (labelsFlag || options.consensusType || indexesLocation == 'both' || indexesLocation == 'lateral') { // both

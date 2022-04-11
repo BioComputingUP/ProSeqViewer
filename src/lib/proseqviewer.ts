@@ -209,18 +209,32 @@ export class ProSeqViewer {
     return labelsContainer;
   }
 
-  private addTopIndexes(chunkSize, x, maxTop, rowMarginBottom) {
+  private addTopIndexes(chunkSize, x, maxTop, rowMarginBottom, topIndexes) {
+    console.log(x)
     let cells = '';
-    // adding top indexes
+    let chunkTopIndex;
 
-      let chunkTopIndex;
-      if (x % chunkSize === 0 && x <= maxTop) {
-        chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${x}</span>`;
 
-      } else {
-        chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}">0</span>`;
-      }
-      cells += chunkTopIndex;
+      // personalized top indexes (e.g pdb indexes) -- let's see if we want to implement this
+      // if (Object.keys(topIndexes).length !== 0) {
+      //   if (topIndexes[x]) {
+      //     chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${topIndexes[x]}</span>`;
+      //   } else {
+      //     chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}"></span>`;
+      //   }
+      //   console.log(chunkTopIndex)
+      //
+      //   cells += chunkTopIndex;
+      // } else { // regular indexes
+        // adding top indexes
+        if (x % chunkSize === 0 && x <= maxTop) {
+          chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;direction: rtl;display:block;width:0.6em;margin-bottom:${rowMarginBottom}">${x}</span>`;
+        } else {
+          chunkTopIndex = `<span class="cell" style="-webkit-user-select: none;display:block;visibility: hidden;margin-bottom:${rowMarginBottom}">0</span>`;
+        }
+        cells += chunkTopIndex;
+      // }
+
     return cells;
   }
 
@@ -251,6 +265,7 @@ export class ProSeqViewer {
     const fontSize = options.fontSize;
     const chunkSeparation = options.chunkSeparation;
     const indexesLocation = options.indexesLocation;
+    const topIndexes = options.topIndexes;
     const wrapLine = options.wrapLine;
     const viewerWidth = options.viewerWidth;
     const lineSeparation = options.lineSeparation + ';';
@@ -285,7 +300,7 @@ export class ProSeqViewer {
     let idx;
     let cells = '';
     for (let x = 1; x <= maxIdx; x++) {
-      if (indexesLocation != 'lateral') {cells = this.addTopIndexes(chunkSize, x, maxTop, lineSeparation)};
+      if (indexesLocation != 'lateral') {cells = this.addTopIndexes(chunkSize, x, maxTop, lineSeparation, topIndexes)};
 
       for (let y = 0; y < data.length; y++) {
         entity = data[y][x];
@@ -341,7 +356,10 @@ export class ProSeqViewer {
         index = `<div class="idx hidden">${index}</div>`;
         style = `font-size: ${fontSize};`;
 
-        if (x !== maxIdx) { style += 'padding-right: ' + chunkSeparation + 'em;'; } else { style += 'margin-right: ' + chunkSeparation + 'em;'; }
+
+        if (chunkSize !== 1) {
+          if (x !== maxIdx ) { style += 'padding-right: ' + chunkSeparation + 'em;'; } else { style += 'margin-right: ' + chunkSeparation + 'em;'; }
+        }
 
         let chunk = '';
 

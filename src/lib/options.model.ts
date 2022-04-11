@@ -1,3 +1,5 @@
+import {type} from "os";
+
 export class OptionsModel {
 
   options =  {
@@ -16,7 +18,8 @@ export class OptionsModel {
     sequenceColorMatrixPalette: undefined,
     consensusColorIdentity: undefined,
     consensusColorMapping: undefined,
-    selection: undefined
+    selection: undefined,
+    topIndexes: {}
   };
 
   process(opt, consensus) {
@@ -66,6 +69,13 @@ export class OptionsModel {
     if (opt && opt.indexesLocation) {
       if (opt.indexesLocation == "top" || opt.indexesLocation == "lateral") {
         this.options.indexesLocation = opt.indexesLocation;
+      }
+    }
+
+    /** check topIndexes type */
+    if (opt && opt.topIndexes) {
+      if (opt.topIndexes.constructor == Object) {
+        this.options.topIndexes = opt.topIndexes;
       }
     }
 

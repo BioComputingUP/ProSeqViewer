@@ -41,9 +41,9 @@ export interface Options {
   chunkSeparation?: number, // space between chunks
   viewerWidth?: string,
   indexesLocation?: string, // "top" / "lateral"
+  topIndexes?: {}, // -- let's see if we want to implement this
   wrapLine?: boolean,
   lineSeparation?: string, // margin bottom of  horizontal rows
-
   sequenceColor?: string | {}, // colorscheme, introduce option for custom input
   selection?: string
 }
