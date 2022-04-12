@@ -46,7 +46,8 @@ export interface Options {
   lineSeparation?: string, // margin bottom of  horizontal rows
   sequenceColor?: string | {}, // colorscheme, introduce option for custom input
   selection?: string,
-  index?: Array<any>  // top index
+  index?: Array<any>  // top index,
+  indexRotation?: boolean
 }
 
 export interface Consensus {

@@ -2,6 +2,11 @@
   font-family: monospace, monospace;
 }
 
+.wrap {
+  display:inline-block;
+  overflow-x:scroll;
+  white-space: nowrap;
+}
 .container {
   margin-left: 0;
 }
@@ -29,6 +34,7 @@
 
 .lblContainer {
   direction: rtl;
+  display: inline-block;
 }
 
 .lbl-hidden {
@@ -51,7 +57,19 @@
 .cell{
   margin-bottom: 1.5em;
   height: 1em;
-  display: inline-block;
+  line-height:1em;
+  display: block;
+  -webkit-user-select: none;
+}
+
+.topidx {
+  width: 0.6em;
+  direction: rtl;
+}
+
+.topidxrotate {
+  width: 0.6em;
+  transform: rotate(-90deg);
 }
 
 .highlight {

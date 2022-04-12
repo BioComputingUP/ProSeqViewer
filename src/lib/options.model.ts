@@ -8,6 +8,7 @@ export class OptionsModel {
     chunkSeparation: 1, // relative to fontSize
     emptyFiller: ' ', // fills gap at the end of the MSA sequences
     indexesLocation: null,
+    indexRotation: false,
     wrapLine: true,
     viewerWidth: '',
     dotThreshold: 90,
@@ -19,7 +20,7 @@ export class OptionsModel {
     consensusColorIdentity: undefined,
     consensusColorMapping: undefined,
     selection: undefined,
-    topIndexes: {}
+    topIndex: undefined
   };
 
   process(opt, consensus) {
@@ -72,10 +73,16 @@ export class OptionsModel {
       }
     }
 
-    /** check topIndexes type */
-    if (opt && opt.topIndexes) {
-      if (opt.topIndexes.constructor == Array) {
-        this.options.topIndexes = opt.topIndexes;
+    /** check indexRotation value */
+
+    if (opt && typeof opt.indexRotation == 'boolean') {
+      this.options.indexRotation = opt.indexRotation;
+    }
+
+    /** check topIndex type */
+    if (opt && opt.topIndex) {
+      if (opt.topIndex.constructor == Array) {
+        this.options.topIndex = opt.topIndex;
       }
     }
 
