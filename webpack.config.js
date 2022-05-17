@@ -20,7 +20,12 @@ module.exports = {
   output: {
     // filename: 'sqv-bundle.js'
     filename: 'index.js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'dist'),
+    // Treat as a library
+    library: {
+      name: 'proseqviewer',
+      type: "umd",
+    },
   },
   // optimization: {
   //   minimize: true

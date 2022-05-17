@@ -1,2 +1,1 @@
-import { ProSeqViewer } from './lib/proseqviewer';
-export { ProSeqViewer };
+export { ProSeqViewer } from "./lib/proseqviewer";
