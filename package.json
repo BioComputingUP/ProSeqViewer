@@ -18,7 +18,8 @@
     "start": "npm run build -- -w"
   },
   "files": [
-    "dist/**"
+    "dist/**",
+    "src/**"
   ],
   "author": "Martina Bevilacqua",
   "license": "ISC",
