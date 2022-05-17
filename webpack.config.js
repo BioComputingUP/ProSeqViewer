@@ -1,10 +1,29 @@
+const path = require('path');
+
 module.exports = {
-  entry: './dist/index.js',
+  // Enter through index.ts
+  entry: './src/index.ts',
+  devtool: 'inline-source-map',
+  module: {
+    rules: [{
+      // Match .ts[x] files
+      test: /\.tsx?$/,
+      // Transpile them using the ts-loader
+      use: 'ts-loader',
+      // Exclude files in node modules
+      exclude: /node_modules/,
+    }]
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
   output: {
-    filename: 'sqv-bundle.js'
+    // filename: 'sqv-bundle.js'
+    filename: 'index.js',
+    path: path.resolve(__dirname, 'dist')
   },
-  optimization: {
-    minimize: false
-  },
-  mode: "production"
+  // optimization: {
+  //   minimize: true
+  // },
+  mode: "development",
 };

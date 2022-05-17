@@ -376,5 +376,5 @@ export class ProSeqViewer {
 
 
 }
-// VERY IMPORTANT AND USEFUL TO BE ABLE TO HAVE A WORKING BUNDLE.JS!! NEVER DELETE THIS LINE
-(window as any).ProSeqViewer = ProSeqViewer;
+// // VERY IMPORTANT AND USEFUL TO BE ABLE TO HAVE A WORKING BUNDLE.JS!! NEVER DELETE THIS LINE
+// (window as any).ProSeqViewer = ProSeqViewer;

@@ -1,26 +1,32 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2015",
+    "module": "es6",
+    "target": "es5",
+    "outDir": "./dist/",
+    "moduleResolution": "node",
     "declaration": true,
-    "outDir": "./dist",
-    "lib": [
-      "es6",
-      "dom",
-      "es2017"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "assets/*": [
-        "assets/*"
-      ]
-    }
+    //    "lib": [
+//      "es6",
+//      "dom",
+//      "es2017"
+//    ],
+//    "baseUrl": ".",
+//    "paths": {
+//      "assets/*": [
+//        "assets/*"
+//      ]
+//    }
   },
   "include": [
-    "src/index.ts",
-    "src/lib/*"
+//    "src/index.ts",
+//    "src/lib/*"
+    "src/**/*",
   ],
-  "exclude": [
-    "node_modules"
-  ]
+//  "exclude": [
+//    "node_modules"
+//  ]
+  // Allow debugging
+  "sourceMap": true,
+  // Allow javascript files
+  "allowJs": true,
 }
