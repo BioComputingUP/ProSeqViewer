@@ -2,7 +2,6 @@
   "name": "proseqviewer",
   "version": "1.1.9",
   "private": true,
-  "types": "src/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/BioComputingUP/ProSeqViewer"
@@ -10,24 +9,38 @@
   "homepage": "https://biocomputingup.github.io/ProSeqViewer-documentation/",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "postbuild": "cp -r src/assets dist/",
-    "wp": "npx webpack",
-    "postwp": "sed -i 's/^exports\\.\\(ProSeqViewer = ProSeqViewer;\\)$/window\\.\\1/' dist/sqv-bundle.js",
-    "buildall": "rm -rfv dist && npm run build && npm run postbuild && npm run wp && npm run postwp",
-    "start": "npm run build -- -w"
+    "build": "webpack --config webpack.config.js",
+    "start": "npx webpack serve"
   },
-  "files": [
-    "dist/**"
-  ],
+  "main": "./dist/proseqviewer.js",
   "author": "Martina Bevilacqua",
   "license": "ISC",
   "description": "TypeScript library to visualize annotation on single sequences and multiple sequence alignments",
   "devDependencies": {
+    "@babel/core": "^7.18.0",
+    "@babel/plugin-proposal-class-properties": "^7.17.12",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.18.0",
+    "@babel/preset-env": "^7.18.0",
+    "@babel/preset-typescript": "^7.17.12",
+    "@babel/runtime": "^7.18.0",
+    "@svgr/webpack": "^6.2.1",
     "@types/node": "14.14.13",
+    "babel-loader": "^8.2.5",
+    "css-loader": "^6.7.1",
+    "css-minimizer-webpack-plugin": "^4.0.0",
+    "fork-ts-checker-webpack-plugin": "^7.2.11",
+    "html-webpack-plugin": "^5.5.0",
+    "mini-css-extract-plugin": "^2.6.0",
+    "node-sass": "^7.0.1",
+    "resolve-url-loader": "^5.0.0",
+    "sass-loader": "^13.0.0",
+    "style-loader": "^3.3.1",
+    "terser-webpack-plugin": "^5.3.1",
     "ts-loader": "^9.3.0",
-    "typescript": "^4.2.4",
-    "webpack": "5.32.0",
-    "webpack-cli": "^4.6.0"
+    "typescript": "^4.7.2",
+    "webpack": "^5.32.0",
+    "webpack-cli": "^4.6.0",
+    "webpack-dev-server": "^4.9.0"
   }
 }

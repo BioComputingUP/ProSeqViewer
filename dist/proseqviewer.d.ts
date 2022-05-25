@@ -1,0 +1,31 @@
+import { OptionsModel } from './lib/options.model';
+import { RowsModel } from './lib/rows.model';
+import { ColorsModel } from './lib/colors.model';
+import { SelectionModel } from './lib/selection.model';
+import { IconsModel } from './lib/icons.model';
+import { SequenceInfoModel } from './lib/sequenceInfoModel';
+import { EventsModel } from './lib/events.model';
+import { PatternsModel } from './lib/patterns.model';
+import { ConsensusModel } from './lib/consensus.model';
+import { Input } from './lib/interface';
+import './styles.scss';
+export default class ProSeqViewer {
+    static sqvList: any[];
+    divId: string;
+    init: boolean;
+    params: OptionsModel;
+    rows: RowsModel;
+    consensus: ConsensusModel;
+    regions: ColorsModel;
+    patterns: PatternsModel;
+    icons: IconsModel;
+    labels: SequenceInfoModel;
+    selection: SelectionModel;
+    events: EventsModel;
+    constructor(divId?: string);
+    private calculateIdxs;
+    draw(inputs: Input): void;
+    private generateLabels;
+    private addTopIndexes;
+    private createGUI;
+}

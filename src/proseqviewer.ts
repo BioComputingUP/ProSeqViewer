@@ -1,15 +1,19 @@
-import {OptionsModel} from './options.model';
-import {RowsModel} from './rows.model';
-import {ColorsModel} from './colors.model';
-import {SelectionModel} from './selection.model';
-import {IconsModel} from './icons.model';
-import {SequenceInfoModel} from './sequenceInfoModel';
-import {EventsModel} from './events.model';
-import {PatternsModel} from './patterns.model';
-import {ConsensusModel} from './consensus.model';
-import {Input} from './interface';
+import {OptionsModel} from './lib/options.model';
+import {RowsModel} from './lib/rows.model';
+import {ColorsModel} from './lib/colors.model';
+import {SelectionModel} from './lib/selection.model';
+import {IconsModel} from './lib/icons.model';
+import {SequenceInfoModel} from './lib/sequenceInfoModel';
+import {EventsModel} from './lib/events.model';
+import {PatternsModel} from './lib/patterns.model';
+import {ConsensusModel} from './lib/consensus.model';
+import {Input} from './lib/interface';
 
-export class ProSeqViewer {
+// Add custom style
+import './styles.scss';
+
+// Export the actual ProSeqViewer constructor
+export default class ProSeqViewer {
   static sqvList = [];
   divId: string;
   init: boolean;
@@ -376,5 +380,3 @@ export class ProSeqViewer {
 
 
 }
-// // VERY IMPORTANT AND USEFUL TO BE ABLE TO HAVE A WORKING BUNDLE.JS!! NEVER DELETE THIS LINE
-// (window as any).ProSeqViewer = ProSeqViewer;

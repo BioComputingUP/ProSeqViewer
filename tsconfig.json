@@ -5,26 +5,13 @@
     "outDir": "./dist/",
     "moduleResolution": "node",
     "declaration": true,
-    //    "lib": [
-//      "es6",
-//      "dom",
-//      "es2017"
-//    ],
-//    "baseUrl": ".",
-//    "paths": {
-//      "assets/*": [
-//        "assets/*"
-//      ]
-//    }
   },
   "include": [
-//    "src/index.ts",
-//    "src/lib/*"
     "src/**/*",
   ],
-//  "exclude": [
-//    "node_modules"
-//  ]
+  "exclude": [
+    "node_modules"
+  ],
   // Allow debugging
   "sourceMap": true,
   // Allow javascript files
