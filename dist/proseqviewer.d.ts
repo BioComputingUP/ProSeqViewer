@@ -26,6 +26,6 @@ export default class ProSeqViewer {
     private calculateIdxs;
     draw(inputs: Input): void;
     private generateLabels;
-    private addTopIndexes;
+    private addTopIndex;
     private createGUI;
 }

@@ -7,6 +7,7 @@ export interface Sequences {
   startIndex?: number
 }
 
+
 export interface Regions {
   sequenceId: number,
   start: number,
@@ -27,6 +28,7 @@ export interface Patterns {
   backgroundImage?: string
 }
 
+
 export interface Icons {
   sequenceId: number,
   start: number,
@@ -35,18 +37,24 @@ export interface Icons {
   display?: string,  // center
 }
 
+
+export type Index = 'top' | 'left';
+
+
 export interface Options {
   fontSize?: string,
   chunkSize?: number, // number of chunk letters
   chunkSeparation?: number, // space between chunks
   viewerWidth?: string,
-  indexesLocation?: string, // "top" / "lateral"
+  // indexesLocation?: string, // "top" / "lateral"
+  indexLocation?: Index | Index[],
   wrapLine?: boolean,
   lineSeparation?: string, // margin bottom of  horizontal rows
 
   sequenceColor?: string | {}, // colorscheme, introduce option for custom input
   selection?: string
 }
+
 
 export interface Consensus {
   color: string | {},
@@ -62,3 +70,4 @@ export interface Input {
   icons?: Array<Icons>,
   options?: Options,
 }
+

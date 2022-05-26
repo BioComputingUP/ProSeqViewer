@@ -15,7 +15,7 @@ module.exports = {
         index: './src/index.ts',
         proseqviewer: './src/proseqviewer.ts',
     },
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     module: {
         rules: [
             // Typescript compilation
@@ -32,12 +32,15 @@ module.exports = {
                             cacheCompression: false,
                             // TODO Substitute with production
                             envName: 'development',
-                        }
+                            // TODO Remove in production
+                            sourceMaps: true,
+                            inputSourceMap: true,
+                        },
                     },
-                    // First, use TSC (generates declaration files)
-                    {
-                        loader: 'ts-loader',
-                    },
+                    // // First, use TSC (generates declaration files)
+                    // {
+                    //     loader: 'ts-loader',
+                    // },
                 ],
                 // Exclude files in node modules
                 exclude: /node_modules/,

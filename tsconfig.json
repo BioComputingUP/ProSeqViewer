@@ -2,18 +2,18 @@
   "compilerOptions": {
     "module": "es6",
     "target": "es5",
-    "outDir": "./dist/",
+    "outDir": "./dist",
     "moduleResolution": "node",
-    "declaration": true,
+    "declaration": true
   },
-  "include": [
-    "src/**/*",
-  ],
+//  "include": [
+//    "src/**/*"
+//  ],
   "exclude": [
     "node_modules"
   ],
   // Allow debugging
   "sourceMap": true,
   // Allow javascript files
-  "allowJs": true,
+  "allowJs": true
 }

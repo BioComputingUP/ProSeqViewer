@@ -12,7 +12,6 @@
     "build": "webpack --config webpack.config.js",
     "start": "npx webpack serve"
   },
-  "main": "./dist/proseqviewer.js",
   "author": "Martina Bevilacqua",
   "license": "ISC",
   "description": "TypeScript library to visualize annotation on single sequences and multiple sequence alignments",
@@ -25,6 +24,7 @@
     "@babel/preset-typescript": "^7.17.12",
     "@babel/runtime": "^7.18.0",
     "@svgr/webpack": "^6.2.1",
+    "@types/lodash": "^4.14.182",
     "@types/node": "14.14.13",
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
@@ -42,5 +42,8 @@
     "webpack": "^5.32.0",
     "webpack-cli": "^4.6.0",
     "webpack-dev-server": "^4.9.0"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
   }
 }
