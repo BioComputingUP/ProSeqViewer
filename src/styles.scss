@@ -23,9 +23,9 @@
   -webkit-touch-callout: none;
 }
 
-.hidden {
-  display: none;
-}
+//.hidden {
+//  display: none;
+//}
 
 .lblContainer {
   direction: rtl;
@@ -68,3 +68,44 @@
   display: inline-block;
   -webkit-user-select: none;
 }
+
+.cnk {
+  margin: .25rem;
+
+  .crd .index.top {
+    display: none;
+  }
+
+  .crd:last-child .index.top {
+    display: block;
+  }
+}
+
+.cell {
+  position: relative;
+  display: block;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+  // Placeholder keeps the correct space for content
+  .placeholder {
+    visibility: hidden;
+  }
+  // Value is the actually displayed value in cell
+  .value {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+// Style index cells
+.cell.index {
+  // Style top index
+  &.top {}
+  // Style left index
+  &.left {
+    margin-right: .5rem;
+  }
+}
+

@@ -237,10 +237,33 @@ export default class ProSeqViewer {
     // }
 
     // Add index on top of a column
-    private addTopIndex(index: number, split: number) {
+    private addTopIndex(index: number) {
         // Create an index cell
-        return `<span class="cell index top">${index}</span>`;
+        return `
+            <span class="cell index top">
+                <span class="placeholder">&nbsp;</span>
+                <span class="value">${index}</span>
+            </span>`;
     }
+
+    // Add left index of a column
+    private addLeftIndex(index: number, longest: number | string) {
+        // Create an index cell
+        return `
+            <span class="cell index left">
+                <span class="placeholder">${longest}</span>
+                <span class="value">${index}</span>
+            </span>`;
+    }
+
+    // Add label
+    private addLabel(index: number, labels: Array<string>) {
+        // Define label
+        let label = labels[index];
+        // Create a label cell
+        return `<span class="label">${label}</span>`;
+    }
+
 
     private createGUI(sequences: Array<Object>, labels: Array<string>, startIndexes, tooltips, options, labelsFlag) {
 
@@ -320,13 +343,25 @@ export default class ProSeqViewer {
             // Case the top index must be set
             if (topIndex) {
                 // Create top index
-                column += this.addTopIndex(j, split);
-            }
-            // TODO Case the left index must be set
-            if (leftIndex) {
+                column += this.addTopIndex(j);
             }
 
-            // if (indexesLocation != 'lateral') {cells = this.addTopIndexes(chunkSize, x, maxTop, lineSeparation)};
+            // Define if column is the first in chunk
+            const isFirst = !columns;
+            // Case left index is set
+            if (leftIndex && isFirst) {
+                // TODO Define leftmost column
+                let column = ``;
+                // Loop through each sequence
+                for (let i = 0; i < sequences.length; i++) {
+                    // Get i-th sequence
+                    let cell = sequences[i][j];
+                    // Generate and store index cell
+                    column += this.addLeftIndex(j, longest);
+                }
+                // Update columns
+                columns = `<div class="crd">${column}</div>` + columns;
+            }
 
             // Loop through each sequence
             for (let i = 0; i < sequences.length; i++) {
@@ -356,26 +391,20 @@ export default class ProSeqViewer {
                 // TODO What is entity.target???
                 // TODO Handle SVG in cell
                 // Add cell, embed (x, y) coordinates
-                column += `<span data-x="${j}" data-y="${i}">${cell.char}</span>`;
+                column += `<span data-x="${j}" data-y="${i}" class="cell">${cell.char}</span>`;
             }
             // Store column
             columns += `<div class="crd">${column}</div>`;
-
-            // cards += `<div class="crd">${cells}</div>`; // width 3/5em to reduce white space around letters
-            // cells = '';
 
             // Define if it is the last column of the chunk
             const isLast = (j % split == 0) || (j == (longest - 1));
             // Case current column index "hits" chunk size
             if (isLast) {
-                // TODO Case left index is set
-                if (leftIndex) {
-
-                }
-                // TODO Define left index
-                let labels = ''
                 // Define chunk
-                let chunk = `<div class="cnk"><div class="crds">${columns}</div></div>`; // top';
+                let chunk = `
+                    <div class="cnk">
+                        <div class="crds">${columns}</div>
+                    </div>`; // top';
                 // Reset columns
                 columns = ``;
                 // Store chunk
