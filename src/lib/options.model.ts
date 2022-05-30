@@ -1,7 +1,7 @@
 export class OptionsModel {
 
   options =  {
-    fontSize: '14px',
+    fontSize: '20px',
     chunkSize: 10,
     chunkSeparation: 1, // relative to fontSize
     emptyFiller: ' ', // fills gap at the end of the MSA sequences

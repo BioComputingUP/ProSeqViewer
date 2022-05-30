@@ -45,7 +45,12 @@ module.exports = {
                 // Exclude files in node modules
                 exclude: /node_modules/,
             },
-            // Allow serving styles
+            // Allow serving image/SVG files
+            {
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',
+            },
+            // Allow serving style
             {
                 test: /\.css$/,
                 use: [
@@ -90,11 +95,6 @@ module.exports = {
                     }
                 ]
             },
-            // Allow serving SVG files
-            {
-                test: /\.svg$/,
-                use: ["@svgr/webpack"]
-            }
         ]
     },
     // Configure plugins

@@ -8,15 +8,24 @@ import {EventsModel} from './lib/events.model';
 import {PatternsModel} from './lib/patterns.model';
 import {ConsensusModel} from './lib/consensus.model';
 import {Index, Input} from './lib/interface';
-import {isString, find} from 'lodash';
+import {isString, find, times, repeat} from 'lodash';
 
 // Add custom style
 import './styles.scss';
 
+
+export interface Options {
+    // Define index location
+    indexLocation?: Index | Array<Index>,
+    // Define rotation for top index
+    indexRotation?: boolean,
+}
+
+
 // Export the actual ProSeqViewer constructor
 export default class ProSeqViewer {
+
     static sqvList = [];
-    divId: string;
     init: boolean;
     params: OptionsModel;
     rows: RowsModel;
@@ -31,7 +40,16 @@ export default class ProSeqViewer {
     // Target DOM element
     root: HTMLElement;
 
-    constructor(target: string | HTMLElement) {
+    // Store options
+    options: Options;
+
+    // Default options
+    static defaults: Options = {
+        indexLocation: ['top', 'left'],
+        indexRotation: true,
+    }
+
+    constructor(target: string | HTMLElement, options?: Options) {
         // Define temporary root element
         let root: HTMLElement;
         // Case target is a string
@@ -58,6 +76,9 @@ export default class ProSeqViewer {
         this.selection = new SelectionModel();
         this.events = new EventsModel();
 
+        // Store options
+        this.options = options || ProSeqViewer.defaults;
+
         // On resize event, recalculate indexes
         window.onresize = () => this.updateIndex();
 
@@ -81,7 +102,7 @@ export default class ProSeqViewer {
             // Get first column of the chunk
             const column = chunk.firstElementChild;
 
-            let classNames = ['idx', 'hidden'];
+            let classNames = ['idx'];  // ['idx', 'hidden'];
             // Compute current top offset
             let currTopOffset = chunks[i].getBoundingClientRect().top + window.scrollY;
             // Compare current and previous top offset
@@ -237,11 +258,24 @@ export default class ProSeqViewer {
     // }
 
     // Add index on top of a column
-    private addTopIndex(index: number) {
+    private addTopIndex(index: number, longest: number | string, rotate?: boolean) {
+        let classes = 'cell index top';
+        // Case rotation is set
+        if (rotate) {
+            // Add rotate class
+            classes += 'rotate'
+        }
+        // Define placeholder
+        let placeholder = repeat(
+            // Create a single character cell
+            `<span class="cell">&nbsp;</span>`,
+            // Repeat once for each character in the longest index
+            (longest + '').length
+        );
         // Create an index cell
         return `
-            <span class="cell index top">
-                <span class="placeholder">&nbsp;</span>
+            <span class="cell top index ${ rotate ? 'rotate' : '' }">
+                <span class="placeholder">${placeholder}</span>
                 <span class="value">${index}</span>
             </span>`;
     }
@@ -343,7 +377,7 @@ export default class ProSeqViewer {
             // Case the top index must be set
             if (topIndex) {
                 // Create top index
-                column += this.addTopIndex(j);
+                column += this.addTopIndex(j, longest, true);
             }
 
             // Define if column is the first in chunk

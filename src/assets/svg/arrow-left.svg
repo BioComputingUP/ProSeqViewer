@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56px" height="56px" id="arrow-left" x="0px" y="0px" viewBox="0 0 963.78 1587.4"
+     enable-background="new 0 0 963.78 1587.4" xml:space="preserve"><rect style="fill:transparent" x="0.477" y="412.818" stroke="#000000" stroke-miterlimit="10" width="963.781" height="763.636"/>
+    <g><defs><rect width="964" height="1587"></rect></defs>
+        <clipPath><use overflow="visible"></use></clipPath>
+        <polygon style="fill:#FDDD0D;" fill-rule="evenodd" clip-rule="evenodd"
+                 points="1589.64,411.77 1589.64,1179.37    756.04,1179.37 756.04,1591.15 0,795.57 756.04,0 756.04,411.77  "> </polygon></g></svg>
