@@ -1,3 +1,5 @@
+@import "styles/variables";
+
 .root{
   font-family: monospace, monospace;
 }
@@ -50,7 +52,7 @@
 
 .cell{
   margin-bottom: 1.5em;
-  height: 1em;
+  //height: 1em;
   display: inline-block;
 }
 
@@ -70,7 +72,7 @@
 }
 
 .cnk {
-  margin: .25rem;
+  margin-left: .25rem;
 
   .crd .index.top {
     display: none;
@@ -82,30 +84,73 @@
 }
 
 .cell {
+  // Set positioning
   position: relative;
   display: block;
-  font-size: 1rem;
+  // Set cell size
+  height: $cell-height;
+  width: $cell-width;
+  // No margin/padding is shown by default
   margin: 0;
   padding: 0;
+  // Set text properties
+  font-size: $cell-font-size;
+  text-align: right;
   // Placeholder keeps the correct space for content
-  .placeholder {
-    visibility: hidden;
+  & > .placeholder {
+     visibility: hidden;
   }
   // Value is the actually displayed value in cell
-  .value {
+  & > .value {
     position: absolute;
     right: 0;
     top: 0;
   }
+  // Tell SVGs to stretch
+  & > svg {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 // Style index cells
-.cell.index {
+.index {
   // Style top index
-  &.top {}
+  &.top {
+    overflow: hidden;
+  }
   // Style left index
   &.left {
     margin-right: .5rem;
+  }
+  // Style rotated cells
+  &.rotate {
+    // Take size of children
+    height: auto;
+    width: auto;
+    // Set boundaries
+    overflow: hidden;
+
+    .placeholder, .value {
+      display: block;
+    }
+
+    .value {
+      position: absolute;
+      display: block;
+      // Set absolute position
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      // Set size according to parent
+      width: 100%;
+      height: fit-content;
+      // Center vertically and horizontally
+      margin: auto;
+      // Rotate index
+      transform: rotate(-90deg) translate(-100%);
+    }
   }
 }
 

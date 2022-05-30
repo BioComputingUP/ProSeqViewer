@@ -1,4 +1,11 @@
 import {Icons} from './icons';
+import Lollipop from '../assets/svg/lollipop.svg';
+import NoSecondary from '../assets/svg/no-secondary.svg';
+import AlphaHelix from '../assets/svg/alpha-helix.svg';
+import BetaStrand from '../assets/svg/beta-strand.svg';
+import BetaTurn from '../assets/svg/beta-turn.svg';
+import ArrowRight from '../assets/svg/arrow-right.svg';
+import ArrowLeft from '../assets/svg/arrow-left.svg';
 
 export class IconsModel {
 
@@ -28,31 +35,32 @@ export class IconsModel {
 
                   switch (reg.icon) {
                     case 'lollipop': {
-                      icon = Icons.lollipop;
+                      icon = `<img src="${Lollipop}" style="width: 100%; height: 100%;">`;
+                      // icon = Icons.lollipop;
                       break;
                     }
                     case 'arrowRight': {
-                      icon = Icons.arrowRight;
+                      icon = `<img src="${ArrowRight}" style="width: 100%; height: 100%;">`;
                       break;
                     }
                     case 'arrowLeft': {
-                      icon = Icons.arrowLeft;
+                      icon = `<img src="${ArrowLeft}" style="width: 100%; height: 100%;">`;
                       break;
                     }
                     case 'strand': {
-                      icon = Icons.strand;
+                      icon = `<img src="${BetaStrand}" style="width: 100%; height: 100%;">`;
                       break;
                     }
                     case 'noSecondary': {
-                      icon = Icons.noSecondary;
+                      icon = `<img src="${NoSecondary}" style="width: 100%; height: 100%;">`;
                       break;
                     }
                     case 'helix': {
-                      icon = Icons.helix;
+                      icon = `<img src="${AlphaHelix}" style="width: 100%; height: 100%;">`;
                       break;
                     }
                     case 'turn': {
-                      icon = Icons.turn;
+                      icon = `<img src="${BetaTurn}" style="width: 100%; height: 100%;">`;
                       break;
                     }
                     default: {
